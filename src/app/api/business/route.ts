@@ -8,7 +8,7 @@ export async function GET() {
 
   try {
     const { data, error } = await supabase
-      .from('businesses')
+      .from('business')
       .select('*')
       .eq('id', businessId)
       .single();

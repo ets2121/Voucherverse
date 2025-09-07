@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminSupabase } from '@/lib/supabase-admin';
+import { supabase } from '@/lib/supabase';
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
@@ -7,7 +7,7 @@ export async function GET() {
   const businessId = 1; // Hardcoded for single business context
 
   try {
-    const { data, error } = await adminSupabase
+    const { data, error } = await supabase
       .from('businesses')
       .select('*')
       .eq('id', businessId)

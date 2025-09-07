@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminSupabase } from '@/lib/supabase-admin';
+import { supabase } from '@/lib/supabase';
 
 export const revalidate = 0; // Don't cache this route
 
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const { data, error } = await adminSupabase
+    const { data, error } = await supabase
       .from('products')
       .select(`
         *,

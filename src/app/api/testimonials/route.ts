@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminSupabase } from '@/lib/supabase-admin';
+import { supabase } from '@/lib/supabase';
 
 export const revalidate = 3600; // Cache for 1 hour
 
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const { data, error } = await adminSupabase
+    const { data, error } = await supabase
       .from('testimonials')
       .select('*')
       .eq('business_id', businessId);

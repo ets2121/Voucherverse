@@ -8,11 +8,18 @@ export default {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       fontFamily: {
         body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
-        code: ['monospace'],
+        headline: ['Space Grotesk', 'sans-serif'],
+        code: ['Source Code Pro', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -92,6 +99,10 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'grid': 'grid 15s linear infinite',
+      },
+      backgroundImage: {
+        'grid-white/[0.02]': 'linear-gradient(to right, hsla(0, 0%, 100%, 0.02) 1px, transparent 1px), linear-gradient(to bottom, hsla(0, 0%, 100%, 0.02) 1px, transparent 1px)',
       },
     },
   },

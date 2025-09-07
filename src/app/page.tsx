@@ -1,3 +1,87 @@
+'use client';
+
+import type { FC } from 'react';
+import { motion } from 'framer-motion';
+import { useAppContext } from '@/context/AppContext';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import HeroSection from '@/components/sections/HeroSection';
+import ProductsSection from '@/components/sections/ProductsSection';
+import TestimonialsSection from '@/components/sections/TestimonialsSection';
+import ServicesSection from '@/components/sections/ServicesSection';
+import { Skeleton } from '@/components/ui/skeleton';
+import config from '@/../public/config.json';
+
+const sectionComponents: Record<string, FC> = {
+  hero: HeroSection,
+  services: ServicesSection,
+  products: ProductsSection,
+  testimonials: TestimonialsSection,
+};
+
+const LoadingSkeleton = () => (
+  <div className="flex flex-col min-h-screen">
+    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-background/80">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
+        <Skeleton className="h-8 w-32" />
+        <Skeleton className="h-8 w-24" />
+      </div>
+    </header>
+    <main className="flex-grow pt-20">
+      <div className="container mx-auto px-4 py-12 space-y-24">
+        <div className="flex flex-col items-center text-center space-y-4">
+          <Skeleton className="h-12 w-3/4" />
+          <Skeleton className="h-6 w-1/2" />
+          <Skeleton className="h-10 w-40 mt-4" />
+        </div>
+        <div className="space-y-8">
+          <Skeleton className="h-10 w-1/3 mx-auto" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer className="container mx-auto px-4 py-6">
+      <div className="flex justify-between items-center">
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-8 w-24" />
+      </div>
+    </footer>
+  </div>
+);
+
 export default function Home() {
-  return <></>;
+  const { isLoading } = useAppContext();
+  const { sections } = config;
+
+  if (isLoading) {
+    return <LoadingSkeleton />;
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-grow">
+        {sections.map((sectionName, index) => {
+          const SectionComponent = sectionComponents[sectionName];
+          if (!SectionComponent) return null;
+
+          return (
+            <motion.div
+              key={sectionName}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+            >
+              <SectionComponent />
+            </motion.div>
+          );
+        })}
+      </main>
+      <Footer />
+    </div>
+  );
 }

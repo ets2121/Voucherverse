@@ -1,0 +1,10 @@
+{
+  "title": "VoucherVerse",
+  "route": "/",
+  "sections": [
+    "hero",
+    "services",
+    "products",
+    "testimonials"
+  ]
+}

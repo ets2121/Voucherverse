@@ -14,17 +14,18 @@ export async function GET() {
       .single();
 
     if (error) {
-      console.error('Business fetch error:', error);
-      throw new Error(error.message);
+      console.error('Supabase business fetch error:', error);
+      // Pass the specific Supabase error message to the client
+      return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 });
     }
 
     if (!data) {
-        return NextResponse.json({ error: 'Business not found' }, { status: 404 });
+        return NextResponse.json({ error: 'Business with the specified ID not found.' }, { status: 404 });
     }
 
     return NextResponse.json(data);
-  } catch (error: any) {
-    console.error('API Business Fetch Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (e: any) {
+    console.error('API Business route error:', e);
+    return NextResponse.json({ error: 'An unexpected error occurred on the server.' }, { status: 500 });
   }
 }

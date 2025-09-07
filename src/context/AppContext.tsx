@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import useSWR from 'swr';
 import type { Business, Voucher } from '@/lib/types';
 
@@ -17,15 +17,20 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const fetcher = (url: string) => fetch(url).then(res => {
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+
   if (!res.ok) {
-    throw new Error('Failed to fetch business data');
+    const errorBody = await res.json();
+    const error = new Error(errorBody.error || 'An error occurred while fetching the data.');
+    throw error;
   }
+
   return res.json();
-});
+};
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const { data: business, error: businessError, isLoading: isBusinessLoading } = useSWR<Business>('/api/business', fetcher);
+  const { data: business, error: businessError, isLoading: isBusinessLoading } = useSWR<Business>('/api/business', fetcher, { shouldRetryOnError: false });
 
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -23,13 +23,13 @@ export async function GET(request: Request) {
       .eq('is_active', true);
 
     if (error) {
-      console.error('Products fetch error:', error);
-      throw new Error(error.message);
+       console.error('Supabase products fetch error:', error);
+      return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 });
     }
 
     return NextResponse.json(data);
-  } catch (error: any) {
-    console.error('API Products Fetch Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (e: any) {
+    console.error('API Products route error:', e);
+    return NextResponse.json({ error: 'An unexpected error occurred on the server.' }, { status: 500 });
   }
 }

@@ -71,7 +71,9 @@ export default function Home() {
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Error Loading Business Information</AlertTitle>
           <AlertDescription>
-            We couldn't load the essential business data. The API might be down or there could be a configuration issue. Please try refreshing the page.
+            There was a problem connecting to the database. Please check your Supabase credentials and network connection.
+            <br />
+            <strong>Details:</strong> {businessError.message}
           </AlertDescription>
         </Alert>
       </div>

@@ -3,12 +3,15 @@ import { useEffect } from 'react';
 import type { Product } from '@/lib/types';
 import { supabase } from '@/lib/supabase';
 
-const fetcher = (url: string) => fetch(url).then(res => {
+const fetcher = async (url: string) => {
+    const res = await fetch(url);
     if (!res.ok) {
-        throw new Error('Failed to fetch products');
+        const errorBody = await res.json();
+        const error = new Error(errorBody.error || 'Failed to fetch products');
+        throw error;
     }
     return res.json();
-});
+};
 
 export function useProducts(businessId: number | undefined) {
     const swrKey = businessId ? `/api/products?business_id=${businessId}` : null;

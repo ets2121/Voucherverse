@@ -37,6 +37,7 @@ export default function ProductsSection() {
               <AlertTitle>Error Loading Products</AlertTitle>
               <AlertDescription>
                 We couldn't load the product deals. The API might be down or there's a network issue.
+                 <strong>Details:</strong> {error.message}
               </AlertDescription>
             </Alert>
         </div>

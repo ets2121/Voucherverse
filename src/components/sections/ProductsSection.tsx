@@ -4,6 +4,8 @@ import { useAppContext } from '@/context/AppContext';
 import { useProducts } from '@/hooks/useProducts';
 import ProductCard from './ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
 
 export default function ProductsSection() {
   const { business, openModal } = useAppContext();
@@ -26,7 +28,23 @@ export default function ProductsSection() {
     )
   }
 
-  if (error || !products || products.length === 0) {
+  if (error) {
+    return (
+      <section id="products" className="py-20 md:py-24 bg-background border-t border-b">
+        <div className="container mx-auto px-4">
+           <Alert variant="destructive" className="max-w-lg mx-auto">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Error Loading Products</AlertTitle>
+              <AlertDescription>
+                We couldn't load the product deals. The API might be down or there's a network issue.
+              </AlertDescription>
+            </Alert>
+        </div>
+      </section>
+    );
+  }
+
+  if (!products || products.length === 0) {
     return null;
   }
 

@@ -12,6 +12,8 @@ import ServicesSection from '@/components/sections/ServicesSection';
 import { Skeleton } from '@/components/ui/skeleton';
 import config from '@/../public/config.json';
 import VoucherModal from '@/components/shared/VoucherModal';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
 
 const sectionComponents: Record<string, FC> = {
   hero: HeroSection,
@@ -55,11 +57,25 @@ const LoadingSkeleton = () => (
 );
 
 export default function Home() {
-  const { isBusinessLoading } = useAppContext();
+  const { isBusinessLoading, businessError } = useAppContext();
   const { sections } = config;
 
   if (isBusinessLoading) {
     return <LoadingSkeleton />;
+  }
+
+  if (businessError) {
+    return (
+       <div className="flex items-center justify-center min-h-screen">
+        <Alert variant="destructive" className="max-w-lg">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Error Loading Business Information</AlertTitle>
+          <AlertDescription>
+            We couldn't load the essential business data. The API might be down or there could be a configuration issue. Please try refreshing the page.
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
   }
 
   return (

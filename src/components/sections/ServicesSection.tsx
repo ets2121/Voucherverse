@@ -7,6 +7,8 @@ import { motion } from 'framer-motion';
 import useSWR from 'swr';
 import type { BusinessService } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -34,7 +36,23 @@ export default function ServicesSection() {
      )
   }
 
-  if (error || !services || services.length === 0) {
+  if (error) {
+     return (
+      <section id="services" className="py-20 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+           <Alert variant="destructive" className="max-w-lg mx-auto">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Error Loading Services</AlertTitle>
+              <AlertDescription>
+                We couldn't load the services offered. The API might be down or there's a network issue.
+              </AlertDescription>
+            </Alert>
+        </div>
+      </section>
+     )
+  }
+
+  if (!services || services.length === 0) {
     return null;
   }
 

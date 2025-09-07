@@ -14,6 +14,9 @@ import { Star } from 'lucide-react';
 import useSWR from 'swr';
 import type { Testimonial } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
+
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -39,7 +42,23 @@ export default function TestimonialsSection() {
     );
   }
 
-  if (error || !testimonials || testimonials.length === 0) {
+  if (error) {
+     return (
+      <section id="testimonials" className="py-20 md:py-24 bg-card">
+        <div className="container mx-auto px-4">
+           <Alert variant="destructive" className="max-w-lg mx-auto">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Error Loading Testimonials</AlertTitle>
+              <AlertDescription>
+                We couldn't load customer testimonials. The API might be down or there's a network issue.
+              </AlertDescription>
+            </Alert>
+        </div>
+      </section>
+     )
+  }
+
+  if (!testimonials || testimonials.length === 0) {
     return null;
   }
 

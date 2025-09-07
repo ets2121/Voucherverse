@@ -1,7 +1,8 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
+import useSWR from 'swr';
 import type { Business, Voucher } from '@/lib/types';
 
 interface AppContextType {
@@ -16,29 +17,15 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+const fetcher = (url: string) => fetch(url).then(res => {
+  if (!res.ok) {
+    throw new Error('Failed to fetch business data');
+  }
+  return res.json();
+});
+
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [business, setBusiness] = useState<Business | undefined>(undefined);
-  const [businessError, setBusinessError] = useState<any>(null);
-  const [isBusinessLoading, setIsBusinessLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchBusiness = async () => {
-      try {
-        const response = await fetch('/api/business');
-        if (!response.ok) {
-          throw new Error('Failed to fetch business data');
-        }
-        const data = await response.json();
-        setBusiness(data);
-      } catch (error) {
-        setBusinessError(error);
-      } finally {
-        setIsBusinessLoading(false);
-      }
-    };
-
-    fetchBusiness();
-  }, []);
+  const { data: business, error: businessError, isLoading: isBusinessLoading } = useSWR<Business>('/api/business', fetcher);
 
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

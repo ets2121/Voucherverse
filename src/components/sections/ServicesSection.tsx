@@ -10,11 +10,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => {
+    if (!res.ok) {
+        throw new Error('Failed to fetch services');
+    }
+    return res.json();
+});
 
 export default function ServicesSection() {
   const { business } = useAppContext();
-  const { data: services, isLoading, error } = useSWR<BusinessService[]>(
+  const { data: services, error, isLoading } = useSWR<BusinessService[]>(
     () => business?.id ? `/api/services?business_id=${business.id}` : null,
     fetcher
   );

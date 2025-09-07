@@ -17,7 +17,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onClaimVoucher }: ProductCardProps) {
-  const primaryVoucher = product.vouchers.find(v => v.is_promo);
+  const primaryVoucher = product.voucher?.find(v => v.is_promo);
 
   if (!primaryVoucher) return null;
 

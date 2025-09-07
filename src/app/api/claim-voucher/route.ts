@@ -29,16 +29,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: data }, { status: 409 });
     }
     
-    // On success, the RPC should return the voucher code.
-    // Let's check if the data looks like a voucher code or the success message.
-    if (data === 'successfully claimed' || typeof data === 'string' && data.length > 0) {
-       // If the function returns a code, we send it. If it just returns 'successfully claimed' we send that.
+    // On success, the RPC should return the voucher code or a success message.
+    if (typeof data === 'string' && data.length > 0) {
        // The front-end expects a `voucher_code` property.
-       const voucherCode = data === 'successfully claimed' ? 'CLAIMED' : data;
+       // If the function just returns a success message, we can use that or a generic code.
+       const voucherCode = data.includes('successfully claimed') ? 'CLAIMED' : data;
        return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: voucherCode });
     }
 
     // Fallback for any other unexpected response from the RPC
+    console.error('Unexpected RPC response:', data);
     return NextResponse.json({ error: 'An unexpected response was received from the server.' }, { status: 500 });
 
   } catch (e: any) {

@@ -17,9 +17,11 @@ export function useProducts(businessId: number | undefined) {
     useEffect(() => {
         if (!businessId) return;
 
-        // Subscribe to voucher updates
+        // Create a unique channel name to avoid conflicts
+        const channelName = `products-update-${businessId}-${Math.random().toString(36).substring(7)}`;
+
         const channel = supabase
-            .channel(`products-update-for-business-${businessId}`)
+            .channel(channelName)
             .on(
                 'postgres_changes',
                 { 
@@ -35,7 +37,7 @@ export function useProducts(businessId: number | undefined) {
             )
             .subscribe((status, err) => {
                 if (status === 'SUBSCRIBED') {
-                    console.log('Subscribed to voucher changes');
+                    console.log(`Subscribed to ${channelName}`);
                 }
                 if (status === 'CHANNEL_ERROR') {
                     console.error('Subscription error:', err);

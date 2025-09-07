@@ -9,7 +9,7 @@ import StarRating from '@/components/shared/StarRating';
 import { Progress } from '@/components/ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ticket, Clock } from 'lucide-react';
-import { differenceInSeconds, formatDistanceToNowStrict } from 'date-fns';
+import { differenceInSeconds } from 'date-fns';
 
 interface ProductCardProps {
   product: Product;
@@ -17,32 +17,54 @@ interface ProductCardProps {
 }
 
 const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
-  const [timeLeft, setTimeLeft] = useState('');
+  const calculateTimeLeft = () => {
+    const now = new Date();
+    const end = new Date(expiryDate);
+    let delta = differenceInSeconds(end, now);
+
+    if (delta <= 0) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+
+    const days = Math.floor(delta / 86400);
+    delta -= days * 86400;
+
+    const hours = Math.floor(delta / 3600) % 24;
+    delta -= hours * 3600;
+
+    const minutes = Math.floor(delta / 60) % 60;
+    delta -= minutes * 60;
+
+    const seconds = Math.floor(delta % 60);
+
+    return { days, hours, minutes, seconds };
+  };
+  
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
   useEffect(() => {
-    const calculateTimeLeft = () => {
-      const now = new Date();
-      const end = new Date(expiryDate);
-      const secondsLeft = differenceInSeconds(end, now);
+    const timer = setTimeout(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
 
-      if (secondsLeft <= 0) {
-        setTimeLeft('Expired');
-        return;
-      }
+    return () => clearTimeout(timer);
+  });
 
-      setTimeLeft(formatDistanceToNowStrict(end, { addSuffix: true }));
-    };
-
-    calculateTimeLeft();
-    const interval = setInterval(calculateTimeLeft, 1000);
-
-    return () => clearInterval(interval);
-  }, [expiryDate]);
+  const isExpired = !Object.values(timeLeft).some(val => val > 0);
 
   return (
     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
       <Clock className="w-3.5 h-3.5" />
-      <span>{timeLeft}</span>
+      {isExpired ? (
+        <span>Expired</span>
+      ) : (
+        <span className="font-mono tracking-widest">
+            {timeLeft.days > 0 && `${timeLeft.days}d `}
+            {timeLeft.hours > 0 && `${String(timeLeft.hours).padStart(2, '0')}h `}
+            {`${String(timeLeft.minutes).padStart(2, '0')}m `}
+            {`${String(timeLeft.seconds).padStart(2, '0')}s`}
+        </span>
+      )}
     </div>
   );
 };

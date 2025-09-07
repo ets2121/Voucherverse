@@ -1,48 +1,38 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 import useSWR from 'swr';
-import { supabase } from '@/lib/supabase';
-import type { PageData, Voucher, Product } from '@/lib/types';
+import type { Business, Voucher } from '@/lib/types';
 
-interface AppContextType extends PageData {
-  isLoading: boolean;
-  error: any;
+interface AppContextType {
+  business: Business | undefined;
+  isBusinessLoading: boolean;
+  businessError: any;
   selectedVoucher: Voucher | null;
   isModalOpen: boolean;
   openModal: (voucher: Voucher) => void;
   closeModal: () => void;
-  mutate: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => {
+  if (!res.ok) {
+    throw new Error('Failed to fetch business data');
+  }
+  return res.json();
+});
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const { data, error, isLoading, mutate } = useSWR<PageData>('/api/data', fetcher);
+  const { 
+    data: business, 
+    error: businessError, 
+    isLoading: isBusinessLoading 
+  } = useSWR<Business>('/api/business', fetcher);
 
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    const channel = supabase
-      .channel('voucher_changes')
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'vouchers' },
-        (payload) => {
-          console.log('Voucher change detected, refetching data...', payload);
-          mutate();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [mutate]);
 
   const openModal = (voucher: Voucher) => {
     setSelectedVoucher(voucher);
@@ -51,21 +41,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedVoucher(null);
+    // Delay clearing the voucher to allow for animations
+    setTimeout(() => {
+      setSelectedVoucher(null);
+    }, 300);
   };
 
   const value: AppContextType = {
-    business: data?.business,
-    products: data?.products ?? [],
-    services: data?.services ?? [],
-    testimonials: data?.testimonials ?? [],
-    isLoading,
-    error,
+    business,
+    isBusinessLoading,
+    businessError,
     selectedVoucher,
     isModalOpen,
     openModal,
     closeModal,
-    mutate,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

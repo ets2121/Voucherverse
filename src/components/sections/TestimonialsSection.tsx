@@ -11,11 +11,35 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Star } from 'lucide-react';
+import useSWR from 'swr';
+import type { Testimonial } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function TestimonialsSection() {
-  const { testimonials } = useAppContext();
+  const { business } = useAppContext();
+  const { data: testimonials, isLoading, error } = useSWR<Testimonial[]>(
+    () => business?.id ? `/api/testimonials?business_id=${business.id}` : null,
+    fetcher
+  );
 
-  if (!testimonials || testimonials.length === 0) {
+  if (isLoading) {
+    return (
+      <section id="testimonials" className="py-20 md:py-24 bg-card">
+        <div className="container mx-auto px-4">
+          <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
+            What Our Customers Say
+          </h2>
+          <div className="flex justify-center">
+            <Skeleton className="h-64 w-full max-w-sm" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || !testimonials || testimonials.length === 0) {
     return null;
   }
 

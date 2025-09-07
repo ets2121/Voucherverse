@@ -9,13 +9,14 @@ import StarRating from '@/components/shared/StarRating';
 import { Progress } from '@/components/ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ticket } from 'lucide-react';
+import type { Voucher } from '@/lib/types';
 
 interface ProductCardProps {
   product: Product;
+  onClaimVoucher: (voucher: Voucher) => void;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
-  const { openModal } = useAppContext();
+export default function ProductCard({ product, onClaimVoucher }: ProductCardProps) {
   const primaryVoucher = product.vouchers.find(v => v.is_promo);
 
   if (!primaryVoucher) return null;
@@ -87,7 +88,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
           <Button 
             className="w-full" 
-            onClick={() => openModal(primaryVoucher)}
+            onClick={() => onClaimVoucher(primaryVoucher)}
             disabled={isSoldOut}
           >
             {isSoldOut ? 'Sold Out' : 'Claim Voucher'}

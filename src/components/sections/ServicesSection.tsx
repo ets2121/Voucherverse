@@ -4,11 +4,37 @@ import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
+import useSWR from 'swr';
+import type { BusinessService } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ServicesSection() {
-  const { services } = useAppContext();
+  const { business } = useAppContext();
+  const { data: services, isLoading, error } = useSWR<BusinessService[]>(
+    () => business?.id ? `/api/services?business_id=${business.id}` : null,
+    fetcher
+  );
 
-  if (!services || services.length === 0) {
+  if (isLoading) {
+     return (
+       <section id="services" className="py-20 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
+            What We Offer
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+             <Skeleton className="h-80 w-full" />
+             <Skeleton className="h-80 w-full" />
+             <Skeleton className="h-80 w-full" />
+          </div>
+        </div>
+       </section>
+     )
+  }
+
+  if (error || !services || services.length === 0) {
     return null;
   }
 

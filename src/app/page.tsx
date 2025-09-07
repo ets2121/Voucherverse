@@ -11,6 +11,7 @@ import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import ServicesSection from '@/components/sections/ServicesSection';
 import { Skeleton } from '@/components/ui/skeleton';
 import config from '@/../public/config.json';
+import VoucherModal from '@/components/shared/VoucherModal';
 
 const sectionComponents: Record<string, FC> = {
   hero: HeroSection,
@@ -54,10 +55,10 @@ const LoadingSkeleton = () => (
 );
 
 export default function Home() {
-  const { isLoading } = useAppContext();
+  const { isBusinessLoading } = useAppContext();
   const { sections } = config;
 
-  if (isLoading) {
+  if (isBusinessLoading) {
     return <LoadingSkeleton />;
   }
 
@@ -82,6 +83,7 @@ export default function Home() {
         })}
       </main>
       <Footer />
+      <VoucherModal />
     </div>
   );
 }

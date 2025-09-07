@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
+import { useProducts } from '@/hooks/useProducts';
 import { Loader2, CheckCircle, XCircle, Ticket } from 'lucide-react';
 
 const formSchema = z.object({
@@ -26,7 +27,8 @@ const formSchema = z.object({
 });
 
 export default function VoucherModal() {
-  const { isModalOpen, closeModal, selectedVoucher, mutate } = useAppContext();
+  const { isModalOpen, closeModal, selectedVoucher, business } = useAppContext();
+  const { mutate } = useProducts(business?.id);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [claimStatus, setClaimStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -39,18 +41,21 @@ export default function VoucherModal() {
     },
   });
 
-  const handleClose = () => {
-    closeModal();
-    setTimeout(() => {
+  useEffect(() => {
+    // Reset state when modal is closed or voucher changes
+    if (!isModalOpen) {
+      setTimeout(() => {
         form.reset();
         setIsSubmitting(false);
         setClaimStatus('idle');
         setClaimedVoucherCode(null);
-    }, 300);
-  };
+      }, 300); // Delay to allow for closing animation
+    }
+  }, [isModalOpen, form]);
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!selectedVoucher) return;
+    if (!selectedVoucher || !business) return;
     setIsSubmitting(true);
     setClaimStatus('idle');
 
@@ -61,7 +66,7 @@ export default function VoucherModal() {
         body: JSON.stringify({
           voucher_id: selectedVoucher.id,
           user_email: values.email,
-          business_id: 1, // Hardcoded as per single business context
+          business_id: business.id,
         }),
       });
 
@@ -73,7 +78,7 @@ export default function VoucherModal() {
 
       setClaimStatus('success');
       setClaimedVoucherCode(result.voucher_code);
-      mutate(); // Re-fetch data to update claim count
+      mutate(); // Re-fetch products data to update claim count
     } catch (error: any) {
       setClaimStatus('error');
       toast({
@@ -98,7 +103,7 @@ export default function VoucherModal() {
               {claimedVoucherCode}
             </div>
             <p className="text-xs text-muted-foreground">This has been sent to your email.</p>
-            <Button onClick={handleClose} className="mt-4">Done</Button>
+            <Button onClick={closeModal} className="mt-4">Done</Button>
           </motion.div>
         );
       case 'error':
@@ -137,7 +142,7 @@ export default function VoucherModal() {
                     )}
                   />
                   <DialogFooter>
-                    <Button type="button" variant="ghost" onClick={handleClose}>Cancel</Button>
+                    <Button type="button" variant="ghost" onClick={closeModal}>Cancel</Button>
                     <Button type="submit" disabled={isSubmitting}>
                       {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Claim Now
@@ -152,9 +157,9 @@ export default function VoucherModal() {
 
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={handleClose}>
+    <Dialog open={isModalOpen} onOpenChange={closeModal}>
       <DialogContent className="sm:max-w-[425px]">
-        {renderContent()}
+        {selectedVoucher ? renderContent() : null}
       </DialogContent>
     </Dialog>
   );

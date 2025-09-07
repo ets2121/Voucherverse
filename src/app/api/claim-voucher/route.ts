@@ -18,30 +18,30 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      console.error('RPC voucher_claim error:', error);
-      return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 });
+      // Forward the specific error from Supabase
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     // The RPC function returns a plain text string.
+    // The frontend expects a `voucher_code` for successful claims.
     const responseText = data as string;
 
+    if (responseText && responseText.toLowerCase().includes('successfully claimed')) {
+       return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: responseText });
+    }
+
+    // Handle known error messages from the RPC
     if (responseText === 'promo fully claimed' || responseText === 'already claimed') {
       return NextResponse.json({ error: responseText }, { status: 409 });
     }
     
-    if (responseText && responseText.toLowerCase().includes('successfully claimed')) {
-       // The frontend expects a `voucher_code` property. We'll send a generic success code.
-       return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: 'CLAIMED' });
-    }
-
-    // Handle any other unexpected but non-error response from the RPC.
-    // It might be the actual voucher code as plain text.
+    // For any other text response from the RPC, treat it as a success/voucher code
     if (typeof responseText === 'string' && responseText.length > 0) {
         return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: responseText });
     }
-
-    console.error('Unexpected RPC response:', data);
-    return NextResponse.json({ error: 'An unexpected response was received from the server.' }, { status: 500 });
+    
+    // Fallback for unexpected responses
+    return NextResponse.json({ data: responseText }, { status: 200 });
 
   } catch (e: any) {
     console.error('API claim-voucher route error:', e);

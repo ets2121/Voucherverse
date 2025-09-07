@@ -12,59 +12,45 @@ export async function GET(request: Request) {
   }
 
   try {
-    const today = new Date().toISOString();
-
     const { data, error } = await supabase
       .from('product')
       .select(`
         *,
-        voucher!left(*)
+        voucher!left(*),
+        product_ratings(*)
       `)
       .eq('business_id', businessId)
-      .eq('is_active', true)
-      .filter('voucher.id', 'is', null) // Temporarily include products without vouchers
-      .or(`voucher.start_date.lte.${today},voucher.end_date.gte.${today},voucher.id.is.null`);
+      .eq('is_active', true);
 
     if (error) {
        console.error('Supabase products fetch error:', error);
       return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 });
     }
     
-    // Fetch product_ratings separately
-    const productIds = data?.map(p => p.id) || [];
-    if (productIds.length > 0) {
-      const { data: ratingsData, error: ratingsError } = await supabase
-        .from('product_ratings')
-        .select('*')
-        .in('product_id', productIds);
-
-      if (ratingsError) {
-        console.error('Supabase ratings fetch error:', ratingsError);
-        // continue without ratings if it fails
-      } else {
-        // Attach ratings to products
-        data?.forEach(product => {
-          product.product_ratings = ratingsData?.find(r => r.product_id === product.id) || null;
-        });
-      }
-    }
-
-
-    // Post-process to flatten voucher
+    // Post-process to flatten voucher and ratings, and filter invalid vouchers
      const processedData = data?.map(p => {
         // If voucher is an array, take the first one, otherwise use the object or null.
         const singleVoucher = Array.isArray(p.voucher) ? p.voucher[0] : p.voucher;
+        const singleRating = Array.isArray(p.product_ratings) ? p.product_ratings[0] : p.product_ratings;
         
+        let finalVoucher = null;
         // Ensure voucher is valid (not expired, etc.)
         if (singleVoucher) {
             const startDate = new Date(singleVoucher.start_date);
             const endDate = new Date(singleVoucher.end_date);
             const now = new Date();
-            if (now < startDate || now > endDate) {
-                return { ...p, voucher: null }; // Invalidate expired voucher
+            if (now >= startDate && now <= endDate) {
+                finalVoucher = singleVoucher;
             }
         }
-        return { ...p, voucher: singleVoucher || null };
+        // remove the original voucher and product_ratings array from the product object
+        const { voucher, product_ratings, ...rest } = p;
+        
+        return { 
+          ...rest, 
+          voucher: finalVoucher,
+          product_ratings: singleRating || null
+        };
      });
 
 

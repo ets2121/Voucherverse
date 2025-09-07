@@ -13,10 +13,10 @@ export async function GET(request: Request) {
 
   try {
     const { data, error } = await supabase
-      .from('products')
+      .from('product')
       .select(`
         *,
-        vouchers (*),
+        voucher (*),
         product_ratings (*)
       `)
       .eq('business_id', businessId)

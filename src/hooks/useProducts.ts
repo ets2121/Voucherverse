@@ -30,7 +30,7 @@ export function useProducts(businessId: number | undefined) {
                 { 
                     event: 'UPDATE', 
                     schema: 'public', 
-                    table: 'vouchers'
+                    table: 'voucher'
                 },
                 (payload) => {
                     console.log('Voucher change detected, refetching products...', payload.new);

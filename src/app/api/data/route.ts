@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { adminSupabase } from '@/lib/supabase';
+import { adminSupabase } from '@/lib/supabase-admin';
 
 export const revalidate = 0; // Don't cache this route
 

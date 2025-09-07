@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { adminSupabase } from '@/lib/supabase-admin';
 
@@ -9,6 +10,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required parameters.' }, { status: 400 });
     }
 
+    // Call the RPC function
     const { data, error } = await adminSupabase.rpc('voucher_claim', {
       p_voucher_id: voucher_id,
       p_user_email: user_email,
@@ -17,21 +19,28 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error('RPC voucher_claim error:', error);
-      // More specific error messages
-      if (error.message.includes('duplicate key value violates unique constraint')) {
-        return NextResponse.json({ error: 'You have already claimed this voucher.' }, { status: 409 });
-      }
-      if (error.message.includes('Voucher has reached its maximum claim limit')) {
-        return NextResponse.json({ error: 'This voucher is fully claimed.' }, { status: 409 });
-      }
-       if (error.message.includes('function voucher_claim')) {
-         return NextResponse.json({ error: 'The voucher claim function is not available in the database.' }, { status: 500 });
-       }
-      return NextResponse.json({ error: 'An unexpected error occurred during claim.' }, { status: 500 });
+      // Pass the specific Supabase error message to the client
+      return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 });
     }
 
-    // The RPC returns the voucher code on success
-    return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: data });
+    // The RPC returns a status message or a voucher code.
+    // Check for specific error messages returned from the function logic.
+    if (data === 'promo fully claimed' || data === 'already claimed') {
+      return NextResponse.json({ error: data }, { status: 409 });
+    }
+    
+    // On success, the RPC should return the voucher code.
+    // Let's check if the data looks like a voucher code or the success message.
+    if (data === 'successfully claimed' || typeof data === 'string' && data.length > 0) {
+       // If the function returns a code, we send it. If it just returns 'successfully claimed' we send that.
+       // The front-end expects a `voucher_code` property.
+       const voucherCode = data === 'successfully claimed' ? 'CLAIMED' : data;
+       return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: voucherCode });
+    }
+
+    // Fallback for any other unexpected response from the RPC
+    return NextResponse.json({ error: 'An unexpected response was received from the server.' }, { status: 500 });
+
   } catch (e: any) {
     console.error('API claim-voucher error:', e);
     // This will catch JSON parsing errors or other unexpected issues

@@ -50,7 +50,7 @@ export interface Product {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  voucher: Voucher[];
+  voucher: Voucher | null; // Can be a single object or null
   product_ratings: ProductRating | null;
 }
 

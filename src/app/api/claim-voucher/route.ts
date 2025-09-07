@@ -24,6 +24,9 @@ export async function POST(request: Request) {
       if (error.message.includes('Voucher has reached its maximum claim limit')) {
         return NextResponse.json({ error: 'This voucher is fully claimed.' }, { status: 409 });
       }
+       if (error.message.includes('function voucher_claim')) {
+         return NextResponse.json({ error: 'The voucher claim function is not available in the database.' }, { status: 500 });
+       }
       return NextResponse.json({ error: 'An unexpected error occurred during claim.' }, { status: 500 });
     }
 
@@ -31,6 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: data });
   } catch (e: any) {
     console.error('API claim-voucher error:', e);
+    // This will catch JSON parsing errors or other unexpected issues
     return NextResponse.json({ error: e.message || 'An internal server error occurred.' }, { status: 500 });
   }
 }

@@ -33,6 +33,7 @@ export default function VoucherModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [claimStatus, setClaimStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [claimedVoucherCode, setClaimedVoucherCode] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState('An unknown error occurred. Please try again.');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,6 +50,7 @@ export default function VoucherModal() {
         setIsSubmitting(false);
         setClaimStatus('idle');
         setClaimedVoucherCode(null);
+        setErrorMessage('An unknown error occurred. Please try again.');
       }, 300); // Delay to allow for closing animation
     }
   }, [isModalOpen, form]);
@@ -73,18 +75,20 @@ export default function VoucherModal() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to claim voucher.');
+        throw new Error(result.error || `Failed to claim voucher. Status: ${response.status}`);
       }
 
       setClaimStatus('success');
       setClaimedVoucherCode(result.voucher_code);
       mutate(); // Re-fetch products data to update claim count
     } catch (error: any) {
+      const detailedError = error.message || 'An unexpected error occurred.';
+      setErrorMessage(detailedError);
       setClaimStatus('error');
       toast({
         variant: 'destructive',
         title: 'Claim Failed',
-        description: error.message,
+        description: detailedError,
       });
     } finally {
       setIsSubmitting(false);
@@ -110,8 +114,8 @@ export default function VoucherModal() {
         return (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
             <XCircle className="w-16 h-16 text-destructive" />
-            <h2 className="text-2xl font-headline">Something Went Wrong</h2>
-            <p className="text-muted-foreground">Please try again later.</p>
+            <h2 className="text-2xl font-headline">Claim Failed</h2>
+            <p className="text-muted-foreground max-w-sm">{errorMessage}</p>
             <Button onClick={() => setClaimStatus('idle')} variant="outline" className="mt-4">Try Again</Button>
           </motion.div>
         );

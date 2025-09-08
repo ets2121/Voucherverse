@@ -15,45 +15,57 @@ export async function POST(request: Request) {
   const { voucher_id, user_email, business_id } = body;
 
   if (!voucher_id || !user_email || !business_id) {
-    console.error('Missing required parameters in request', { voucher_id, user_email, business_id });
-    return NextResponse.json({ error: 'Missing required parameters.' }, { status: 400 });
+    const missingParams = [
+        !voucher_id && 'voucher_id',
+        !user_email && 'user_email',
+        !business_id && 'business_id'
+    ].filter(Boolean).join(', ');
+    const errorMessage = `Missing required parameters: ${missingParams}.`;
+    console.error(errorMessage, { voucher_id, user_email, business_id });
+    return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 
   try {
     console.log('Calling voucher_claim RPC with:', { p_voucher_id: voucher_id, p_user_email: user_email, p_business_id: business_id });
 
-    const { data, error } = await adminSupabase.rpc('voucher_claim', {
+    const { data: rpcResponse, error: rpcError } = await adminSupabase.rpc('voucher_claim', {
       p_voucher_id: voucher_id,
       p_user_email: user_email,
       p_business_id: business_id,
     });
 
-    if (error) {
-      console.error('Supabase RPC error:', error);
-      return NextResponse.json({ error: error.message }, { status: 400 });
+    if (rpcError) {
+      console.error('Supabase RPC error:', rpcError);
+      // Make DB error more user-friendly
+      const userMessage = rpcError.message.includes('duplicate key') 
+        ? 'This voucher has already been claimed by this email address.' 
+        : 'A database error occurred. Please try again later.';
+      return NextResponse.json({ error: userMessage }, { status: 400 });
     }
 
-    console.log('Supabase RPC success. Data:', data);
-    const responseText = data as string;
+    console.log('Supabase RPC success. Data:', rpcResponse);
+    const responseText = rpcResponse as string;
 
-    if (responseText && responseText.toLowerCase().includes('successfully claimed')) {
-       return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: responseText });
+    // Handle specific, known string responses from the RPC
+    if (responseText === 'promo fully claimed') {
+      return NextResponse.json({ error: 'This voucher is fully claimed and no longer available.' }, { status: 409 });
+    }
+    if (responseText === 'already claimed') {
+      return NextResponse.json({ error: 'You have already claimed this voucher with this email.' }, { status: 409 });
     }
 
-    if (responseText === 'promo fully claimed' || responseText === 'already claimed') {
-      return NextResponse.json({ error: responseText }, { status: 409 });
-    }
-    
+    // Handle success case where a voucher code is returned
     if (typeof responseText === 'string' && responseText.length > 0) {
-        return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: responseText });
+      return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: responseText });
     }
 
+    // Fallback for any other successful but unexpected response
     return NextResponse.json({ data: responseText }, { status: 200 });
 
   } catch (e: any) {
     console.error('Full API claim-voucher route error:', e);
     return NextResponse.json(
-      { error: e.message || 'An internal server error occurred.' },
+      { error: 'An unexpected internal server error occurred. Please contact support.' },
       { status: 500 }
     );
   }

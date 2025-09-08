@@ -75,20 +75,20 @@ export default function VoucherModal() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || `Failed to claim voucher. Status: ${response.status}`);
+        throw new Error(result.error || `Modal Error: Failed to claim voucher.`);
       }
 
       setClaimStatus('success');
       setClaimedVoucherCode(result.voucher_code);
       mutate(); // Re-fetch products data to update claim count
     } catch (error: any) {
-      const detailedError = error.message || 'An unexpected error occurred.';
+      const detailedError = error.message || 'Modal Error: An unexpected error occurred.';
       setErrorMessage(detailedError);
       setClaimStatus('error');
       toast({
         variant: 'destructive',
         title: 'Claim Failed',
-        description: detailedError,
+        description: "Toast Error: There was a problem with the request.",
       });
     } finally {
       setIsSubmitting(false);

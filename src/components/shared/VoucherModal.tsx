@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useProducts } from '@/hooks/useProducts';
-import { Loader2, CheckCircle, XCircle, Ticket, AlertTriangle } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, Ticket, AlertTriangle, Clock } from 'lucide-react';
 import modalConfig from '@/../public/modalConfig.json';
 
 const formSchema = z.object({
@@ -30,7 +30,7 @@ export default function VoucherModal() {
   const { isModalOpen, closeModal, selectedVoucher, business } = useAppContext();
   const { mutate } = useProducts(business?.id);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [claimStatus, setClaimStatus] = useState<'idle' | 'success' | 'error' | 'already-claimed'>('idle');
+  const [claimStatus, setClaimStatus] = useState<'idle' | 'success' | 'error' | 'already-claimed' | 'expired'>('idle');
   const [errorMessage, setErrorMessage] = useState('An unknown error occurred. Please try again.');
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,6 +55,13 @@ export default function VoucherModal() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!selectedVoucher || !business) return;
+
+    // Client-side validation for expiry date
+    if (new Date(selectedVoucher.end_date) < new Date()) {
+        setClaimStatus('expired');
+        return;
+    }
+      
     setIsSubmitting(true);
     setClaimStatus('idle');
 
@@ -109,6 +116,15 @@ export default function VoucherModal() {
             <p className="text-muted-foreground max-w-sm">{modalConfig.alreadyClaimed.message}</p>
             <Button onClick={closeModal} variant="outline" className="mt-4">{modalConfig.alreadyClaimed.buttonText}</Button>
           </motion.div>
+        );
+      case 'expired':
+        return (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
+            <Clock className="w-16 h-16 text-destructive" />
+            <h2 className="text-2xl font-headline">{modalConfig.expired.title}</h2>
+            <p className="text-muted-foreground max-w-sm">{modalConfig.expired.message}</p>
+            <Button onClick={closeModal} variant="outline" className="mt-4">{modalConfig.expired.buttonText}</Button>
+            </motion.div>
         );
       case 'error':
         return (

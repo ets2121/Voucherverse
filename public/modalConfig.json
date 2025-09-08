@@ -1,8 +1,8 @@
 {
   "default": {
-    "title": "Claim Your Exclusive Voucher",
-    "emailLabel": "Email Address",
-    "emailPlaceholder": "Enter your email to claim",
+    "title": "Claim Your Voucher",
+    "emailLabel": "Enter your email to claim",
+    "emailPlaceholder": "you@example.com",
     "submitButton": "Claim Now",
     "cancelButton": "Cancel"
   },
@@ -10,18 +10,22 @@
     "submitButton": "Claiming..."
   },
   "success": {
-    "title": "Voucher Claimed!",
-    "message": "Your voucher has been successfully claimed. Check your email for details.",
-    "buttonText": "Done"
+    "title": "Success!",
+    "message": "Your voucher has been claimed. Check your email for details.",
+    "buttonText": "Awesome!"
   },
   "error": {
-    "title": "Claim Failed",
-    "message": "We couldn't process your claim. Please try again shortly.",
+    "title": "Oops! Something went wrong.",
     "buttonText": "Try Again"
   },
   "alreadyClaimed": {
-    "title": "Already Claimed",
+    "title": "Voucher Already Claimed",
     "message": "It looks like you've already claimed this voucher with this email address.",
+    "buttonText": "Got it"
+  },
+  "expired": {
+    "title": "Voucher Expired",
+    "message": "We're sorry, but this voucher has already expired and can no longer be claimed.",
     "buttonText": "Close"
   }
 }

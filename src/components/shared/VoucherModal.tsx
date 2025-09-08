@@ -32,7 +32,6 @@ export default function VoucherModal() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [claimStatus, setClaimStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [claimedVoucherCode, setClaimedVoucherCode] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState('An unknown error occurred. Please try again.');
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -49,7 +48,6 @@ export default function VoucherModal() {
         form.reset();
         setIsSubmitting(false);
         setClaimStatus('idle');
-        setClaimedVoucherCode(null);
         setErrorMessage('An unknown error occurred. Please try again.');
       }, 300); // Delay to allow for closing animation
     }
@@ -75,20 +73,20 @@ export default function VoucherModal() {
       const result = await response.json();
 
       if (!response.ok) {
+         // Use the specific error from the API if available
         throw new Error(result.error || `Modal Error: Failed to claim voucher.`);
       }
 
       setClaimStatus('success');
-      setClaimedVoucherCode(result.voucher_code);
       mutate(); // Re-fetch products data to update claim count
     } catch (error: any) {
-      const detailedError = error.message || 'Modal Error: An unexpected error occurred.';
+      const detailedError = error.message || 'An unexpected error occurred.';
       setErrorMessage(detailedError);
       setClaimStatus('error');
       toast({
         variant: 'destructive',
         title: 'Claim Failed',
-        description: "Toast Error: There was a problem with the request.",
+        description: detailedError,
       });
     } finally {
       setIsSubmitting(false);
@@ -102,11 +100,7 @@ export default function VoucherModal() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
             <CheckCircle className="w-16 h-16 text-green-500" />
             <h2 className="text-2xl font-headline">Voucher Claimed!</h2>
-            <p className="text-muted-foreground">Your voucher code is:</p>
-            <div className="bg-primary/10 border border-dashed border-primary text-primary font-mono text-lg font-bold p-3 rounded-md">
-              {claimedVoucherCode}
-            </div>
-            <p className="text-xs text-muted-foreground">This has been sent to your email.</p>
+            <p className="text-muted-foreground">You have successfully claimed this voucher. It has been sent to your email.</p>
             <Button onClick={closeModal} className="mt-4">Done</Button>
           </motion.div>
         );

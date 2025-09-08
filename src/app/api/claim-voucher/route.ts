@@ -8,8 +8,8 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch (e: any) {
-    console.error('Failed to parse request body:', e.message);
-    return NextResponse.json({ error: "API Error: Invalid request body." }, { status: 400 });
+    console.error('API Error: Failed to parse request body.', e);
+    return NextResponse.json({ error: 'Invalid request format.' }, { status: 400 });
   }
 
   const { voucher_id, user_email, business_id } = body;
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
         !user_email && 'user_email',
         !business_id && 'business_id'
     ].filter(Boolean).join(', ');
-    const errorMessage = `API Error: Missing required parameters: ${missingParams}.`;
+    const errorMessage = `Missing required parameters: ${missingParams}.`;
     console.error(errorMessage, { voucher_id, user_email, business_id });
     return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
@@ -36,29 +36,23 @@ export async function POST(request: Request) {
 
     if (rpcError) {
       console.error('Supabase RPC error:', rpcError);
-      return NextResponse.json({ error: "API Error: Supabase RPC failed." }, { status: 400 });
+      return NextResponse.json({ error: "A database error occurred." }, { status: 500 });
     }
 
-    console.log('Supabase RPC success. Data:', rpcResponse);
+    console.log('Supabase RPC success. Response text:', rpcResponse);
     const responseText = rpcResponse as string;
 
-    if (responseText === 'promo fully claimed') {
-      return NextResponse.json({ error: "API Error: Voucher is fully claimed." }, { status: 409 });
+    if (responseText === 'Successfully claimed') {
+      return NextResponse.json({ message: 'Voucher claimed successfully!', status: 'success' });
+    } else {
+       // Handles 'Already claimed' and 'Promo fully claimed'
+       return NextResponse.json({ error: responseText, status: 'error' }, { status: 409 });
     }
-    if (responseText === 'already claimed') {
-      return NextResponse.json({ error: "API Error: You have already claimed this voucher." }, { status: 409 });
-    }
-
-    if (typeof responseText === 'string' && responseText.length > 0) {
-      return NextResponse.json({ message: 'Voucher claimed successfully!', voucher_code: responseText });
-    }
-
-    return NextResponse.json({ data: responseText }, { status: 200 });
 
   } catch (e: any) {
     console.error('Full API claim-voucher route error:', e);
     return NextResponse.json(
-      { error: "API Error: An unexpected internal server error occurred." },
+      { error: "An unexpected internal server error occurred." },
       { status: 500 }
     );
   }

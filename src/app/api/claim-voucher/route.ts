@@ -1,7 +1,7 @@
 'use server';
 
 import { NextResponse } from 'next/server';
-import { adminSupabase } from '@/lib/supabase-admin';
+import { supabase } from '@/lib/supabase'; // Changed from supabase-admin to supabase
 
 export async function POST(request: Request) {
   let body;
@@ -28,7 +28,8 @@ export async function POST(request: Request) {
   try {
     console.log('Calling voucher_claim RPC with:', { p_voucher_id: voucher_id, p_user_email: user_email, p_business_id: business_id });
 
-    const { data: rpcResponse, error: rpcError } = await adminSupabase.rpc('voucher_claim', {
+    // Switched to the standard 'supabase' client
+    const { data: rpcResponse, error: rpcError } = await supabase.rpc('voucher_claim', {
       p_voucher_id: voucher_id,
       p_user_email: user_email,
       p_business_id: business_id,

@@ -1,0 +1,21 @@
+{
+  "default": {
+    "title": "Claim Your Voucher",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "you@example.com",
+    "cancelButton": "Cancel",
+    "submitButton": "Claim Now"
+  },
+  "submitting": {
+    "submitButton": "Claiming..."
+  },
+  "success": {
+    "title": "Voucher Claimed!",
+    "message": "You have successfully claimed this voucher. It has been sent to your email.",
+    "buttonText": "Done"
+  },
+  "error": {
+    "title": "Claim Failed",
+    "buttonText": "Try Again"
+  }
+}

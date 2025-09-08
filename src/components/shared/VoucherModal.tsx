@@ -18,9 +18,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useToast } from '@/hooks/use-toast';
 import { useProducts } from '@/hooks/useProducts';
 import { Loader2, CheckCircle, XCircle, Ticket } from 'lucide-react';
+import modalConfig from '@/../public/modalConfig.json';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -29,7 +29,6 @@ const formSchema = z.object({
 export default function VoucherModal() {
   const { isModalOpen, closeModal, selectedVoucher, business } = useAppContext();
   const { mutate } = useProducts(business?.id);
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [claimStatus, setClaimStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('An unknown error occurred. Please try again.');
@@ -72,7 +71,7 @@ export default function VoucherModal() {
 
       const result = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || result.status === 'error') {
          // Use the specific error from the API if available
         throw new Error(result.error || `Modal Error: Failed to claim voucher.`);
       }
@@ -83,11 +82,6 @@ export default function VoucherModal() {
       const detailedError = error.message || 'An unexpected error occurred.';
       setErrorMessage(detailedError);
       setClaimStatus('error');
-      toast({
-        variant: 'destructive',
-        title: 'Claim Failed',
-        description: detailedError,
-      });
     } finally {
       setIsSubmitting(false);
     }
@@ -99,18 +93,18 @@ export default function VoucherModal() {
         return (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
             <CheckCircle className="w-16 h-16 text-green-500" />
-            <h2 className="text-2xl font-headline">Voucher Claimed!</h2>
-            <p className="text-muted-foreground">You have successfully claimed this voucher. It has been sent to your email.</p>
-            <Button onClick={closeModal} className="mt-4">Done</Button>
+            <h2 className="text-2xl font-headline">{modalConfig.success.title}</h2>
+            <p className="text-muted-foreground">{modalConfig.success.message}</p>
+            <Button onClick={closeModal} className="mt-4">{modalConfig.success.buttonText}</Button>
           </motion.div>
         );
       case 'error':
         return (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
             <XCircle className="w-16 h-16 text-destructive" />
-            <h2 className="text-2xl font-headline">Claim Failed</h2>
+            <h2 className="text-2xl font-headline">{modalConfig.error.title}</h2>
             <p className="text-muted-foreground max-w-sm">{errorMessage}</p>
-            <Button onClick={() => setClaimStatus('idle')} variant="outline" className="mt-4">Try Again</Button>
+            <Button onClick={() => setClaimStatus('idle')} variant="outline" className="mt-4">{modalConfig.error.buttonText}</Button>
           </motion.div>
         );
       default:
@@ -118,7 +112,7 @@ export default function VoucherModal() {
             <>
               <DialogHeader>
                 <DialogTitle className="font-headline flex items-center gap-2">
-                  <Ticket className="text-primary"/> Claim Your Voucher
+                  <Ticket className="text-primary"/> {modalConfig.default.title}
                 </DialogTitle>
                 <DialogDescription>
                   {selectedVoucher?.description}
@@ -131,19 +125,19 @@ export default function VoucherModal() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Address</FormLabel>
+                        <FormLabel>{modalConfig.default.emailLabel}</FormLabel>
                         <FormControl>
-                          <Input placeholder="you@example.com" {...field} />
+                          <Input placeholder={modalConfig.default.emailPlaceholder} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   <DialogFooter>
-                    <Button type="button" variant="ghost" onClick={closeModal}>Cancel</Button>
+                    <Button type="button" variant="ghost" onClick={closeModal}>{modalConfig.default.cancelButton}</Button>
                     <Button type="submit" disabled={isSubmitting}>
                       {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Claim Now
+                      {isSubmitting ? modalConfig.submitting.submitButton : modalConfig.default.submitButton}
                     </Button>
                   </DialogFooter>
                 </form>

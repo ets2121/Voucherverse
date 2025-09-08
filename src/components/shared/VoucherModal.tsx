@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useProducts } from '@/hooks/useProducts';
-import { Loader2, CheckCircle, XCircle, Ticket } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, Ticket, AlertTriangle } from 'lucide-react';
 import modalConfig from '@/../public/modalConfig.json';
 
 const formSchema = z.object({
@@ -30,7 +30,7 @@ export default function VoucherModal() {
   const { isModalOpen, closeModal, selectedVoucher, business } = useAppContext();
   const { mutate } = useProducts(business?.id);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [claimStatus, setClaimStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [claimStatus, setClaimStatus] = useState<'idle' | 'success' | 'error' | 'already-claimed'>('idle');
   const [errorMessage, setErrorMessage] = useState('An unknown error occurred. Please try again.');
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -72,7 +72,6 @@ export default function VoucherModal() {
       const result = await response.json();
 
       if (!response.ok || result.status === 'error') {
-         // Use the specific error from the API if available
         throw new Error(result.error || `Modal Error: Failed to claim voucher.`);
       }
 
@@ -80,8 +79,12 @@ export default function VoucherModal() {
       mutate(); // Re-fetch products data to update claim count
     } catch (error: any) {
       const detailedError = error.message || 'An unexpected error occurred.';
-      setErrorMessage(detailedError);
-      setClaimStatus('error');
+      if (detailedError.includes('Already claimed')) {
+        setClaimStatus('already-claimed');
+      } else {
+        setErrorMessage(detailedError);
+        setClaimStatus('error');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -96,6 +99,15 @@ export default function VoucherModal() {
             <h2 className="text-2xl font-headline">{modalConfig.success.title}</h2>
             <p className="text-muted-foreground">{modalConfig.success.message}</p>
             <Button onClick={closeModal} className="mt-4">{modalConfig.success.buttonText}</Button>
+          </motion.div>
+        );
+      case 'already-claimed':
+        return (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
+            <AlertTriangle className="w-16 h-16 text-yellow-500" />
+            <h2 className="text-2xl font-headline">{modalConfig.alreadyClaimed.title}</h2>
+            <p className="text-muted-foreground max-w-sm">{modalConfig.alreadyClaimed.message}</p>
+            <Button onClick={closeModal} variant="outline" className="mt-4">{modalConfig.alreadyClaimed.buttonText}</Button>
           </motion.div>
         );
       case 'error':

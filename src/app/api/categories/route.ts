@@ -12,11 +12,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    // We want to fetch categories that are actually being used by active products
-    // for the given business. This prevents showing empty category filters.
-    const { data, error } = await supabase.rpc('get_business_product_categories', {
-        p_business_id: parseInt(businessId, 10)
-    });
+    // Fetch all categories directly for the given business ID
+    const { data, error } = await supabase
+        .from('product_category')
+        .select('*')
+        .eq('business_id', businessId);
+
 
     if (error) {
        console.error('Supabase categories fetch error:', error);

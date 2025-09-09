@@ -47,6 +47,7 @@ export interface ProductCategory {
   description?: string;
   created_at: string;
   updated_at: string;
+  business_id: number;
 }
 
 export interface ProductReview {

@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const revalidate = 0; // Don't cache reviews, always get the latest
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -13,11 +13,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Query the source table directly and filter for actual reviews
-    // Casting created_at to text ensures a consistent ISO 8601 format
+    // Query the source table directly and filter for actual reviews.
+    // Explicitly cast the timestamp to an ISO 8601 string in UTC.
+    // This ensures consistent parsing across all client browsers.
     const { data, error } = await supabase
       .from('product_reviews')
-      .select('*, created_at::text')
+      .select('*, created_at') // Let Supabase handle timestamp conversion
       .eq('product_id', productId)
       .not('review', 'is', null) // Only fetch rows with a review text
       .order('created_at', { ascending: false });

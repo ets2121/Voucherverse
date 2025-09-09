@@ -96,7 +96,14 @@ export default function ProductsSection() {
   
 
   return (
-    <section id="products" className="py-20 md:py-24 bg-background relative">
+    <motion.section 
+        id="products" 
+        className="py-20 md:py-24 bg-background relative"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+    >
       <AnimatePresence>
         {isMobile && selectedProduct && (
             <motion.div
@@ -107,8 +114,8 @@ export default function ProductsSection() {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="fixed top-0 left-0 right-0 bottom-0 bg-background z-30 overflow-y-auto"
             >
-                <div className="fixed top-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-sm z-40" />
-                <div className="sticky top-20 z-40 bg-background/80 backdrop-blur-sm p-2 border-b">
+                <div className="h-20" />
+                <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-sm p-2 border-b">
                     <Button variant="ghost" onClick={handleGoBack} className="w-full justify-start">
                         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Deals
                     </Button>
@@ -205,6 +212,6 @@ export default function ProductsSection() {
             </motion.div>
         </AnimatePresence>
       </div>
-    </section>
+    </motion.section>
   );
 }

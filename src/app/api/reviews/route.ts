@@ -14,11 +14,11 @@ export async function GET(request: Request) {
 
   try {
     // Query the source table directly and filter for actual reviews.
-    // Explicitly cast the timestamp to an ISO 8601 string in UTC.
-    // This ensures consistent parsing across all client browsers.
+    // Let the Supabase client handle the timestamp conversion to a proper ISO 8601 string.
+    // This is the most reliable way to ensure correct parsing in the browser.
     const { data, error } = await supabase
       .from('product_reviews')
-      .select('*, created_at') // Let Supabase handle timestamp conversion
+      .select('*, created_at') 
       .eq('product_id', productId)
       .not('review', 'is', null) // Only fetch rows with a review text
       .order('created_at', { ascending: false });

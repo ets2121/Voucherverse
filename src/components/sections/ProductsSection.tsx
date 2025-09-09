@@ -39,11 +39,11 @@ export default function ProductsSection() {
             Our Exclusive Deals
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-8">
-            <Skeleton className="h-64 md:h-96 w-full" />
-            <Skeleton className="h-64 md:h-96 w-full" />
-            <Skeleton className="h-64 md:h-96 w-full hidden lg:block" />
-            <Skeleton className="h-64 md:h-96 w-full hidden xl:block" />
-            <Skeleton className="h-64 md:h-96 w-full hidden 2xl:block" />
+            <Skeleton className="h-96 w-full" />
+            <Skeleton className="h-96 w-full" />
+            <Skeleton className="h-96 w-full hidden lg:block" />
+            <Skeleton className="h-96 w-full hidden xl:block" />
+            <Skeleton className="h-96 w-full hidden 2xl:block" />
           </div>
         </div>
       </section>
@@ -82,10 +82,14 @@ export default function ProductsSection() {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="w-full max-w-md mx-auto"
         >
-            <Button variant="ghost" onClick={handleGoBack} className="mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Deals
-            </Button>
-            <ProductCard product={selectedProduct} onClaimVoucher={openModal} />
+            <div className="fixed top-20 left-0 right-0 bg-background z-10 p-4 pt-0 border-b">
+              <Button variant="ghost" onClick={handleGoBack} className="w-full justify-start">
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Deals
+              </Button>
+            </div>
+            <div className="pt-16 pb-4">
+              <ProductCard product={selectedProduct} onClaimVoucher={openModal} />
+            </div>
         </motion.div>
       );
     }
@@ -97,7 +101,7 @@ export default function ProductsSection() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6 items-stretch"
+            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6 items-start"
         >
          {products.map((product) =>
             isMobile ? (
@@ -124,4 +128,3 @@ export default function ProductsSection() {
     </section>
   );
 }
-

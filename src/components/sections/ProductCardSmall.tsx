@@ -35,7 +35,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         onClick={onClick}
-        className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden flex flex-col cursor-pointer"
+        className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden flex flex-col cursor-pointer h-full"
     >
       <div className="relative aspect-square w-full">
         <Image
@@ -72,7 +72,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
                 )}
               </div>
             )}
-            <StarRating ratingData={product_ratings} showReviewCount={false}/>
+            <StarRating ratingData={product_ratings} showReviewCount={false} showAverage={false} />
         </div>
       </div>
     </motion.div>

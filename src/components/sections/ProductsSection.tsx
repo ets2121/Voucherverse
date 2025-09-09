@@ -38,11 +38,12 @@ export default function ProductsSection() {
           <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
             Our Exclusive Deals
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-8">
             <Skeleton className="h-64 md:h-96 w-full" />
             <Skeleton className="h-64 md:h-96 w-full" />
-            <Skeleton className="h-64 md:h-96 w-full hidden md:block" />
+            <Skeleton className="h-64 md:h-96 w-full hidden lg:block" />
             <Skeleton className="h-64 md:h-96 w-full hidden xl:block" />
+            <Skeleton className="h-64 md:h-96 w-full hidden 2xl:block" />
           </div>
         </div>
       </section>
@@ -96,7 +97,7 @@ export default function ProductsSection() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 items-stretch"
+            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6 items-stretch"
         >
          {products.map((product) =>
             isMobile ? (

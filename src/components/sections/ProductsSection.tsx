@@ -1,17 +1,36 @@
 
 'use client';
 
+import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { useProducts } from '@/hooks/useProducts';
 import ProductCard from './ProductCard';
+import ProductCardSmall from './ProductCardSmall';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, ArrowLeft } from 'lucide-react';
+import type { Product } from '@/lib/types';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
+
 
 export default function ProductsSection() {
   const { business, openModal } = useAppContext();
   const { products, isLoading, error } = useProducts(business?.id);
-  
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const isMobile = useIsMobile();
+
+  const handleSelectProduct = (product: Product) => {
+    if(isMobile) {
+      setSelectedProduct(product);
+    }
+  };
+
+  const handleGoBack = () => {
+    setSelectedProduct(null);
+  };
+
   if (isLoading) {
     return (
       <section id="products" className="py-20 md:py-24 bg-background border-t border-b">
@@ -19,11 +38,11 @@ export default function ProductsSection() {
           <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
             Our Exclusive Deals
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            <Skeleton className="h-96 w-full" />
-            <Skeleton className="h-96 w-full" />
-            <Skeleton className="h-96 w-full" />
-            <Skeleton className="h-96 w-full" />
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+            <Skeleton className="h-64 md:h-96 w-full" />
+            <Skeleton className="h-64 md:h-96 w-full" />
+            <Skeleton className="h-64 md:h-96 w-full hidden md:block" />
+            <Skeleton className="h-64 md:h-96 w-full hidden xl:block" />
           </div>
         </div>
       </section>
@@ -50,6 +69,46 @@ export default function ProductsSection() {
   if (!products || products.length === 0) {
     return null;
   }
+  
+  const renderProductView = () => {
+    if (isMobile && selectedProduct) {
+       return (
+        <motion.div
+            key="detail"
+            initial={{ opacity: 0, x: 300 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -300 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-full max-w-md mx-auto"
+        >
+            <Button variant="ghost" onClick={handleGoBack} className="mb-4">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Deals
+            </Button>
+            <ProductCard product={selectedProduct} onClaimVoucher={openModal} />
+        </motion.div>
+      );
+    }
+
+    return (
+        <motion.div
+            key="grid"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 items-stretch"
+        >
+         {products.map((product) =>
+            isMobile ? (
+              <ProductCardSmall key={product.id} product={product} onClick={() => handleSelectProduct(product)} />
+            ) : (
+              <ProductCard key={product.id} product={product} onClaimVoucher={openModal} />
+            )
+          )}
+        </motion.div>
+    )
+  }
+
 
   return (
     <section id="products" className="py-20 md:py-24 bg-background border-t border-b">
@@ -57,12 +116,11 @@ export default function ProductsSection() {
         <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
           Our Exclusive Deals
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} onClaimVoucher={openModal} />
-          ))}
-        </div>
+        <AnimatePresence mode="wait">
+            {renderProductView()}
+        </AnimatePresence>
       </div>
     </section>
   );
 }
+

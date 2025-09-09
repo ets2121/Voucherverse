@@ -101,21 +101,19 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      whileHover={{ y: -5 }}
       className="h-full"
     >
-      <Card className="h-full flex flex-col overflow-hidden bg-card hover:border-primary transition-all duration-300 group">
+      <Card className="h-full flex flex-col overflow-hidden bg-card transition-all duration-300 group">
         <CardHeader className="p-0">
-           <div className="relative h-32 w-full overflow-hidden">
+           <div className="relative h-48 w-full overflow-hidden">
             <Image
               src={product.image_url || `https://picsum.photos/400/300?random=${product.id}`}
               alt={product.name}
               fill
               data-ai-hint="product food"
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover transition-transform duration-300"
             />
             {hasDiscount && discountPercent > 0 && (
               <Badge variant="destructive" className="absolute top-2 right-2">
@@ -124,7 +122,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
             )}
           </div>
           <div className="p-4 space-y-2">
-            <CardTitle className="font-headline pt-1 text-lg line-clamp-1">{product.name}</CardTitle>
+            <CardTitle className="font-headline pt-1 text-xl line-clamp-1">{product.name}</CardTitle>
             
             {product.price && (
               <div className="flex items-baseline gap-2">
@@ -146,7 +144,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
             )}
             
             <StarRating ratingData={product.product_ratings} />
-            <CardDescription className="text-sm line-clamp-2 pt-1">{product.short_description}</CardDescription>
+            <CardDescription className="text-sm line-clamp-3 pt-1">{product.short_description}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="flex-grow p-4 pt-0">
@@ -205,3 +203,4 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
     </motion.div>
   );
 }
+

@@ -185,15 +185,17 @@ export default function ProductsSection() {
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="fixed top-0 left-0 right-0 bottom-0 bg-background z-30 overflow-y-auto"
+                className="fixed top-0 left-0 right-0 bottom-0 bg-background z-30"
             >
-                <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm p-2 border-b">
-                    <Button variant="ghost" onClick={handleGoBack} className="w-full justify-start">
-                        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Deals
-                    </Button>
-                </div>
-                <div className="p-4">
-                    <ProductCard product={selectedProduct} onClaimVoucher={openModal} />
+                <div className="h-full overflow-y-auto">
+                    <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-sm p-2 border-b">
+                        <Button variant="ghost" onClick={handleGoBack} className="w-full justify-start">
+                            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Deals
+                        </Button>
+                    </div>
+                    <div className="p-4">
+                        <ProductCard product={selectedProduct} onClaimVoucher={openModal} />
+                    </div>
                 </div>
             </motion.div>
         )}

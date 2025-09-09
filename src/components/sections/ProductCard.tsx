@@ -85,8 +85,18 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
 
   const isSoldOut = voucher?.max_claims ? voucher.claimed_count >= voucher.max_claims : false;
 
-  const hasDiscount = voucher && voucher.discount_amount && product.price;
-  const discountedPrice = hasDiscount ? product.price - (product.price * (voucher.discount_amount / 100)) : null;
+  const hasDiscount = voucher && voucher.discount_amount && product.price && product.price > 0;
+  
+  let discountedPrice = null;
+  let discountPercent = 0;
+
+  if (hasDiscount && product.price) {
+    discountedPrice = product.price - voucher.discount_amount!;
+    if (discountedPrice < 0) discountedPrice = 0;
+
+    discountPercent = Math.min(Math.round((voucher.discount_amount! / product.price) * 100), 100);
+  }
+
 
   return (
     <motion.div
@@ -107,9 +117,9 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               data-ai-hint="product food"
               className="object-cover"
             />
-            {hasDiscount && (
+            {hasDiscount && discountPercent > 0 && (
               <Badge variant="destructive" className="absolute top-2 right-2">
-                <Tag className="w-3 h-3 mr-1"/> {voucher.discount_amount}% OFF
+                <Tag className="w-3 h-3 mr-1"/> {discountPercent}% OFF
               </Badge>
             )}
           </div>

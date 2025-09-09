@@ -6,8 +6,10 @@ import { formatDistanceToNow } from 'date-fns';
 import type { ProductReview } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { MessageSquareDashed, AlertTriangle, UserCircle } from 'lucide-react';
+import { MessageSquareDashed, AlertTriangle, UserCircle, Star } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+
 
 const fetcher = (url: string) => fetch(url).then(res => {
     if (!res.ok) {
@@ -26,6 +28,7 @@ const ReviewSkeleton = () => (
                         <Skeleton className="h-4 w-1/4" />
                         <Skeleton className="h-4 w-1/5" />
                     </div>
+                     <Skeleton className="h-4 w-1/3" />
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-4 w-3/4" />
                 </div>
@@ -33,6 +36,20 @@ const ReviewSkeleton = () => (
         ))}
     </div>
 );
+
+
+const IndividualStarRating = ({ rating, starSize = 'h-4 w-4' }: { rating: number, starSize?: string }) => {
+    return (
+        <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+            <Star
+                key={i}
+                className={cn('text-yellow-400', starSize, i < rating ? 'fill-yellow-400' : 'fill-transparent')}
+            />
+            ))}
+        </div>
+    )
+}
 
 export default function ProductReviews({ productId }: { productId: number }) {
   const { data: reviews, error, isLoading } = useSWR<ProductReview[]>(
@@ -67,15 +84,18 @@ export default function ProductReviews({ productId }: { productId: number }) {
                 {reviews.map((review, index) => (
                     <div key={review.id}>
                         <div className="flex gap-3">
-                             <UserCircle className="h-8 w-8 text-muted-foreground" />
+                             <UserCircle className="h-8 w-8 text-muted-foreground shrink-0" />
                             <div className="flex-1">
-                                <div className="flex justify-between items-center">
-                                    <p className="text-sm font-semibold">{review.email}</p>
-                                    <p className="text-xs text-muted-foreground">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <p className="text-sm font-semibold">{review.email}</p>
+                                         <IndividualStarRating rating={review.rating} />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground text-right shrink-0">
                                         {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
                                     </p>
                                 </div>
-                                <p className="text-sm text-foreground mt-1">{review.review}</p>
+                                <p className="text-sm text-foreground mt-2">{review.review}</p>
                             </div>
                         </div>
                         {index < reviews.length - 1 && <Separator className="mt-4" />}

@@ -13,10 +13,12 @@ export async function GET(request: Request) {
   }
 
   try {
+    // Query the source table directly and filter for actual reviews
     const { data, error } = await supabase
-      .from('product_reviews')
+      .from('product_ratings_and_reviews')
       .select('*')
       .eq('product_id', productId)
+      .not('review', 'is', null) // Only fetch rows with a review text
       .order('created_at', { ascending: false });
 
     if (error) {

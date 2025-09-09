@@ -71,14 +71,14 @@ export default function ProductsSection() {
 
   if (isLoading) {
     return (
-      <section id="products" className="py-20 md:py-24 bg-background border-t border-b">
+      <section id="products" className="py-20 md:py-24 bg-background">
         <div className="container mx-auto px-4">
           <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-4">Our Exclusive Deals</h2>
           <div className="flex justify-center mb-12">
              <Skeleton className="h-10 w-full max-w-xs" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6">
-            {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
+            {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
           </div>
         </div>
       </section>
@@ -132,7 +132,7 @@ export default function ProductsSection() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6 items-start"
+            className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6 items-start"
         >
          {filteredProducts.map((product) =>
             isMobile ? (
@@ -146,47 +146,52 @@ export default function ProductsSection() {
   }
 
   return (
-    <section id="products" className="py-20 md:py-24 bg-background border-t border-b">
+    <section id="products" className="py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4">
-        <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-4">
-          Our Exclusive Deals
-        </h2>
-        <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-12">
-            <div className="relative w-full max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                    type="search"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                />
-                {searchQuery && (
-                   <Button 
-                     variant="ghost" 
-                     size="icon" 
-                     className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
-                     onClick={handleClearSearch}
-                    >
-                     <X className="h-4 w-4" />
-                   </Button>
+        <div className="text-center mb-8">
+            <h2 className="font-headline text-3xl md:text-4xl font-bold">
+            Our Exclusive Deals
+            </h2>
+        </div>
+        
+        <div className="sticky top-20 z-10 bg-background/95 backdrop-blur-sm py-4 mb-8 border-b">
+            <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <div className="relative w-full max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                        type="search"
+                        placeholder="Search products..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10"
+                    />
+                    {searchQuery && (
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                        onClick={handleClearSearch}
+                        >
+                        <X className="h-4 w-4" />
+                    </Button>
+                    )}
+                </div>
+                {showCategoryFilter && (
+                <Select onValueChange={(value) => setSelectedCategoryId(value === 'all' ? null : value)} defaultValue="all">
+                    <SelectTrigger className="w-full md:w-[180px]">
+                    <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={String(cat.id)}>
+                        {cat.name}
+                        </SelectItem>
+                    ))}
+                    </SelectContent>
+                </Select>
                 )}
             </div>
-            {showCategoryFilter && (
-              <Select onValueChange={(value) => setSelectedCategoryId(value === 'all' ? null : value)} defaultValue="all">
-                <SelectTrigger className="w-full md:w-[180px]">
-                  <SelectValue placeholder="All Categories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={String(cat.id)}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
         </div>
         
          {error && (
@@ -207,9 +212,9 @@ export default function ProductsSection() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6"
+                    className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6"
                  >
-                    {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
+                    {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
                  </motion.div>
             ) : (
                 renderProductView()

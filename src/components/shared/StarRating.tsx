@@ -55,9 +55,11 @@ export default function StarRating({
           );
         })}
       </div>
-      {showAverage && (
+       {(showAverage || showReviewCount) && (
         <span className="text-xs text-muted-foreground">
-          {average > 0 && average.toFixed(1)} {showReviewCount && `(${total} reviews)`}
+          {showAverage && average > 0 && average.toFixed(1)}
+          {showAverage && showReviewCount && average > 0 && <span className="mr-1"> </span>}
+          {showReviewCount && `(${total} reviews)`}
         </span>
       )}
     </div>

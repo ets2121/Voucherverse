@@ -121,7 +121,7 @@ export default function ProductsSection() {
 
     return (
         <motion.div
-            key="grid"
+            key={selectedCategoryId || 'all'}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

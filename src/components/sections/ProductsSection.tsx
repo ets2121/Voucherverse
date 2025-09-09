@@ -14,13 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCategories } from '@/hooks/useCategories';
 import { useDebounce } from '@/hooks/use-debounce';
 
@@ -155,7 +149,7 @@ export default function ProductsSection() {
         </div>
         
         <div className="sticky top-20 z-10 bg-background/95 backdrop-blur-sm py-4 mb-8 border-b">
-            <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col gap-4 justify-center items-center">
                 <div className="relative w-full max-w-sm">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input 
@@ -176,20 +170,21 @@ export default function ProductsSection() {
                     </Button>
                     )}
                 </div>
-                {showCategoryFilter && (
-                <Select onValueChange={(value) => setSelectedCategoryId(value === 'all' ? null : value)} defaultValue="all">
-                    <SelectTrigger className="w-full md:w-[180px]">
-                    <SelectValue placeholder="All Categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((cat) => (
-                        <SelectItem key={cat.id} value={String(cat.id)}>
-                        {cat.name}
-                        </SelectItem>
-                    ))}
-                    </SelectContent>
-                </Select>
+                 {showCategoryFilter && (
+                    <Tabs 
+                        defaultValue="all" 
+                        onValueChange={(value) => setSelectedCategoryId(value === 'all' ? null : value)}
+                        className="w-full max-w-full"
+                    >
+                        <TabsList className="flex w-full overflow-x-auto justify-start">
+                            <TabsTrigger value="all">All</TabsTrigger>
+                            {categories.map((cat) => (
+                                <TabsTrigger key={cat.id} value={String(cat.id)}>
+                                    {cat.name}
+                                </TabsTrigger>
+                            ))}
+                        </TabsList>
+                    </Tabs>
                 )}
             </div>
         </div>

@@ -107,7 +107,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
       whileHover={{ y: -5 }}
       className="h-full"
     >
-      <Card className="h-full flex flex-col overflow-hidden bg-card hover:border-primary transition-all duration-300">
+      <Card className="h-full flex flex-col overflow-hidden bg-card hover:border-primary transition-all duration-300 group">
         <CardHeader className="p-0">
            <div className="relative h-32 w-full overflow-hidden">
             <Image
@@ -115,7 +115,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               alt={product.name}
               fill
               data-ai-hint="product food"
-              className="object-cover"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
             />
             {hasDiscount && discountPercent > 0 && (
               <Badge variant="destructive" className="absolute top-2 right-2">

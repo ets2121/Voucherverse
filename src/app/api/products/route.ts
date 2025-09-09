@@ -6,21 +6,35 @@ export const revalidate = 0; // Don't cache this route
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const businessId = searchParams.get('business_id');
+  const categoryId = searchParams.get('category_id');
+  const searchQuery = searchParams.get('search');
 
   if (!businessId) {
     return NextResponse.json({ error: 'business_id is required' }, { status: 400 });
   }
 
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('product')
       .select(`
         *,
         voucher!left(*),
-        product_ratings(*)
+        product_ratings(*),
+        product_category(*)
       `)
       .eq('business_id', businessId)
       .eq('is_active', true);
+
+    if (categoryId) {
+      query = query.eq('category_id', categoryId);
+    }
+
+    if (searchQuery) {
+        // Using ilike for case-insensitive search on name and description
+        query = query.or(`name.ilike.%${searchQuery}%,short_description.ilike.%${searchQuery}%`);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
        console.error('Supabase products fetch error:', error);
@@ -29,12 +43,10 @@ export async function GET(request: Request) {
     
     // Post-process to flatten voucher and ratings, and filter invalid vouchers
      const processedData = data?.map(p => {
-        // If voucher is an array, take the first one, otherwise use the object or null.
         const singleVoucher = Array.isArray(p.voucher) ? p.voucher[0] : p.voucher;
         const singleRating = Array.isArray(p.product_ratings) ? p.product_ratings[0] : p.product_ratings;
         
         let finalVoucher = null;
-        // Ensure voucher is valid (not expired, etc.)
         if (singleVoucher) {
             const startDate = new Date(singleVoucher.start_date);
             const endDate = new Date(singleVoucher.end_date);
@@ -43,7 +55,7 @@ export async function GET(request: Request) {
                 finalVoucher = singleVoucher;
             }
         }
-        // remove the original voucher and product_ratings array from the product object
+        
         const { voucher, product_ratings, ...rest } = p;
         
         return { 

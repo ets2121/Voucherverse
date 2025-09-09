@@ -13,8 +13,11 @@ const fetcher = async (url: string) => {
     return res.json();
 };
 
-export function useProducts(businessId: number | undefined) {
-    const swrKey = businessId ? `/api/products?business_id=${businessId}` : null;
+export function useProducts(businessId: number | undefined, searchQuery?: string | null, categoryId?: string | null) {
+    const swrKey = businessId 
+        ? `/api/products?business_id=${businessId}&search=${searchQuery || ''}&category_id=${categoryId || ''}`
+        : null;
+
     const { data: products, error, isLoading, mutate } = useSWR<Product[]>(swrKey, fetcher, {
       revalidateOnFocus: false,
     });
@@ -35,11 +38,9 @@ export function useProducts(businessId: number | undefined) {
                     const updatedVoucher = payload.new as Product['voucher'];
                     if (!updatedVoucher) return;
                     
-                    // Optimistically update the SWR cache
                     mutate((currentData) => {
                         if (!currentData) return [];
                         
-                        // Check if the updated voucher belongs to a product of the current business
                         const productExists = currentData.some(p => p.id === updatedVoucher.product_id);
                         if (!productExists) {
                             return currentData;
@@ -47,17 +48,15 @@ export function useProducts(businessId: number | undefined) {
 
                         return currentData.map(product => {
                             if (product.voucher && product.voucher.id === updatedVoucher.id) {
-                                // Return a new product object to trigger re-render
                                 return { ...product, voucher: updatedVoucher };
                             }
                             return product;
                         });
-                    }, false); // 'false' prevents revalidation, we trust the real-time update
+                    }, false); 
                 }
             )
             .subscribe();
 
-        // Cleanup function to remove the subscription
         return () => {
             supabase.removeChannel(channel);
         };

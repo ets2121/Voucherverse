@@ -15,6 +15,7 @@ export interface Business {
 
 export interface ProductRating {
   id: number;
+  business_id: number;
   product_id: number;
   one_star: number;
   two_star: number;
@@ -40,6 +41,25 @@ export interface Voucher {
   updated_at: string;
 }
 
+export interface ProductCategory {
+  id: number;
+  name: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProductReview {
+    id: number;
+    business_id: number;
+    product_id: number;
+    email: string;
+    review: string;
+    created_at: string;
+    updated_at: string;
+}
+
+
 export interface Product {
   id: number;
   business_id: number;
@@ -50,8 +70,10 @@ export interface Product {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  voucher: Voucher | null; // Can be a single object or null
+  category_id?: number;
+  voucher: Voucher | null;
   product_ratings: ProductRating | null;
+  product_category: ProductCategory | null;
 }
 
 export interface PromoClaim {

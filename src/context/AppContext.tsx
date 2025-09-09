@@ -1,18 +1,27 @@
+
 'use client';
 
 import type { ReactNode } from 'react';
 import { createContext, useContext, useState, useEffect } from 'react';
 import useSWR from 'swr';
-import type { Business, Voucher } from '@/lib/types';
+import type { Business, Voucher, Product } from '@/lib/types';
 
 interface AppContextType {
   business: Business | undefined;
   isBusinessLoading: boolean;
   businessError: any;
+  
+  // Voucher Modal
   selectedVoucher: Voucher | null;
   isModalOpen: boolean;
   openModal: (voucher: Voucher) => void;
   closeModal: () => void;
+
+  // Review Modal
+  selectedProduct: Product | null;
+  isReviewModalOpen: boolean;
+  openReviewModal: (product: Product) => void;
+  closeReviewModal: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -32,8 +41,14 @@ const fetcher = async (url: string) => {
 export function AppProvider({ children }: { children: ReactNode }) {
   const { data: business, error: businessError, isLoading: isBusinessLoading } = useSWR<Business>('/api/business', fetcher, { shouldRetryOnError: false });
 
+  // Voucher Modal State
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Review Modal State
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
 
   const openModal = (voucher: Voucher) => {
     setSelectedVoucher(voucher);
@@ -46,6 +61,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedVoucher(null);
     }, 300);
   };
+  
+  const openReviewModal = (product: Product) => {
+    setSelectedProduct(product);
+    setIsReviewModalOpen(true);
+  };
+
+  const closeReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setTimeout(() => {
+      setSelectedProduct(null);
+    }, 300);
+  };
 
   const value: AppContextType = {
     business,
@@ -55,6 +82,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     isModalOpen,
     openModal,
     closeModal,
+    selectedProduct,
+    isReviewModalOpen,
+    openReviewModal,
+    closeReviewModal,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

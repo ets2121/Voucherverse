@@ -4,6 +4,7 @@ import ProductsSection from '@/components/sections/ProductsSection';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import VoucherModal from '@/components/shared/VoucherModal';
+import ReviewModal from '@/components/shared/ReviewModal';
 
 export default function ProductsPage() {
   return (
@@ -14,6 +15,7 @@ export default function ProductsPage() {
       </main>
       <Footer />
       <VoucherModal />
+      <ReviewModal />
     </div>
   );
 }

@@ -9,10 +9,11 @@ import { Button } from '@/components/ui/button';
 import StarRating from '@/components/shared/StarRating';
 import { Progress } from '@/components/ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Ticket, Clock, Tag } from 'lucide-react';
+import { Ticket, Clock, Tag, MessageSquareQuote } from 'lucide-react';
 import { differenceInSeconds } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import priceConfig from '@/../public/priceConfig.json';
+import { useAppContext } from '@/context/AppContext';
 
 interface ProductCardProps {
   product: Product;
@@ -74,6 +75,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 
 
 export default function ProductCard({ product, onClaimVoucher }: ProductCardProps) {
+  const { openReviewModal } = useAppContext();
   const voucher = product.voucher;
   const currencySymbol = priceConfig.currency_symbol;
 
@@ -159,6 +161,10 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                   </div>
               </div>
           )}
+           <Button variant="outline" size="sm" className="w-full mt-2" onClick={() => openReviewModal(product)}>
+                <MessageSquareQuote className="mr-2 h-4 w-4" />
+                Rate this product
+            </Button>
         </CardContent>
         <CardFooter className="flex-col items-start gap-3 p-4 pt-0 mt-auto">
           {voucher && (

@@ -1,10 +1,12 @@
 {
-  "title": "VoucherVerse",
-  "route": "/",
+  "product_slug": "products",
   "sections": [
     "hero",
     "services",
-    "products",
     "testimonials"
+  ],
+  "navigation": [
+    { "label": "Home", "href": "/" },
+    { "label": "Deals", "href": "/products" }
   ]
 }

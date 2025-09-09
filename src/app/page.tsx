@@ -6,7 +6,6 @@ import { useAppContext } from '@/context/AppContext';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/sections/HeroSection';
-import ProductsSection from '@/components/sections/ProductsSection';
 import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import ServicesSection from '@/components/sections/ServicesSection';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,7 +17,6 @@ import { AlertTriangle } from 'lucide-react';
 const sectionComponents: Record<string, FC> = {
   hero: HeroSection,
   services: ServicesSection,
-  products: ProductsSection,
   testimonials: TestimonialsSection,
 };
 

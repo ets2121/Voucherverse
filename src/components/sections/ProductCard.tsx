@@ -90,8 +90,8 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
       whileHover={{ y: -5 }}
     >
       <Card className="h-full flex flex-col overflow-hidden bg-card hover:border-primary transition-all duration-300">
-        <CardHeader>
-          <div className="relative h-48 w-full mb-4 rounded-t-lg overflow-hidden">
+        <CardHeader className="p-4">
+          <div className="relative h-40 w-full mb-4 rounded-t-lg overflow-hidden">
             <Image
               src={product.image_url || `https://picsum.photos/400/300?random=${product.id}`}
               alt={product.name}
@@ -101,17 +101,17 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
             />
           </div>
           <StarRating ratingData={product.product_ratings} />
-          <CardTitle className="font-headline pt-2">{product.name}</CardTitle>
-          <CardDescription>{product.short_description}</CardDescription>
+          <CardTitle className="font-headline pt-2 text-xl">{product.name}</CardTitle>
+          <CardDescription className="text-sm">{product.short_description}</CardDescription>
         </CardHeader>
-        <CardContent className="flex-grow">
+        <CardContent className="flex-grow p-4 pt-0">
           {voucher && (
-             <div className="bg-primary/10 p-4 rounded-lg border border-dashed border-primary">
+             <div className="bg-primary/10 p-3 rounded-lg border border-dashed border-primary">
                 <div className="flex items-center gap-3">
-                  <Ticket className="w-8 h-8 text-primary" />
+                  <Ticket className="w-6 h-6 text-primary" />
                   <div>
-                    <p className="font-bold text-lg text-primary">{voucher.description}</p>
-                    <p className="text-sm text-primary/80">
+                    <p className="font-bold text-base text-primary">{voucher.description}</p>
+                    <p className="text-xs text-primary/80">
                       {`Save ${voucher.discount_amount}% on this item!`}
                     </p>
                   </div>
@@ -119,7 +119,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               </div>
           )}
         </CardContent>
-        <CardFooter className="flex-col items-start gap-4">
+        <CardFooter className="flex-col items-start gap-3 p-4 pt-0">
           {voucher && (
             <>
               <div>

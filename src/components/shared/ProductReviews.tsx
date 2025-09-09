@@ -95,14 +95,14 @@ export default function ProductReviews({ reviews, isLoading, error }: ProductRev
                 {reviews.map((review, index) => (
                     <div key={review.id}>
                         <div className="flex gap-3">
-                             <UserCircle className="h-8 w-8 text-muted-foreground shrink-0" />
+                             <UserCircle className="h-8 w-8 text-muted-foreground shrink-0 mt-1" />
                             <div className="flex-1">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="text-sm font-semibold">{formatEmailForPrivacy(review.email)}</p>
+                                <div className="flex justify-between items-start gap-2">
+                                    <div className="flex-grow">
+                                        <p className="text-sm font-semibold break-all">{formatEmailForPrivacy(review.email)}</p>
                                          <IndividualStarRating rating={review.rating} />
                                     </div>
-                                    <p className="text-xs text-muted-foreground text-right shrink-0">
+                                    <p className="text-xs text-muted-foreground text-right shrink-0 mt-1">
                                         {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
                                     </p>
                                 </div>

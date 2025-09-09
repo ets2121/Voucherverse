@@ -40,6 +40,8 @@ export default function StarRating({
 }: StarRatingProps) {
   const { average, total } = calculateAverageRating(ratingData);
   
+  const showText = (showAverage && average > 0) || showReviewCount;
+
   return (
     <div className="flex items-center gap-1.5">
       <div className="flex items-center">
@@ -55,11 +57,11 @@ export default function StarRating({
           );
         })}
       </div>
-       {(showAverage || showReviewCount) && (
+       {showText && (
         <span className="text-xs text-muted-foreground">
           {showAverage && average > 0 && average.toFixed(1)}
-          {showAverage && showReviewCount && average > 0 && <span className="mr-1"> </span>}
-          {showReviewCount && `(${total} reviews)`}
+          {showAverage && showReviewCount && average > 0 && total > 0 && <span className="mx-1">·</span>}
+          {showReviewCount && total > 0 && `${total} reviews`}
         </span>
       )}
     </div>

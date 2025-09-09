@@ -6,6 +6,7 @@ interface StarRatingProps {
   ratingData: ProductRating | null;
   showReviewCount?: boolean;
   showAverage?: boolean;
+  starSize?: string;
 }
 
 export function calculateAverageRating(ratingData: ProductRating | null) {
@@ -31,18 +32,23 @@ export function calculateAverageRating(ratingData: ProductRating | null) {
   return { average: parseFloat(averageRating.toFixed(1)), total: totalRatings };
 }
 
-export default function StarRating({ ratingData, showReviewCount = true, showAverage = true }: StarRatingProps) {
+export default function StarRating({ 
+  ratingData, 
+  showReviewCount = true, 
+  showAverage = true,
+  starSize = 'h-4 w-4'
+}: StarRatingProps) {
   const { average, total } = calculateAverageRating(ratingData);
   
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       <div className="flex items-center">
         {[...Array(5)].map((_, i) => {
           const starValue = i + 1;
           return (
             <Star
                 key={i}
-                className={cn('h-4 w-4 text-yellow-400', 
+                className={cn('text-yellow-400', starSize,
                     starValue <= average ? 'fill-yellow-400' : 'fill-transparent'
                 )}
             />
@@ -51,7 +57,7 @@ export default function StarRating({ ratingData, showReviewCount = true, showAve
       </div>
       {showAverage && (
         <span className="text-xs text-muted-foreground">
-          {average.toFixed(1)} {showReviewCount && `(${total} reviews)`}
+          {average > 0 && average.toFixed(1)} {showReviewCount && `(${total} reviews)`}
         </span>
       )}
     </div>

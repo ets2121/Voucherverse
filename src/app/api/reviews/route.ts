@@ -14,9 +14,10 @@ export async function GET(request: Request) {
 
   try {
     // Query the source table directly and filter for actual reviews
+    // Casting created_at to text ensures a consistent ISO 8601 format
     const { data, error } = await supabase
       .from('product_reviews')
-      .select('*')
+      .select('*, created_at::text')
       .eq('product_id', productId)
       .not('review', 'is', null) // Only fetch rows with a review text
       .order('created_at', { ascending: false });

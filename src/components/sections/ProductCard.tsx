@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -81,6 +82,10 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
 
   const isSoldOut = voucher?.max_claims ? voucher.claimed_count >= voucher.max_claims : false;
 
+  const hasDiscount = voucher && voucher.discount_amount && product.price;
+  const discountedPrice = hasDiscount ? product.price * (1 - voucher.discount_amount / 100) : null;
+
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -88,10 +93,11 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
       whileHover={{ y: -5 }}
+      className="h-full"
     >
       <Card className="h-full flex flex-col overflow-hidden bg-card hover:border-primary transition-all duration-300">
-        <CardHeader className="p-4">
-          <div className="relative h-40 w-full mb-4 rounded-t-lg overflow-hidden">
+        <CardHeader className="p-0">
+           <div className="relative h-32 w-full overflow-hidden">
             <Image
               src={product.image_url || `https://picsum.photos/400/300?random=${product.id}`}
               alt={product.name}
@@ -100,23 +106,43 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               className="object-cover"
             />
           </div>
-          <StarRating ratingData={product.product_ratings} />
-          <CardTitle className="font-headline pt-2 text-xl">{product.name}</CardTitle>
-          <CardDescription className="text-sm">{product.short_description}</CardDescription>
+          <div className="p-4 space-y-1">
+            <StarRating ratingData={product.product_ratings} />
+            <CardTitle className="font-headline pt-1 text-lg">{product.name}</CardTitle>
+            <CardDescription className="text-sm line-clamp-2">{product.short_description}</CardDescription>
+          </div>
         </CardHeader>
         <CardContent className="flex-grow p-4 pt-0">
-          {voucher && (
-             <div className="bg-primary/10 p-3 rounded-lg border border-dashed border-primary">
+          {voucher ? (
+             <div className="bg-primary/10 p-3 rounded-lg border border-dashed border-primary space-y-2">
                 <div className="flex items-center gap-3">
-                  <Ticket className="w-6 h-6 text-primary" />
+                  <Ticket className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="font-bold text-base text-primary">{voucher.description}</p>
+                    <p className="font-bold text-sm text-primary">{voucher.description}</p>
                     <p className="text-xs text-primary/80">
                       {`Save ${voucher.discount_amount}% on this item!`}
                     </p>
                   </div>
                 </div>
+                {product.price && (
+                    <div className="flex items-baseline justify-end gap-2 text-right">
+                      {discountedPrice !== null && (
+                        <p className="text-sm text-muted-foreground line-through">
+                          ${product.price.toFixed(2)}
+                        </p>
+                      )}
+                      <p className="text-xl font-bold text-foreground">
+                        ${discountedPrice !== null ? discountedPrice.toFixed(2) : product.price.toFixed(2)}
+                      </p>
+                    </div>
+                )}
               </div>
+          ) : (
+             product.price && (
+                 <div className="flex items-baseline justify-end gap-2 text-right pt-2">
+                     <p className="text-xl font-bold text-foreground">${product.price.toFixed(2)}</p>
+                 </div>
+             )
           )}
         </CardContent>
         <CardFooter className="flex-col items-start gap-3 p-4 pt-0">
@@ -155,7 +181,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
             </>
           )}
            {!voucher && (
-             <p className="w-full text-center text-sm text-muted-foreground">No voucher available for this product.</p>
+             <p className="w-full text-center text-sm text-muted-foreground pt-4">No voucher currently available.</p>
            )}
         </CardFooter>
       </Card>

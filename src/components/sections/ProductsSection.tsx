@@ -31,9 +31,7 @@ export default function ProductsSection() {
   const isMobile = useIsMobile();
 
   const handleSelectProduct = (product: Product) => {
-    if (isMobile) {
-      setSelectedProduct(product);
-    }
+    setSelectedProduct(product);
   };
 
   const handleGoBack = () => {
@@ -67,17 +65,29 @@ export default function ProductsSection() {
     return (
       <section id="products" className="py-20 md:py-24 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="font-headline text-3xl md:text-4xl font-bold">Our Exclusive Deals</h2>
+          <div className="text-center mb-12">
+            <Skeleton className="h-10 w-1/2 mx-auto" />
           </div>
-          <div className="sticky top-20 z-10 bg-background/95 backdrop-blur-sm py-4 mb-8 border-b">
+          <div className="sticky top-[80px] z-20 bg-background/95 backdrop-blur-sm py-4 mb-8 border-b">
             <div className="flex flex-col gap-4 justify-center items-center">
                 <Skeleton className="h-10 w-full max-w-sm" />
                 <Skeleton className="h-10 w-full max-w-lg" />
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
-            {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-80 w-full" />)}
+            {[...Array(12)].map((_, i) => (
+               <div key={i} className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden flex flex-col h-full">
+                  <Skeleton className="aspect-square w-full" />
+                  <div className="p-2 flex flex-col flex-grow space-y-2">
+                     <Skeleton className="h-4 w-5/6" />
+                     <Skeleton className="h-4 w-3/4" />
+                     <div className="pt-2 space-y-1">
+                      <Skeleton className="h-5 w-1/2" />
+                      <Skeleton className="h-3 w-1/3" />
+                     </div>
+                  </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -87,8 +97,31 @@ export default function ProductsSection() {
 
   return (
     <section id="products" className="py-20 md:py-24 bg-background relative">
+      <AnimatePresence>
+        {isMobile && selectedProduct && (
+            <motion.div
+                key="detail"
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="fixed top-0 left-0 right-0 bottom-0 bg-background z-30 overflow-y-auto"
+            >
+                <div className="fixed top-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-sm z-40" />
+                <div className="sticky top-20 z-40 bg-background/80 backdrop-blur-sm p-2 border-b">
+                    <Button variant="ghost" onClick={handleGoBack} className="w-full justify-start">
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Deals
+                    </Button>
+                </div>
+                <div className="p-4">
+                    <ProductCard product={selectedProduct} onClaimVoucher={openModal} />
+                </div>
+            </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="container mx-auto px-4">
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
             <h2 className="font-headline text-3xl md:text-4xl font-bold">
             Our Exclusive Deals
             </h2>
@@ -120,7 +153,7 @@ export default function ProductsSection() {
                     <Tabs 
                         value={selectedCategoryId || 'all'}
                         onValueChange={(value) => setSelectedCategoryId(value === 'all' ? null : value)}
-                        className="w-full"
+                        className="w-full max-w-full"
                     >
                         <TabsList className="flex w-full overflow-x-auto justify-start md:justify-center">
                             <TabsTrigger value="all">All</TabsTrigger>
@@ -164,43 +197,14 @@ export default function ProductsSection() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6 items-start">
-                        {filteredProducts.map((product) =>
-                            isMobile ? (
+                        {filteredProducts.map((product) => (
                             <ProductCardSmall key={product.id} product={product} onClick={() => handleSelectProduct(product)} />
-                            ) : (
-                            <ProductCard key={product.id} product={product} onClaimVoucher={openModal} />
-                            )
-                        )}
+                        ))}
                     </div>
                 )}
             </motion.div>
         </AnimatePresence>
       </div>
-
-       <AnimatePresence>
-        {isMobile && selectedProduct && (
-            <motion.div
-                key="detail"
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '100%' }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="fixed top-0 left-0 right-0 bottom-0 bg-background z-30"
-            >
-                <div className="h-full overflow-y-auto pt-20">
-                    <div className="fixed top-20 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm p-2 border-b">
-                        <Button variant="ghost" onClick={handleGoBack} className="w-full justify-start">
-                            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Deals
-                        </Button>
-                    </div>
-                    <div className="p-4 pt-16">
-                        <ProductCard product={selectedProduct} onClaimVoucher={openModal} />
-                    </div>
-                </div>
-            </motion.div>
-        )}
-      </AnimatePresence>
-
     </section>
   );
 }

@@ -187,13 +187,13 @@ export default function ProductsSection() {
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="fixed top-0 left-0 right-0 bottom-0 bg-background z-30"
             >
-                <div className="h-full overflow-y-auto">
-                    <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-sm p-2 border-b">
+                <div className="h-full overflow-y-auto pt-20">
+                    <div className="fixed top-20 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm p-2 border-b">
                         <Button variant="ghost" onClick={handleGoBack} className="w-full justify-start">
                             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Deals
                         </Button>
                     </div>
-                    <div className="p-4">
+                    <div className="p-4 pt-16">
                         <ProductCard product={selectedProduct} onClaimVoucher={openModal} />
                     </div>
                 </div>

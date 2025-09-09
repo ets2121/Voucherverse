@@ -1,7 +1,6 @@
 
 'use client';
 
-import useSWR from 'swr';
 import { formatDistanceToNow } from 'date-fns';
 import type { ProductReview } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,13 +9,6 @@ import { MessageSquareDashed, AlertTriangle, UserCircle, Star } from 'lucide-rea
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
-
-const fetcher = (url: string) => fetch(url).then(res => {
-    if (!res.ok) {
-        throw new Error('Failed to fetch reviews');
-    }
-    return res.json();
-});
 
 const ReviewSkeleton = () => (
     <div className="space-y-4">
@@ -51,12 +43,14 @@ const IndividualStarRating = ({ rating, starSize = 'h-4 w-4' }: { rating: number
     )
 }
 
-export default function ProductReviews({ productId }: { productId: number }) {
-  const { data: reviews, error, isLoading } = useSWR<ProductReview[]>(
-    `/api/reviews?product_id=${productId}`, 
-    fetcher
-  );
+interface ProductReviewsProps {
+  reviews: ProductReview[] | undefined;
+  isLoading: boolean;
+  error: any;
+}
 
+
+export default function ProductReviews({ reviews, isLoading, error }: ProductReviewsProps) {
   return (
     <div className="space-y-4">
         <h3 className="font-headline text-lg font-semibold">Customer Reviews</h3>

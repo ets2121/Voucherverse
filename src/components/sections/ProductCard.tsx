@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import type { Product, Voucher } from '@/lib/types';
+import type { Product, Voucher, ProductReview } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import StarRating from '@/components/shared/StarRating';
@@ -16,11 +16,20 @@ import priceConfig from '@/../public/priceConfig.json';
 import { useAppContext } from '@/context/AppContext';
 import { Separator } from '@/components/ui/separator';
 import ProductReviews from '@/components/shared/ProductReviews';
+import useSWR from 'swr';
+
 
 interface ProductCardProps {
   product: Product;
   onClaimVoucher: (voucher: Voucher) => void;
 }
+
+const fetcher = (url: string) => fetch(url).then(res => {
+    if (!res.ok) {
+        throw new Error('Failed to fetch reviews');
+    }
+    return res.json();
+});
 
 const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
   const calculateTimeLeft = () => {
@@ -80,6 +89,11 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
   const { openReviewModal } = useAppContext();
   const voucher = product.voucher;
   const currencySymbol = priceConfig.currency_symbol;
+
+  const { data: reviews, error: reviewsError, isLoading: reviewsLoading } = useSWR<ProductReview[]>(
+    `/api/reviews?product_id=${product.id}`, 
+    fetcher
+  );
 
   const claimedPercentage = voucher?.max_claims 
     ? (voucher.claimed_count / voucher.max_claims) * 100 
@@ -147,7 +161,11 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               </div>
             )}
             
-            <StarRating ratingData={product.product_ratings} showReviewCount={true}/>
+            <StarRating 
+                ratingData={product.product_ratings} 
+                showReviewCount={true}
+                reviewCount={reviews?.length}
+            />
             <CardDescription className="text-sm line-clamp-3 pt-1">{product.short_description}</CardDescription>
           </div>
         </CardHeader>
@@ -164,7 +182,11 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               </div>
           )}
           <Separator className="my-4" />
-          <ProductReviews productId={product.id} />
+          <ProductReviews 
+            reviews={reviews} 
+            isLoading={reviewsLoading} 
+            error={reviewsError} 
+          />
         </CardContent>
         <CardFooter className="flex-col items-start gap-3 p-4 pt-2 mt-auto">
            <Button variant="outline" size="sm" className="w-full" onClick={() => openReviewModal(product)}>

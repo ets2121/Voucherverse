@@ -7,11 +7,12 @@ interface StarRatingProps {
   showReviewCount?: boolean;
   showAverage?: boolean;
   starSize?: string;
+  reviewCount?: number;
 }
 
 export function calculateAverageRating(ratingData: ProductRating | null) {
   if (!ratingData) {
-    return { average: 0, total: 0 };
+    return { average: 0 };
   }
 
   const ratings = [
@@ -23,24 +24,26 @@ export function calculateAverageRating(ratingData: ProductRating | null) {
   ];
   const totalRatings = ratings.reduce((acc, count) => acc + count, 0);
   if (totalRatings === 0) {
-    return { average: 0, total: 0 };
+    return { average: 0 };
   }
 
   const weightedSum = ratings.reduce((acc, count, i) => acc + count * (i + 1), 0);
   const averageRating = weightedSum / totalRatings;
 
-  return { average: parseFloat(averageRating.toFixed(1)), total: totalRatings };
+  return { average: parseFloat(averageRating.toFixed(1)) };
 }
 
 export default function StarRating({ 
   ratingData, 
   showReviewCount = true, 
   showAverage = true,
-  starSize = 'h-4 w-4'
+  starSize = 'h-4 w-4',
+  reviewCount,
 }: StarRatingProps) {
-  const { average, total } = calculateAverageRating(ratingData);
+  const { average } = calculateAverageRating(ratingData);
+  const total = reviewCount !== undefined ? reviewCount : 0;
   
-  const showText = (showAverage && average > 0) || showReviewCount;
+  const showText = (showAverage && average > 0) || (showReviewCount && total > 0);
 
   return (
     <div className="flex items-center gap-1.5">
@@ -61,7 +64,7 @@ export default function StarRating({
         <span className="text-xs text-muted-foreground">
           {showAverage && average > 0 && average.toFixed(1)}
           {showAverage && showReviewCount && average > 0 && total > 0 && <span className="mx-1">·</span>}
-          {showReviewCount && total > 0 && `${total} reviews`}
+          {showReviewCount && total > 0 && `${total} review${total === 1 ? '' : 's'}`}
         </span>
       )}
     </div>

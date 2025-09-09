@@ -72,7 +72,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
                 )}
               </div>
             )}
-            <StarRating ratingData={product_ratings} />
+            <StarRating ratingData={product_ratings} showReviewCount={false}/>
         </div>
       </div>
     </motion.div>

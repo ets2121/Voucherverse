@@ -143,7 +143,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               </div>
             )}
             
-            <StarRating ratingData={product.product_ratings} />
+            <StarRating ratingData={product.product_ratings} showReviewCount={true}/>
             <CardDescription className="text-sm line-clamp-3 pt-1">{product.short_description}</CardDescription>
           </div>
         </CardHeader>
@@ -203,4 +203,5 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
     </motion.div>
   );
 }
+
 

@@ -49,6 +49,23 @@ interface ProductReviewsProps {
   error: any;
 }
 
+const formatEmailForPrivacy = (email: string): string => {
+    const atIndex = email.indexOf('@');
+    if (atIndex < 1) return 'Anonymous'; // Not a valid email format
+
+    const localPart = email.substring(0, atIndex);
+    const domainPart = email.substring(atIndex);
+
+    let maskedLocalPart;
+    if (localPart.length <= 3) {
+        maskedLocalPart = `${localPart.charAt(0)}**`;
+    } else {
+        maskedLocalPart = `${localPart.substring(0, 3)}***`;
+    }
+
+    return `${maskedLocalPart}${domainPart}`;
+};
+
 
 export default function ProductReviews({ reviews, isLoading, error }: ProductReviewsProps) {
   return (
@@ -82,7 +99,7 @@ export default function ProductReviews({ reviews, isLoading, error }: ProductRev
                             <div className="flex-1">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <p className="text-sm font-semibold">{review.email}</p>
+                                        <p className="text-sm font-semibold">{formatEmailForPrivacy(review.email)}</p>
                                          <IndividualStarRating rating={review.rating} />
                                     </div>
                                     <p className="text-xs text-muted-foreground text-right shrink-0">

@@ -6,14 +6,13 @@ export const revalidate = 0; // Don't cache this route
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const businessId = searchParams.get('business_id');
-  const categoryId = searchParams.get('category_id');
-  const searchQuery = searchParams.get('search');
-
+  
   if (!businessId) {
     return NextResponse.json({ error: 'business_id is required' }, { status: 400 });
   }
 
   try {
+    // Correctly join with product_category to ensure category_id is available
     let query = supabase
       .from('product')
       .select(`
@@ -24,15 +23,6 @@ export async function GET(request: Request) {
       `)
       .eq('business_id', businessId)
       .eq('is_active', true);
-
-    if (categoryId) {
-      query = query.eq('category_id', categoryId);
-    }
-
-    if (searchQuery) {
-        // Using ilike for case-insensitive search on name and description
-        query = query.or(`name.ilike.%${searchQuery}%,short_description.ilike.%${searchQuery}%`);
-    }
 
     const { data, error } = await query;
 

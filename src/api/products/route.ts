@@ -12,6 +12,7 @@ export async function GET(request: Request) {
   }
 
   try {
+    // Correctly join with product_category to ensure category_id is available
     let query = supabase
       .from('product')
       .select(`

@@ -13,9 +13,9 @@ const fetcher = async (url: string) => {
     return res.json();
 };
 
-export function useProducts(businessId: number | undefined, searchQuery?: string | null, categoryId?: string | null) {
+export function useProducts(businessId: number | undefined) {
     const swrKey = businessId 
-        ? `/api/products?business_id=${businessId}&search=${searchQuery || ''}&category_id=${categoryId || ''}`
+        ? `/api/products?business_id=${businessId}`
         : null;
 
     const { data: products, error, isLoading, mutate } = useSWR<Product[]>(swrKey, fetcher, {

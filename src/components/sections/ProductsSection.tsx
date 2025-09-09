@@ -32,7 +32,7 @@ export default function ProductsSection() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const { products, isLoading, error } = useProducts(business?.id, debouncedSearchQuery, selectedCategoryId);
+  const { products, isLoading, error } = useProducts(business?.id);
   const { categories, isLoading: categoriesLoading, error: categoriesError } = useCategories(business?.id);
   const isMobile = useIsMobile();
 
@@ -52,12 +52,24 @@ export default function ProductsSection() {
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
-    return products;
-  }, [products]);
+    
+    return products.filter(product => {
+        const searchMatch = debouncedSearchQuery
+            ? product.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+              product.short_description?.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+            : true;
+
+        const categoryMatch = selectedCategoryId
+            ? product.category_id === parseInt(selectedCategoryId, 10)
+            : true;
+            
+        return searchMatch && categoryMatch;
+    });
+  }, [products, debouncedSearchQuery, selectedCategoryId]);
 
   const showCategoryFilter = categories && categories.length > 1;
 
-  if (isLoading && !searchQuery) {
+  if (isLoading) {
     return (
       <section id="products" className="py-20 md:py-24 bg-background border-t border-b">
         <div className="container mx-auto px-4">
@@ -189,7 +201,7 @@ export default function ProductsSection() {
          )}
 
         <AnimatePresence mode="wait">
-            {isLoading && filteredProducts.length === 0 ? (
+            {isLoading && products?.length === 0 ? (
                  <motion.div
                     key="loading"
                     initial={{ opacity: 0 }}

@@ -1,14 +1,14 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { useProducts } from '@/hooks/useProducts';
 import ProductCard from './ProductCard';
 import ProductCardSmall from './ProductCardSmall';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle, ArrowLeft, Search, X } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Search, X, Loader2 } from 'lucide-react';
 import type { Product } from '@/lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCategories } from '@/hooks/useCategories';
 import { useDebounce } from '@/hooks/use-debounce';
+import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 
 
 export default function ProductsSection() {
@@ -26,9 +27,25 @@ export default function ProductsSection() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const { products, isLoading, error } = useProducts(business?.id);
+  const { 
+    products, 
+    isLoading, 
+    error, 
+    loadMore, 
+    isLoadingMore, 
+    isReachingEnd 
+  } = useProducts(business?.id);
   const { categories, isLoading: categoriesLoading, error: categoriesError } = useCategories(business?.id);
   const isMobile = useIsMobile();
+  
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const isIntersecting = useIntersectionObserver(loadMoreRef);
+
+  useEffect(() => {
+    if (isIntersecting && !isLoadingMore && !isReachingEnd) {
+      loadMore();
+    }
+  }, [isIntersecting, isLoadingMore, isReachingEnd, loadMore]);
 
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
@@ -61,7 +78,7 @@ export default function ProductsSection() {
 
   const showCategoryFilter = categories && categories.length > 1;
 
-  if (isLoading || categoriesLoading) {
+  if (isLoading && !products) {
     return (
       <section id="products" className="py-20 md:py-24 bg-background">
         <div className="container mx-auto px-4">
@@ -211,6 +228,11 @@ export default function ProductsSection() {
                 )}
             </motion.div>
         </AnimatePresence>
+
+        <div ref={loadMoreRef} className="h-10 mt-8 flex justify-center items-center">
+            {isLoadingMore && <Loader2 className="animate-spin" />}
+            {isReachingEnd && <p className="text-muted-foreground">You've reached the end.</p>}
+        </div>
       </div>
     </motion.section>
   );

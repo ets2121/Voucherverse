@@ -14,6 +14,8 @@ import { differenceInSeconds } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import priceConfig from '@/../public/priceConfig.json';
 import { useAppContext } from '@/context/AppContext';
+import { Separator } from '@/components/ui/separator';
+import ProductReviews from '@/components/shared/ProductReviews';
 
 interface ProductCardProps {
   product: Product;
@@ -150,7 +152,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
           </div>
         </CardHeader>
         <CardContent className="flex-grow p-4 pt-0">
-          {voucher && !hasDiscount && (
+           {voucher && !hasDiscount && (
              <div className="bg-primary/10 p-3 rounded-lg border border-dashed border-primary space-y-2 flex items-center gap-3">
                   <Ticket className="w-5 h-5 text-primary shrink-0" />
                   <div>
@@ -161,15 +163,17 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                   </div>
               </div>
           )}
-           <Button variant="outline" size="sm" className="w-full mt-2" onClick={() => openReviewModal(product)}>
-                <MessageSquareQuote className="mr-2 h-4 w-4" />
-                Rate this product
-            </Button>
+          <Separator className="my-4" />
+          <ProductReviews productId={product.id} />
         </CardContent>
-        <CardFooter className="flex-col items-start gap-3 p-4 pt-0 mt-auto">
+        <CardFooter className="flex-col items-start gap-3 p-4 pt-2 mt-auto">
+           <Button variant="outline" size="sm" className="w-full" onClick={() => openReviewModal(product)}>
+                <MessageSquareQuote className="mr-2 h-4 w-4" />
+                Write a review
+            </Button>
           {voucher && (
             <>
-              <div>
+              <div className="w-full">
                 <div className="flex justify-between items-center mb-1">
                     <p className="text-xs text-muted-foreground font-medium">Vouchers Claimed</p>
                     <AnimatePresence mode="wait">
@@ -202,7 +206,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
             </>
           )}
            {!voucher && (
-             <p className="w-full text-center text-sm text-muted-foreground pt-4">No voucher available.</p>
+             <p className="w-full text-center text-sm text-muted-foreground pt-4">No voucher available for this product.</p>
            )}
         </CardFooter>
       </Card>

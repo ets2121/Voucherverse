@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
@@ -98,45 +98,48 @@ export default function VoucherModal() {
   }
   
   const renderContent = () => {
-    switch (claimStatus) {
-      case 'success':
-        return (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
+    return (
+      <AnimatePresence>
+        <motion.div
+            key={claimStatus}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+        >
+        {claimStatus === 'success' && (
+          <div className="text-center flex flex-col items-center gap-4 p-8">
             <CheckCircle className="w-16 h-16 text-green-500" />
             <h2 className="text-2xl font-headline">{modalConfig.success.title}</h2>
             <p className="text-muted-foreground">{modalConfig.success.message}</p>
             <Button onClick={closeModal} className="mt-4">{modalConfig.success.buttonText}</Button>
-          </motion.div>
-        );
-      case 'already-claimed':
-        return (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
+          </div>
+        )}
+        {claimStatus === 'already-claimed' && (
+          <div className="text-center flex flex-col items-center gap-4 p-8">
             <AlertTriangle className="w-16 h-16 text-yellow-500" />
             <h2 className="text-2xl font-headline">{modalConfig.alreadyClaimed.title}</h2>
             <p className="text-muted-foreground max-w-sm">{modalConfig.alreadyClaimed.message}</p>
             <Button onClick={closeModal} variant="outline" className="mt-4">{modalConfig.alreadyClaimed.buttonText}</Button>
-          </motion.div>
-        );
-      case 'expired':
-        return (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
+          </div>
+        )}
+        {claimStatus === 'expired' && (
+            <div className="text-center flex flex-col items-center gap-4 p-8">
             <Clock className="w-16 h-16 text-destructive" />
             <h2 className="text-2xl font-headline">{modalConfig.expired.title}</h2>
             <p className="text-muted-foreground max-w-sm">{modalConfig.expired.message}</p>
             <Button onClick={closeModal} variant="outline" className="mt-4">{modalConfig.expired.buttonText}</Button>
-            </motion.div>
-        );
-      case 'error':
-        return (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
+            </div>
+        )}
+        {claimStatus === 'error' && (
+          <div className="text-center flex flex-col items-center gap-4 p-8">
             <XCircle className="w-16 h-16 text-destructive" />
             <h2 className="text-2xl font-headline">{modalConfig.error.title}</h2>
             <p className="text-muted-foreground max-w-sm">{errorMessage}</p>
             <Button onClick={() => setClaimStatus('idle')} variant="outline" className="mt-4">{modalConfig.error.buttonText}</Button>
-          </motion.div>
-        );
-      default:
-        return (
+          </div>
+        )}
+        {claimStatus === 'idle' && (
             <>
               <DialogHeader>
                 <DialogTitle className="font-headline flex items-center gap-2">
@@ -171,16 +174,21 @@ export default function VoucherModal() {
                 </form>
               </Form>
             </>
-        );
-    }
+        )}
+        </motion.div>
+    </AnimatePresence>
+    );
   }
 
 
   return (
     <Dialog open={isModalOpen} onOpenChange={closeModal}>
-      <DialogContent className="sm:max-w-[425px]">
-        {selectedVoucher ? renderContent() : null}
-      </DialogContent>
+        <DialogContent 
+            className="sm:max-w-[425px]"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+            {selectedVoucher ? renderContent() : null}
+        </DialogContent>
     </Dialog>
   );
 }

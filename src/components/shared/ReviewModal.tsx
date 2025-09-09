@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
@@ -116,36 +116,40 @@ export default function ReviewModal() {
   }
 
   const renderContent = () => {
-    switch (submitStatus) {
-      case 'success':
-        return (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
+    return (
+       <AnimatePresence>
+         <motion.div
+            key={submitStatus}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+        >
+        {submitStatus === 'success' && (
+          <div className="text-center flex flex-col items-center gap-4 p-8">
             <CheckCircle className="w-16 h-16 text-green-500" />
             <h2 className="text-2xl font-headline">Review Submitted!</h2>
             <p className="text-muted-foreground">Thank you for your valuable feedback.</p>
             <Button onClick={closeReviewModal} className="mt-4">Done</Button>
-          </motion.div>
-        );
-      case 'already-claimed':
-         return (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
+          </div>
+        )}
+        {submitStatus === 'already-claimed' && (
+          <div className="text-center flex flex-col items-center gap-4 p-8">
             <AlertTriangle className="w-16 h-16 text-yellow-500" />
             <h2 className="text-2xl font-headline">Already Reviewed</h2>
             <p className="text-muted-foreground max-w-sm">It looks like you've already submitted a review for this product with this email address.</p>
             <Button onClick={closeReviewModal} variant="outline" className="mt-4">Close</Button>
-          </motion.div>
-        );
-      case 'error':
-        return (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center flex flex-col items-center gap-4 p-8">
+          </div>
+        )}
+        {submitStatus === 'error' && (
+          <div className="text-center flex flex-col items-center gap-4 p-8">
             <XCircle className="w-16 h-16 text-destructive" />
             <h2 className="text-2xl font-headline">Submission Failed</h2>
             <p className="text-muted-foreground max-w-sm">{errorMessage}</p>
             <Button onClick={() => setSubmitStatus('idle')} variant="outline" className="mt-4">Try Again</Button>
-          </motion.div>
-        );
-      default:
-        return (
+          </div>
+        )}
+        {submitStatus === 'idle' && (
           <>
             <DialogHeader>
               <DialogTitle className="font-headline">Rate & Review '{selectedProduct?.name}'</DialogTitle>
@@ -204,13 +208,18 @@ export default function ReviewModal() {
               </form>
             </Form>
           </>
-        );
-    }
+        )}
+        </motion.div>
+       </AnimatePresence>
+    );
   };
 
   return (
     <Dialog open={isReviewModalOpen} onOpenChange={closeReviewModal}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent 
+        className="sm:max-w-md"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         {selectedProduct ? renderContent() : null}
       </DialogContent>
     </Dialog>

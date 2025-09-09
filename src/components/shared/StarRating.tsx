@@ -5,6 +5,7 @@ import type { ProductRating } from '@/lib/types';
 interface StarRatingProps {
   ratingData: ProductRating | null;
   showReviewCount?: boolean;
+  showAverage?: boolean;
 }
 
 export function calculateAverageRating(ratingData: ProductRating | null) {
@@ -30,7 +31,7 @@ export function calculateAverageRating(ratingData: ProductRating | null) {
   return { average: parseFloat(averageRating.toFixed(1)), total: totalRatings };
 }
 
-export default function StarRating({ ratingData, showReviewCount = true }: StarRatingProps) {
+export default function StarRating({ ratingData, showReviewCount = true, showAverage = true }: StarRatingProps) {
   const { average, total } = calculateAverageRating(ratingData);
   
   return (
@@ -48,8 +49,10 @@ export default function StarRating({ ratingData, showReviewCount = true }: StarR
           );
         })}
       </div>
-      {showReviewCount && (
-        <span className="text-xs text-muted-foreground">{average.toFixed(1)} ({total} reviews)</span>
+      {showAverage && (
+        <span className="text-xs text-muted-foreground">
+          {average.toFixed(1)} {showReviewCount && `(${total} reviews)`}
+        </span>
       )}
     </div>
   );

@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/button';
 import StarRating from '@/components/shared/StarRating';
 import { Progress } from '@/components/ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Ticket, Clock } from 'lucide-react';
+import { Ticket, Clock, Tag } from 'lucide-react';
 import { differenceInSeconds } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
+import priceConfig from '@/../public/priceConfig.json';
 
 interface ProductCardProps {
   product: Product;
@@ -73,6 +75,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 
 export default function ProductCard({ product, onClaimVoucher }: ProductCardProps) {
   const voucher = product.voucher;
+  const currencySymbol = priceConfig.currency_symbol;
 
   const claimedPercentage = voucher?.max_claims 
     ? (voucher.claimed_count / voucher.max_claims) * 100 
@@ -83,8 +86,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
   const isSoldOut = voucher?.max_claims ? voucher.claimed_count >= voucher.max_claims : false;
 
   const hasDiscount = voucher && voucher.discount_amount && product.price;
-  const discountedPrice = hasDiscount ? product.price * (1 - voucher.discount_amount / 100) : null;
-
+  const discountedPrice = hasDiscount ? product.price - (product.price * (voucher.discount_amount / 100)) : null;
 
   return (
     <motion.div
@@ -105,47 +107,52 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               data-ai-hint="product food"
               className="object-cover"
             />
+            {hasDiscount && (
+              <Badge variant="destructive" className="absolute top-2 right-2">
+                <Tag className="w-3 h-3 mr-1"/> {voucher.discount_amount}% OFF
+              </Badge>
+            )}
           </div>
-          <div className="p-4 space-y-1">
+          <div className="p-4 space-y-2">
+            <CardTitle className="font-headline pt-1 text-lg line-clamp-1">{product.name}</CardTitle>
+            
+            {product.price && (
+              <div className="flex items-baseline gap-2">
+                {discountedPrice !== null ? (
+                  <>
+                    <p className="text-2xl font-bold text-primary">
+                      {currencySymbol}{discountedPrice.toFixed(2)}
+                    </p>
+                    <p className="text-md text-muted-foreground line-through">
+                      {currencySymbol}{product.price.toFixed(2)}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-2xl font-bold text-foreground">
+                    {currencySymbol}{product.price.toFixed(2)}
+                  </p>
+                )}
+              </div>
+            )}
+            
             <StarRating ratingData={product.product_ratings} />
-            <CardTitle className="font-headline pt-1 text-lg">{product.name}</CardTitle>
-            <CardDescription className="text-sm line-clamp-2">{product.short_description}</CardDescription>
+            <CardDescription className="text-sm line-clamp-2 pt-1">{product.short_description}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="flex-grow p-4 pt-0">
-          {voucher ? (
-             <div className="bg-primary/10 p-3 rounded-lg border border-dashed border-primary space-y-2">
-                <div className="flex items-center gap-3">
-                  <Ticket className="w-5 h-5 text-primary" />
+          {voucher && !hasDiscount && (
+             <div className="bg-primary/10 p-3 rounded-lg border border-dashed border-primary space-y-2 flex items-center gap-3">
+                  <Ticket className="w-5 h-5 text-primary shrink-0" />
                   <div>
                     <p className="font-bold text-sm text-primary">{voucher.description}</p>
                     <p className="text-xs text-primary/80">
-                      {`Save ${voucher.discount_amount}% on this item!`}
+                      Special voucher available!
                     </p>
                   </div>
-                </div>
-                {product.price && (
-                    <div className="flex items-baseline justify-end gap-2 text-right">
-                      {discountedPrice !== null && (
-                        <p className="text-sm text-muted-foreground line-through">
-                          ${product.price.toFixed(2)}
-                        </p>
-                      )}
-                      <p className="text-xl font-bold text-foreground">
-                        ${discountedPrice !== null ? discountedPrice.toFixed(2) : product.price.toFixed(2)}
-                      </p>
-                    </div>
-                )}
               </div>
-          ) : (
-             product.price && (
-                 <div className="flex items-baseline justify-end gap-2 text-right pt-2">
-                     <p className="text-xl font-bold text-foreground">${product.price.toFixed(2)}</p>
-                 </div>
-             )
           )}
         </CardContent>
-        <CardFooter className="flex-col items-start gap-3 p-4 pt-0">
+        <CardFooter className="flex-col items-start gap-3 p-4 pt-0 mt-auto">
           {voucher && (
             <>
               <div>
@@ -176,12 +183,12 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                 onClick={() => onClaimVoucher(voucher)}
                 disabled={isSoldOut}
               >
-                {isSoldOut ? 'Sold Out' : 'Claim Voucher'}
+                {isSoldOut ? 'Fully Claimed' : 'Claim Voucher'}
               </Button>
             </>
           )}
            {!voucher && (
-             <p className="w-full text-center text-sm text-muted-foreground pt-4">No voucher currently available.</p>
+             <p className="w-full text-center text-sm text-muted-foreground pt-4">No voucher available.</p>
            )}
         </CardFooter>
       </Card>

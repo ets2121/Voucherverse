@@ -39,7 +39,15 @@ const fetcher = async (url: string) => {
 };
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const { data: business, error: businessError, isLoading: isBusinessLoading } = useSWR<Business>('/api/business', fetcher, { shouldRetryOnError: false });
+  const { data: business, error: businessError, isLoading: isBusinessLoading } = useSWR<Business>(
+    '/api/business', 
+    fetcher, 
+    { 
+      shouldRetryOnError: true,
+      errorRetryCount: 3,
+      errorRetryInterval: 3000,
+    }
+  );
 
   // Voucher Modal State
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);

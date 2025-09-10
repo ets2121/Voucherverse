@@ -69,9 +69,9 @@ export default function Home() {
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Error Loading Business Information</AlertTitle>
           <AlertDescription>
-            There was a problem connecting to the database. Please check your Supabase credentials and network connection.
+            There was a problem connecting to the server. This might be due to a temporary network issue. Please check your connection and try refreshing the page.
             <br />
-            <strong>Details:</strong> {businessError.message}
+            <strong className="mt-2 block">Error Details:</strong> {businessError.message}
           </AlertDescription>
         </Alert>
       </div>

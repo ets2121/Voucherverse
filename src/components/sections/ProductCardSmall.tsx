@@ -50,6 +50,11 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
               <Tag className="w-2.5 h-2.5 mr-1"/> {discountPercent}%
             </Badge>
           )}
+        {voucher?.promo_type && (
+            <div className="absolute bottom-0 w-full bg-black/50 backdrop-blur-sm p-1.5 text-center">
+                <p className="text-white text-xs font-bold uppercase tracking-wider">{voucher.promo_type}</p>
+            </div>
+        )}
       </div>
       <div className="p-2 flex flex-col flex-grow">
         <h3 className="font-semibold text-sm line-clamp-2 leading-tight flex-grow">{name}</h3>

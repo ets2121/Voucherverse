@@ -138,6 +138,11 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                 <Tag className="w-3 h-3 mr-1"/> {discountPercent}% OFF
               </Badge>
             )}
+            {voucher?.promo_type && (
+                <div className="absolute bottom-0 w-full bg-black/50 backdrop-blur-sm p-2 text-center">
+                    <p className="text-white text-sm font-bold uppercase tracking-wider">{voucher.promo_type}</p>
+                </div>
+            )}
           </div>
           <div className="p-4 space-y-2">
             <CardTitle className="font-headline pt-1 text-xl line-clamp-1">{product.name}</CardTitle>

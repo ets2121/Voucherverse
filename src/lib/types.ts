@@ -1,4 +1,5 @@
 
+
 export interface Business {
   id: number;
   name: string;
@@ -38,6 +39,7 @@ export interface Voucher {
   description?: string;
   start_date: string;
   end_date: string;
+  promo_type?: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -1,6 +1,6 @@
+
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -18,6 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '../ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
 const fetcher = (url: string) => fetch(url).then((res) => {
@@ -88,15 +89,12 @@ export default function TestimonialsSection() {
                 <div className="p-1 h-full">
                   <Card className="h-full flex flex-col justify-between">
                     <CardContent className="p-6 flex flex-col items-center text-center">
-                        <div className="relative h-20 w-20 mb-4 rounded-full overflow-hidden">
-                            <Image
-                                src={testimonial.image_url || `https://picsum.photos/100/100?random=${testimonial.id}`}
-                                alt={testimonial.customer_name || 'Customer'}
-                                fill
-                                data-ai-hint="person headshot"
-                                className="object-contain"
-                            />
-                        </div>
+                        <Avatar className="h-20 w-20 mb-4 text-xl">
+                            <AvatarImage src={testimonial.image_url || ''} alt={testimonial.customer_name || 'Customer'} />
+                            <AvatarFallback>
+                                {testimonial.customer_name?.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                        </Avatar>
                         <p className="mt-4 font-semibold">{testimonial.customer_name}</p>
                         <div className="flex justify-center mt-1">
                             {[...Array(testimonial.rating || 5)].map((_, i) => (

@@ -24,7 +24,7 @@ const TestimonialSkeleton = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
             <Card key={i} className="h-full flex flex-col justify-between">
-                <CardContent className="p-6 flex flex-col items-center text-center">
+                <CardContent className="p-4 flex flex-col items-center text-center">
                     <Skeleton className="h-10 w-10 mb-3 rounded-full" />
                     <Skeleton className="h-5 w-24 mb-2" />
                     <Skeleton className="h-4 w-20 mb-3" />

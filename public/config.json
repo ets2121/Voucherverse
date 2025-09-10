@@ -1,12 +1,43 @@
 {
-  "product_slug": "products",
   "sections": [
     "hero",
     "services",
     "testimonials"
   ],
   "navigation": [
-    { "label": "Home", "href": "/" },
-    { "label": "Deals", "href": "/products" }
-  ]
+    { "href": "/", "label": "Home" },
+    { "href": "/products", "label": "Deals" },
+    { "href": "/testimonials", "label": "Testimonials" }
+  ],
+  "modalConfig": {
+    "default": {
+      "title": "Claim Your Voucher",
+      "emailLabel": "Enter your email to claim",
+      "emailPlaceholder": "you@example.com",
+      "submitButton": "Claim Now",
+      "cancelButton": "Cancel"
+    },
+    "submitting": {
+        "submitButton": "Claiming..."
+    },
+    "success": {
+      "title": "Voucher Claimed!",
+      "message": "Success! We've sent the voucher details to your email. Enjoy your deal!",
+      "buttonText": "Done"
+    },
+    "alreadyClaimed": {
+      "title": "Voucher Already Claimed",
+      "message": "It looks like you've already claimed this voucher with this email address.",
+      "buttonText": "Close"
+    },
+    "expired": {
+        "title": "Voucher Expired",
+        "message": "We're sorry, but this promotion has already ended.",
+        "buttonText": "Close"
+    },
+    "error": {
+      "title": "Claim Failed",
+      "buttonText": "Try Again"
+    }
+  }
 }

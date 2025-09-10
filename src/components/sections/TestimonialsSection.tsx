@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -16,6 +17,7 @@ import type { Testimonial } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import { Button } from '../ui/button';
 
 
 const fetcher = (url: string) => fetch(url).then((res) => {
@@ -62,7 +64,7 @@ export default function TestimonialsSection() {
       </section>
      )
   }
-
+  
   if (!testimonials || testimonials.length === 0) {
     return null;
   }
@@ -73,55 +75,53 @@ export default function TestimonialsSection() {
         <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
           What Our Customers Say
         </h2>
-        <Carousel
+        <Carousel 
           opts={{
             align: 'start',
             loop: true,
           }}
-          className="w-full"
+          className="w-full max-w-4xl mx-auto"
         >
           <CarouselContent>
             {testimonials.map((testimonial) => (
               <CarouselItem key={testimonial.id} className="md:basis-1/2 lg:basis-1/3">
-                <div className="p-1">
-                  <Card className="h-full flex flex-col justify-between bg-background">
-                    <CardContent className="flex flex-col gap-4 p-6">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-5 h-5 ${
-                              testimonial.rating && i < testimonial.rating
-                                ? 'text-yellow-400 fill-current'
-                                : 'text-muted-foreground'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <p className="italic text-foreground">"{testimonial.message}"</p>
-                      <div className="flex items-center gap-4 pt-4">
-                        <Image
-                          src={testimonial.image_url || `https://picsum.photos/100/100?random=${testimonial.id}`}
-                          alt={testimonial.customer_name || 'Customer'}
-                          width={48}
-                          height={48}
-                          data-ai-hint="person avatar"
-                          className="rounded-full object-contain"
-                        />
-                        <div>
-                          <p className="font-bold">{testimonial.customer_name}</p>
-                          <p className="text-sm text-muted-foreground">{testimonial.customer_email}</p>
+                <div className="p-1 h-full">
+                  <Card className="h-full flex flex-col justify-between">
+                    <CardContent className="p-6 flex flex-col items-center text-center">
+                        <div className="relative h-20 w-20 mb-4 rounded-full overflow-hidden">
+                            <Image
+                                src={testimonial.image_url || `https://picsum.photos/100/100?random=${testimonial.id}`}
+                                alt={testimonial.customer_name || 'Customer'}
+                                fill
+                                data-ai-hint="person headshot"
+                                className="object-contain"
+                            />
                         </div>
-                      </div>
+                        <p className="mt-4 font-semibold">{testimonial.customer_name}</p>
+                        <div className="flex justify-center mt-1">
+                            {[...Array(testimonial.rating || 5)].map((_, i) => (
+                                <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                            ))}
+                        </div>
+                        <blockquote className="mt-4 text-sm text-muted-foreground italic">
+                            "{testimonial.message}"
+                        </blockquote>
                     </CardContent>
                   </Card>
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="hidden sm:flex" />
-          <CarouselNext className="hidden sm:flex" />
+          <CarouselPrevious />
+          <CarouselNext />
         </Carousel>
+        <div className="text-center mt-12">
+          <Button asChild>
+            <Link href="/testimonials">
+              View All Testimonials
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );

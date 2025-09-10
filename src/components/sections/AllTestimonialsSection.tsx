@@ -77,7 +77,7 @@ export default function AllTestimonialsSection() {
       <div className="container mx-auto px-4">
         
         <div className="sticky top-[80px] z-30 bg-background/90 backdrop-blur-sm -mx-4 px-4 py-4 mb-8 border-b">
-            <div className="container mx-auto px-4 flex justify-between items-center">
+            <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between md:items-center gap-4">
                  <div className="text-left">
                     <motion.h1 
                         className="font-headline text-3xl md:text-4xl font-bold"
@@ -96,9 +96,9 @@ export default function AllTestimonialsSection() {
                         Honest feedback from our valued customers.
                     </motion.p>
                 </div>
-                <Button onClick={handleOpenModal}>
+                <Button onClick={handleOpenModal} className="shrink-0 md:ml-6">
                     <Send className="mr-2 h-4 w-4" />
-                    Submit a Testimonial
+                    Submit Testimonial
                 </Button>
             </div>
         </div>
@@ -124,7 +124,7 @@ export default function AllTestimonialsSection() {
                 </p>
                 <Button onClick={handleOpenModal} className="mt-4">
                     <Send className="mr-2 h-4 w-4" />
-                    Submit a Testimonial
+                    Submit Testimonial
                 </Button>
             </div>
         )}

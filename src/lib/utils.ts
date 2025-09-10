@@ -25,31 +25,28 @@ export async function fetchWithTimezone(
   // This logic now runs on the server, so it uses the server's timezone.
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   
-  const convertedData = data.map((row: any) => {
+  const convertRow = (row: any) => {
     const newRow = { ...row };
     dateFields.forEach(field => {
       if (newRow[field] && typeof newRow[field] === 'string') {
         try {
-          // Create a date object assuming the input is UTC
           const utcDate = new Date(newRow[field]);
-          
-          // Format it to a string representing the local time in the server's timezone.
-          // This does NOT change the underlying value, just its string representation.
+          if (isNaN(utcDate.getTime())) {
+              // If date is invalid, don't change it.
+              return;
+          }
           const localDateString = utcDate.toLocaleString('en-US', { timeZone });
-          
-          // Now, create a new Date object from this local time string.
-          // The JS engine will interpret this string as being in the server's local time.
           const localDate = new Date(localDateString);
-
           newRow[field] = localDate.toISOString();
         } catch (e) {
-           // If parsing fails, leave the original value.
            console.error(`Failed to parse date field '${field}' with value '${newRow[field]}':`, e);
         }
       }
     });
     return newRow;
-  });
+  }
+
+  const convertedData = Array.isArray(data) ? data.map(convertRow) : convertRow(data);
 
   return { data: convertedData, error: null, count };
 }

@@ -67,11 +67,9 @@ export default function Home() {
        <div className="flex items-center justify-center min-h-screen">
         <Alert variant="destructive" className="max-w-lg">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Error Loading Business Information</AlertTitle>
+          <AlertTitle>Connection Error</AlertTitle>
           <AlertDescription>
-            There was a problem connecting to the server. This might be due to a temporary network issue. Please check your connection and try refreshing the page.
-            <br />
-            <strong className="mt-2 block">Error Details:</strong> {businessError.message}
+            We're having trouble loading our store information. This could be due to a network issue. Please check your connection and try refreshing the page.
           </AlertDescription>
         </Alert>
       </div>

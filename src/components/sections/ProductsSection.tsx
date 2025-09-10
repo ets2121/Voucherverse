@@ -194,10 +194,9 @@ export default function ProductsSection() {
          {error && (
             <Alert variant="destructive" className="max-w-lg mx-auto mb-8">
               <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Error Loading Products</AlertTitle>
+              <AlertTitle>Could Not Load Deals</AlertTitle>
               <AlertDescription>
-                We couldn't load the product deals. The API might be down or there's a network issue.
-                <strong>Details:</strong> {error.message}
+                We're having trouble loading our product deals at the moment. Please try again later.
               </AlertDescription>
             </Alert>
          )}

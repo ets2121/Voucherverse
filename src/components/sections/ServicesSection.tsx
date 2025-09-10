@@ -47,9 +47,9 @@ export default function ServicesSection() {
         <div className="container mx-auto px-4">
            <Alert variant="destructive" className="max-w-lg mx-auto">
               <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Error Loading Services</AlertTitle>
+              <AlertTitle>Could Not Load Services</AlertTitle>
               <AlertDescription>
-                We couldn't load the services offered. The API might be down or there's a network issue.
+                We're having trouble loading our services at the moment. Please try again later.
               </AlertDescription>
             </Alert>
         </div>

@@ -62,12 +62,12 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
     </Card>
 );
 
-const TestimonialCarousel = ({ testimonials, direction }: { testimonials: Testimonial[], direction: 'forward' | 'backward' }) => {
+const TestimonialCarousel = ({ testimonials, direction, delay }: { testimonials: Testimonial[], direction: 'forward' | 'backward', delay: number }) => {
     const [api, setApi] = useState<CarouselApi>();
     const [scaleValues, setScaleValues] = useState<number[]>([]);
 
     const plugin = useRef(
-        Autoplay({ delay: 2000, stopOnInteraction: false, direction })
+        Autoplay({ delay, stopOnInteraction: false, direction })
     );
 
     const onScroll = useCallback(() => {
@@ -216,17 +216,22 @@ export default function AllTestimonialsSection() {
 
         {testimonialChunks.length > 0 && (
             <div className="space-y-8">
-                {testimonialChunks.map((chunk, index) => (
-                    <TestimonialCarousel 
-                        key={index}
-                        testimonials={chunk}
-                        direction={index % 2 === 0 ? 'forward' : 'backward'}
-                    />
-                ))}
+                {testimonialChunks.map((chunk, index) => {
+                    const baseDelay = 2000;
+                    const randomOffset = Math.floor(Math.random() * 1000); // Random value between 0 and 1000
+                    const delay = baseDelay + randomOffset;
+                    return (
+                        <TestimonialCarousel 
+                            key={index}
+                            testimonials={chunk}
+                            direction={index % 2 === 0 ? 'forward' : 'backward'}
+                            delay={delay}
+                        />
+                    )
+                })}
             </div>
         )}
       </div>
     </section>
   );
 }
-

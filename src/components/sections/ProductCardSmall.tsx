@@ -52,9 +52,13 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
           )}
         {voucher?.promo_type && (
             <div className="absolute bottom-1.5 left-1.5 inline-block">
-                <p className="bg-destructive text-destructive-foreground text-[10px] font-bold uppercase tracking-wider rounded-sm px-1.5 py-0.5">
-                    {voucher.promo_type}
-                </p>
+                <div className="relative px-3 py-1 text-xs font-bold text-primary-foreground bg-primary rounded-md overflow-hidden">
+                  <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
+                  <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-background"></div>
+                  <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
+                  <div className="absolute -bottom-1 -right-1 w-2 h-2 rounded-full bg-background"></div>
+                  <span className="relative z-10">{voucher.promo_type}</span>
+                </div>
             </div>
         )}
       </div>

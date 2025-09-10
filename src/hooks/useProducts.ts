@@ -1,3 +1,4 @@
+
 import useSWRInfinite from 'swr/infinite';
 import type { Product } from '@/lib/types';
 import { useEffect } from 'react';
@@ -50,30 +51,13 @@ export function useProducts(businessId: number | undefined) {
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
           schema: 'public',
-          table: 'Voucher',
         },
         (payload) => {
-          const updatedVoucher = payload.new as Product['voucher'];
-          if (!updatedVoucher) return;
-
-          mutate((currentData) => {
-            if (!currentData) return [];
-            
-            return currentData.map(page => {
-              return {
-                ...page,
-                data: page.data.map((product: Product) => {
-                  if (product.voucher && product.voucher.id === updatedVoucher.id) {
-                    return { ...product, voucher: updatedVoucher };
-                  }
-                  return product;
-                })
-              }
-            });
-            
-          }, false);
+           // We received a change, let's refetch the data to be safe
+           console.log('Change detected, refetching products:', payload);
+           mutate();
         }
       )
       .subscribe();

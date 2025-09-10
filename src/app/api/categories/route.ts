@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { fetchWithTimezone } from '@/lib/utils';
 
 export const revalidate = 3600; // Cache for 1 hour
 
@@ -13,11 +14,12 @@ export async function GET(request: Request) {
 
   try {
     // Fetch all categories directly for the given business ID
-    const { data, error } = await supabase
+    const query = supabase
         .from('product_category')
         .select('*')
         .eq('business_id', businessId);
 
+    const { data, error } = await fetchWithTimezone(query);
 
     if (error) {
        console.error('Supabase categories fetch error:', error);

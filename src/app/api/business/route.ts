@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { fetchWithTimezone } from '@/lib/utils';
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
@@ -7,11 +8,13 @@ export async function GET() {
   const businessId = 1; // Hardcoded for single business context
 
   try {
-    const { data, error } = await supabase
+    const query = supabase
       .from('business')
       .select('*')
       .eq('id', businessId)
       .single();
+
+    const { data, error } = await fetchWithTimezone(query);
 
     if (error) {
       console.error('Supabase business fetch error:', error);

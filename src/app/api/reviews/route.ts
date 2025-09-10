@@ -1,6 +1,6 @@
-
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { fetchWithTimezone } from '@/lib/utils';
 
 export const revalidate = 0; // Don't cache reviews, always get the latest
 
@@ -13,15 +13,14 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Query the source table directly and filter for actual reviews.
-    // Let the Supabase client handle the timestamp conversion to a proper ISO 8601 string.
-    // This is the most reliable way to ensure correct parsing in the browser.
-    const { data, error } = await supabase
+    const query = supabase
       .from('product_reviews')
-      .select('*, created_at') 
+      .select('*') 
       .eq('product_id', productId)
-      .not('review', 'is', null) // Only fetch rows with a review text
+      .not('review', 'is', null)
       .order('created_at', { ascending: false });
+
+    const { data, error } = await fetchWithTimezone(query);
 
     if (error) {
       console.error('Supabase reviews fetch error:', error);

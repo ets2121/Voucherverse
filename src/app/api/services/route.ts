@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { fetchWithTimezone } from '@/lib/utils';
 
 export const revalidate = 3600; // Cache for 1 hour
 
@@ -12,10 +13,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    const { data, error } = await supabase
+    const query = supabase
       .from('business_services')
       .select('*')
       .eq('business_id', businessId);
+      
+    const { data, error } = await fetchWithTimezone(query);
 
     if (error) {
        console.error('Supabase services fetch error:', error);

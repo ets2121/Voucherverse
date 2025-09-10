@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { fetchWithTimezone } from '@/lib/utils';
 
 export const revalidate = 0; // Don't cache this route
 
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
   const to = from + limit - 1;
 
   try {
-    let query = supabase
+    const query = supabase
       .from('product')
       .select(
         `
@@ -32,7 +33,7 @@ export async function GET(request: Request) {
       .eq('is_active', true)
       .range(from, to);
 
-    const { data, error, count } = await query;
+    const { data, error, count } = await fetchWithTimezone(query);
 
     if (error) {
       console.error('Supabase products fetch error:', error);

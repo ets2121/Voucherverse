@@ -7,12 +7,11 @@ interface StarRatingProps {
   showReviewCount?: boolean;
   showAverage?: boolean;
   starSize?: string;
-  reviewCount?: number;
 }
 
 export function calculateAverageRating(ratingData: ProductRating | null) {
   if (!ratingData) {
-    return { average: 0 };
+    return { average: 0, total: 0 };
   }
 
   const ratings = [
@@ -24,13 +23,13 @@ export function calculateAverageRating(ratingData: ProductRating | null) {
   ];
   const totalRatings = ratings.reduce((acc, count) => acc + count, 0);
   if (totalRatings === 0) {
-    return { average: 0 };
+    return { average: 0, total: 0 };
   }
 
   const weightedSum = ratings.reduce((acc, count, i) => acc + count * (i + 1), 0);
   const averageRating = weightedSum / totalRatings;
 
-  return { average: parseFloat(averageRating.toFixed(1)) };
+  return { average: parseFloat(averageRating.toFixed(1)), total: totalRatings };
 }
 
 export default function StarRating({ 
@@ -38,10 +37,8 @@ export default function StarRating({
   showReviewCount = true, 
   showAverage = true,
   starSize = 'h-4 w-4',
-  reviewCount,
 }: StarRatingProps) {
-  const { average } = calculateAverageRating(ratingData);
-  const total = reviewCount !== undefined ? reviewCount : 0;
+  const { average, total } = calculateAverageRating(ratingData);
   
   const showText = (showAverage && average > 0) || (showReviewCount && total > 0);
 

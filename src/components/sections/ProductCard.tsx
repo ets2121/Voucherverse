@@ -175,7 +175,6 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
             <StarRating 
                 ratingData={product.product_ratings} 
                 showReviewCount={true}
-                reviewCount={reviews?.length}
             />
             <CardDescription className="text-sm line-clamp-3 pt-1">{product.short_description}</CardDescription>
           </div>

@@ -84,7 +84,7 @@ export default function ServicesSection() {
                       alt={service.name}
                       fill
                       data-ai-hint="service abstract"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-contain group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                   <CardTitle className="font-headline text-xl">{service.name}</CardTitle>

@@ -131,7 +131,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               alt={product.name}
               fill
               data-ai-hint="product food"
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-contain transition-transform duration-300 group-hover:scale-105"
             />
             {hasDiscount && discountPercent > 0 && (
               <Badge variant="destructive" className="absolute top-2 right-2">

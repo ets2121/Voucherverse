@@ -43,7 +43,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
           alt={name}
           fill
           data-ai-hint="product food"
-          className="object-cover"
+          className="object-contain"
         />
          {hasDiscount && discountPercent > 0 && (
             <Badge variant="destructive" className="absolute top-1.5 right-1.5 text-xs px-1.5 py-0.5">

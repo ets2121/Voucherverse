@@ -106,7 +106,7 @@ export default function TestimonialsSection() {
                           width={48}
                           height={48}
                           data-ai-hint="person avatar"
-                          className="rounded-full"
+                          className="rounded-full object-contain"
                         />
                         <div>
                           <p className="font-bold">{testimonial.customer_name}</p>

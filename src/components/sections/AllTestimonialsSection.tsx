@@ -72,11 +72,35 @@ export default function AllTestimonialsSection() {
       openTestimonialModal(() => mutate());
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.5 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24,
+      },
+    },
+  };
+
+
   return (
     <section id="all-testimonials" className="py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4">
         
-        <div className="sticky top-[80px] z-30 bg-background/90 backdrop-blur-sm -mx-4 px-4 py-4 mb-8 border-b">
+        <div className="sticky top-[80px] z-30 bg-background/95 backdrop-blur-sm -mx-4 px-4 py-4 mb-8 border-b">
             <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between md:items-center gap-4">
                  <div className="text-left">
                     <motion.h1 
@@ -96,7 +120,7 @@ export default function AllTestimonialsSection() {
                         Honest feedback from our valued customers.
                     </motion.p>
                 </div>
-                <Button onClick={handleOpenModal} className="shrink-0 md:ml-6">
+                <Button onClick={handleOpenModal} size="sm" className="shrink-0 w-full md:w-auto">
                     <Send className="mr-2 h-4 w-4" />
                     Submit Testimonial
                 </Button>
@@ -132,23 +156,14 @@ export default function AllTestimonialsSection() {
         {testimonials && testimonials.length > 0 && (
           <motion.div 
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
             initial="hidden"
             animate="visible"
-            variants={{
-                visible: {
-                    transition: {
-                        staggerChildren: 0.1,
-                    },
-                },
-            }}
           >
             {testimonials.map((testimonial) => (
               <motion.div
                 key={testimonial.id}
-                variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0 },
-                }}
+                variants={itemVariants}
               >
                 <TestimonialCard testimonial={testimonial} />
               </motion.div>

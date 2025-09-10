@@ -83,14 +83,15 @@ export default function AllTestimonialsSection() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, scale: 0.5 },
+    hidden: { opacity: 0, scale: 0.5, y: 50 },
     visible: {
       opacity: 1,
       scale: 1,
+      y: 0,
       transition: {
         type: "spring",
-        stiffness: 300,
-        damping: 24,
+        stiffness: 260,
+        damping: 20,
       },
     },
   };

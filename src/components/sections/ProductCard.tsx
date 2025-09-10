@@ -139,8 +139,8 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               </Badge>
             )}
             {voucher?.promo_type && (
-                <div className="absolute bottom-2 left-2">
-                    <p className="bg-destructive text-destructive-foreground text-xs font-semibold uppercase tracking-wider rounded-md px-2 py-1">
+                <div className="absolute bottom-2 left-2 inline-block">
+                    <p className="bg-destructive text-destructive-foreground text-[10px] font-bold uppercase tracking-wider rounded-sm px-1.5 py-0.5">
                         {voucher.promo_type}
                     </p>
                 </div>

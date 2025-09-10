@@ -3,12 +3,11 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { Star, MessageSquarePlus } from 'lucide-react';
+import { Star, MessageSquarePlus, AlertTriangle } from 'lucide-react';
 import useSWR from 'swr';
 import type { Testimonial } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -72,24 +71,26 @@ export default function AllTestimonialsSection() {
   return (
     <section id="all-testimonials" className="py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4">
-        <div className="sticky top-[80px] z-40 bg-background/80 backdrop-blur-sm py-4 mb-8 border-b -mx-4 px-4">
-            <div className="container mx-auto flex justify-between items-center">
-                <motion.div 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-left"
-                >
-                <h1 className="font-headline text-2xl md:text-3xl font-bold">
-                    What Our Customers Say
-                </h1>
-                <p className="mt-1 text-md text-muted-foreground">
-                    Honest feedback from our valued customers.
-                </p>
-                </motion.div>
-                 <Button onClick={openTestimonialModal}>
-                    <MessageSquarePlus className="mr-2 h-4 w-4" /> Submit a Testimonial
-                </Button>
+        <div className="sticky top-[80px] z-40 -mx-4 mb-8">
+            <div className="bg-background/80 backdrop-blur-sm border-b px-4 py-4">
+                <div className="container mx-auto flex justify-between items-center">
+                    <motion.div 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-left"
+                    >
+                    <h1 className="font-headline text-2xl md:text-3xl font-bold">
+                        What Our Customers Say
+                    </h1>
+                    <p className="mt-1 text-md text-muted-foreground">
+                        Honest feedback from our valued customers.
+                    </p>
+                    </motion.div>
+                    <Button onClick={openTestimonialModal}>
+                        <MessageSquarePlus className="mr-2 h-4 w-4" /> Submit a Testimonial
+                    </Button>
+                </div>
             </div>
         </div>
 
@@ -105,13 +106,16 @@ export default function AllTestimonialsSection() {
             </Alert>
         )}
         
-        {!isLoading && testimonials?.length === 0 && (
+        {!isLoading && !error && testimonials?.length === 0 && (
              <div className="text-center py-16">
-                <AlertTriangle className="mx-auto h-12 w-12 text-muted-foreground" />
+                <MessageSquarePlus className="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 className="mt-4 text-lg font-medium">No Testimonials Yet</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
                     Be the first one to share your feedback!
                 </p>
+                 <Button onClick={openTestimonialModal} className="mt-4">
+                    Submit a Testimonial
+                </Button>
             </div>
         )}
 

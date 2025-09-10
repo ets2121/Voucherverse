@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useRef } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, MessageSquarePlus, AlertTriangle, Send } from 'lucide-react';
@@ -11,6 +12,14 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 
 const fetcher = (url: string) => fetch(url).then((res) => {
     if (!res.ok) {
@@ -68,34 +77,13 @@ export default function AllTestimonialsSection() {
     fetcher
   );
 
+  const plugin = useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: true })
+  );
+
   const handleOpenModal = () => {
       openTestimonialModal(() => mutate());
   }
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.5, y: 50 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 260,
-        damping: 20,
-      },
-    },
-  };
-
 
   return (
     <section id="all-testimonials" className="py-20 md:py-24 bg-background">
@@ -155,21 +143,28 @@ export default function AllTestimonialsSection() {
         )}
 
         {testimonials && testimonials.length > 0 && (
-          <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
+          <Carousel
+            plugins={[plugin.current]}
+            opts={{
+              align: 'start',
+              loop: true,
+            }}
+            className="w-full max-w-6xl mx-auto"
+            onMouseEnter={plugin.current.stop}
+            onMouseLeave={plugin.current.reset}
           >
-            {testimonials.map((testimonial) => (
-              <motion.div
-                key={testimonial.id}
-                variants={itemVariants}
-              >
-                <TestimonialCard testimonial={testimonial} />
-              </motion.div>
-            ))}
-          </motion.div>
+            <CarouselContent>
+              {testimonials.map((testimonial) => (
+                <CarouselItem key={testimonial.id} className="sm:basis-1/2 md:basis-1/2 lg:basis-1/3">
+                  <div className="p-1 h-full">
+                    <TestimonialCard testimonial={testimonial} />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         )}
       </div>
     </section>

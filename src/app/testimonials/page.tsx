@@ -1,8 +1,10 @@
+
 'use client';
 
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import AllTestimonialsSection from '@/components/sections/AllTestimonialsSection';
+import TestimonialModal from '@/components/shared/TestimonialModal';
 
 export default function TestimonialsPage() {
   return (
@@ -12,6 +14,7 @@ export default function TestimonialsPage() {
         <AllTestimonialsSection />
       </main>
       <Footer />
+      <TestimonialModal />
     </div>
   );
 }

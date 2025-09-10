@@ -90,10 +90,10 @@ export interface PromoClaim {
 export interface Testimonial {
   id: number;
   business_id: number;
-  customer_name?: string;
-  customer_email?: string;
+  customer_name?: string | null;
+  customer_email: string;
   message: string;
-  rating?: number;
+  rating: number;
   image_url?: string;
   created_at: string;
   updated_at: string;

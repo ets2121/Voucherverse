@@ -122,6 +122,10 @@ export default function AllTestimonialsSection() {
                 <p className="mt-1 text-sm text-muted-foreground">
                     Be the first to share your experience!
                 </p>
+                <Button onClick={handleOpenModal} className="mt-4">
+                    <Send className="mr-2 h-4 w-4" />
+                    Submit a Testimonial
+                </Button>
             </div>
         )}
 

@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useRef } from 'react';
 import Link from 'next/link';
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,6 +20,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Autoplay from 'embla-carousel-autoplay';
 
 
 const fetcher = (url: string) => fetch(url).then((res) => {
@@ -30,9 +32,15 @@ const fetcher = (url: string) => fetch(url).then((res) => {
 
 export default function TestimonialsSection() {
   const { business } = useAppContext();
-  const { data: testimonials, error, isLoading } = useSWR<Testimonial[]>(
+  const { data: allTestimonials, error, isLoading } = useSWR<Testimonial[]>(
     () => business?.id ? `/api/testimonials?business_id=${business.id}` : null,
     fetcher
+  );
+
+  const testimonials = allTestimonials?.slice(0, 5);
+
+  const plugin = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true })
   );
 
   if (isLoading) {
@@ -77,19 +85,22 @@ export default function TestimonialsSection() {
           What Our Customers Say
         </h2>
         <Carousel 
+          plugins={[plugin.current]}
           opts={{
             align: 'start',
             loop: true,
           }}
           className="w-full max-w-4xl mx-auto"
+          onMouseEnter={plugin.current.stop}
+          onMouseLeave={plugin.current.reset}
         >
           <CarouselContent>
             {testimonials.map((testimonial) => (
               <CarouselItem key={testimonial.id} className="md:basis-1/2 lg:basis-1/3">
                 <div className="p-1 h-full">
                   <Card className="h-full flex flex-col justify-between">
-                    <CardContent className="p-6 flex flex-col items-center text-center">
-                        <Avatar className="h-16 w-16 mb-4 text-lg">
+                    <CardContent className="p-4 flex flex-col items-center text-center">
+                        <Avatar className="h-12 w-12 mb-3 text-lg">
                             <AvatarImage src={testimonial.image_url || ''} alt={testimonial.customer_name || 'Customer'} />
                             <AvatarFallback>
                                 {testimonial.customer_name?.charAt(0).toUpperCase()}

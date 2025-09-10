@@ -100,19 +100,19 @@ export default function TestimonialsSection() {
                 <div className="p-1 h-full">
                   <Card className="h-full flex flex-col justify-between">
                     <CardContent className="p-4 flex flex-col items-center text-center">
-                        <Avatar className="h-12 w-12 mb-3 text-lg">
+                        <Avatar className="h-10 w-10 mb-3 text-base">
                             <AvatarImage src={testimonial.image_url || ''} alt={testimonial.customer_name || 'Customer'} />
                             <AvatarFallback>
                                 {testimonial.customer_name?.charAt(0).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
-                        <p className="font-semibold">{testimonial.customer_name}</p>
+                        <p className="font-semibold text-sm">{testimonial.customer_name}</p>
                         <div className="flex justify-center mt-1">
                             {[...Array(testimonial.rating || 5)].map((_, i) => (
-                                <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                                <Star key={i} className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
                             ))}
                         </div>
-                        <blockquote className="mt-2 text-sm text-muted-foreground italic">
+                        <blockquote className="mt-2 text-xs text-muted-foreground italic">
                             "{testimonial.message}"
                         </blockquote>
                     </CardContent>
@@ -125,7 +125,7 @@ export default function TestimonialsSection() {
           <CarouselNext />
         </Carousel>
         <div className="text-center mt-12">
-          <Button asChild>
+          <Button asChild variant="link">
             <Link href="/testimonials">
               View All Testimonials
             </Link>

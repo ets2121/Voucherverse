@@ -89,19 +89,19 @@ export default function TestimonialsSection() {
                 <div className="p-1 h-full">
                   <Card className="h-full flex flex-col justify-between">
                     <CardContent className="p-6 flex flex-col items-center text-center">
-                        <Avatar className="h-20 w-20 mb-4 text-xl">
+                        <Avatar className="h-16 w-16 mb-4 text-lg">
                             <AvatarImage src={testimonial.image_url || ''} alt={testimonial.customer_name || 'Customer'} />
                             <AvatarFallback>
                                 {testimonial.customer_name?.charAt(0).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
-                        <p className="mt-4 font-semibold">{testimonial.customer_name}</p>
+                        <p className="font-semibold">{testimonial.customer_name}</p>
                         <div className="flex justify-center mt-1">
                             {[...Array(testimonial.rating || 5)].map((_, i) => (
                                 <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                             ))}
                         </div>
-                        <blockquote className="mt-4 text-sm text-muted-foreground italic">
+                        <blockquote className="mt-2 text-sm text-muted-foreground italic">
                             "{testimonial.message}"
                         </blockquote>
                     </CardContent>

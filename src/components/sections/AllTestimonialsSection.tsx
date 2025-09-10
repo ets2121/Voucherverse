@@ -3,7 +3,7 @@
 
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { Star, MessageSquarePlus, AlertTriangle } from 'lucide-react';
+import { Star, MessageSquarePlus, AlertTriangle, Send } from 'lucide-react';
 import useSWR from 'swr';
 import type { Testimonial } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -62,32 +62,45 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
 );
 
 export default function AllTestimonialsSection() {
-  const { business } = useAppContext();
-  const { data: testimonials, error, isLoading } = useSWR<Testimonial[]>(
+  const { business, openTestimonialModal } = useAppContext();
+  const { data: testimonials, error, isLoading, mutate } = useSWR<Testimonial[]>(
     () => business?.id ? `/api/testimonials?business_id=${business.id}` : null,
     fetcher
   );
 
+  const handleOpenModal = () => {
+      openTestimonialModal(() => mutate());
+  }
+
   return (
     <section id="all-testimonials" className="py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-            <motion.h1 
-                className="font-headline text-3xl md:text-4xl font-bold"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
-                What Our Customers Say
-            </motion.h1>
-            <motion.p 
-                className="mt-2 text-lg text-muted-foreground"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-            >
-                Honest feedback from our valued customers.
-            </motion.p>
+        
+        <div className="sticky top-[80px] z-30 bg-background/90 backdrop-blur-sm -mx-4 px-4 py-4 mb-8 border-b">
+            <div className="container mx-auto px-4 flex justify-between items-center">
+                 <div className="text-left">
+                    <motion.h1 
+                        className="font-headline text-3xl md:text-4xl font-bold"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        What Our Customers Say
+                    </motion.h1>
+                    <motion.p 
+                        className="mt-1 text-md text-muted-foreground"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                        Honest feedback from our valued customers.
+                    </motion.p>
+                </div>
+                <Button onClick={handleOpenModal}>
+                    <Send className="mr-2 h-4 w-4" />
+                    Submit a Testimonial
+                </Button>
+            </div>
         </div>
 
         {isLoading && <TestimonialSkeleton />}
@@ -107,7 +120,7 @@ export default function AllTestimonialsSection() {
                 <MessageSquarePlus className="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 className="mt-4 text-lg font-medium">No Testimonials Yet</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Check back later to see what people are saying!
+                    Be the first to share your experience!
                 </p>
             </div>
         )}

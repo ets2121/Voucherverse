@@ -22,6 +22,12 @@ interface AppContextType {
   isReviewModalOpen: boolean;
   openReviewModal: (product: Product) => void;
   closeReviewModal: () => void;
+
+  // Testimonial Modal
+  isTestimonialModalOpen: boolean;
+  openTestimonialModal: (onSubmit?: () => void) => void;
+  closeTestimonialModal: () => void;
+  onTestimonialSubmit: (() => void) | null;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -56,6 +62,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Review Modal State
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  
+  // Testimonial Modal State
+  const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
+  const [onTestimonialSubmit, setOnTestimonialSubmit] = useState<(() => void) | null>(null);
 
   const openModal = (voucher: Voucher) => {
     setSelectedVoucher(voucher);
@@ -81,6 +91,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }, 300);
   };
 
+  const openTestimonialModal = (onSubmit?: () => void) => {
+    if (onSubmit) {
+        setOnTestimonialSubmit(() => onSubmit);
+    }
+    setIsTestimonialModalOpen(true);
+  };
+
+  const closeTestimonialModal = () => {
+    setIsTestimonialModalOpen(false);
+    setTimeout(() => {
+        setOnTestimonialSubmit(null);
+    }, 300);
+  };
+
   const value: AppContextType = {
     business,
     isBusinessLoading,
@@ -93,6 +117,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     isReviewModalOpen,
     openReviewModal,
     closeReviewModal,
+    isTestimonialModalOpen,
+    openTestimonialModal,
+    closeTestimonialModal,
+    onTestimonialSubmit,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

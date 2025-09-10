@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, MessageSquarePlus, AlertTriangle, Send } from 'lucide-react';
@@ -18,6 +18,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 
@@ -46,7 +47,6 @@ const TestimonialSkeleton = () => (
         ))}
     </div>
 );
-
 
 const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
     <Card className="h-full flex flex-col justify-between">
@@ -77,19 +77,76 @@ export default function AllTestimonialsSection() {
     fetcher
   );
 
+  const [api, setApi] = useState<CarouselApi>();
+  const [scaleValues, setScaleValues] = useState<number[]>([]);
+
   const plugin = useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: true })
+    Autoplay({ delay: 2000, stopOnInteraction: false })
   );
+
+  const onScroll = useCallback(() => {
+    if (!api) return;
+
+    const newScaleValues = api.scrollSnapList().map((_, index) => {
+        const diff = Math.abs(index - api.selectedScrollSnap());
+        const scale = 1 - diff * 0.2;
+        return Math.max(0, scale);
+    });
+    setScaleValues(newScaleValues);
+
+  }, [api]);
+
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+    
+    onScroll(); // Set initial scales
+    api.on('select', onScroll);
+    api.on('reInit', onScroll);
+     api.on('scroll', onScroll);
+
+    return () => {
+      api.off('select', onScroll);
+      api.off('reInit', onScroll);
+      api.off('scroll', onScroll);
+    };
+
+  }, [api, onScroll]);
 
   const handleOpenModal = () => {
       openTestimonialModal(() => mutate());
   }
+  
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0, scale: 0.8 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.5,
+        ease: [0.25, 1, 0.5, 1], // ease-out-expo
+      },
+    },
+  };
 
   return (
     <section id="all-testimonials" className="py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4">
         
-        <div className="sticky top-[80px] z-30 bg-background/95 backdrop-blur-sm -mx-4 px-4 py-4 mb-8 border-b">
+        <div className="bg-background/95 py-4 mb-8">
             <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between md:items-center gap-4">
                  <div className="text-left">
                     <motion.h1 
@@ -143,28 +200,38 @@ export default function AllTestimonialsSection() {
         )}
 
         {testimonials && testimonials.length > 0 && (
-          <Carousel
-            plugins={[plugin.current]}
-            opts={{
-              align: 'start',
-              loop: true,
-            }}
-            className="w-full max-w-6xl mx-auto"
-            onMouseEnter={plugin.current.stop}
-            onMouseLeave={plugin.current.reset}
-          >
-            <CarouselContent>
-              {testimonials.map((testimonial) => (
-                <CarouselItem key={testimonial.id} className="sm:basis-1/2 md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1 h-full">
-                    <TestimonialCard testimonial={testimonial} />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+            <motion.div variants={containerVariants} initial="hidden" animate="visible">
+                <Carousel
+                    setApi={setApi}
+                    plugins={[plugin.current]}
+                    opts={{
+                    align: 'center',
+                    loop: true,
+                    }}
+                    className="w-full max-w-6xl mx-auto"
+                    onMouseEnter={plugin.current.stop}
+                    onMouseLeave={plugin.current.play}
+                >
+                    <CarouselContent>
+                    {testimonials.map((testimonial, index) => (
+                        <CarouselItem key={testimonial.id} className="sm:basis-1/2 md:basis-1/2 lg:basis-1/3">
+                            <motion.div 
+                                className="p-1 h-full"
+                                style={{
+                                    scale: scaleValues[index] ?? 0.8,
+                                    opacity: scaleValues[index] ?? 0,
+                                    transition: 'scale 0.5s ease-in-out, opacity 0.5s ease-in-out'
+                                }}
+                            >
+                                <TestimonialCard testimonial={testimonial} />
+                            </motion.div>
+                        </CarouselItem>
+                    ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                </Carousel>
+          </motion.div>
         )}
       </div>
     </section>

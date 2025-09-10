@@ -110,7 +110,7 @@ export default function ProductsSection() {
 
   const showCategoryFilter = categories && categories.length > 1;
 
-  if (isLoading && !products.length) {
+  if (isLoading) {
     return <ProductsSkeleton />;
   }
   
@@ -207,7 +207,7 @@ export default function ProductsSection() {
             </div>
         </div>
         
-         {error && !isLoading && (
+         {error && (
             <Alert variant="destructive" className="max-w-lg mx-auto mb-8">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Could Not Load Deals</AlertTitle>

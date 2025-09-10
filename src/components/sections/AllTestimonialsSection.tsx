@@ -30,23 +30,15 @@ const fetcher = (url: string) => fetch(url).then((res) => {
 });
 
 const TestimonialSkeleton = () => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[...Array(6)].map((_, i) => (
-            <Card key={i} className="h-full flex flex-col justify-between">
-                <CardContent className="p-4 flex flex-col items-center text-center">
-                    <Skeleton className="h-8 w-8 mb-2 rounded-full" />
-                    <Skeleton className="h-5 w-24 mb-2" />
-                    <Skeleton className="h-4 w-20 mb-3" />
-                    <div className="space-y-2 w-full">
-                        <Skeleton className="h-3 w-full" />
-                        <Skeleton className="h-3 w-full" />
-                        <Skeleton className="h-3 w-3/4" />
-                    </div>
-                </CardContent>
-            </Card>
+    <div className="space-y-6">
+        {[...Array(2)].map((_, i) => (
+            <div key={i} className="flex justify-center">
+                 <Skeleton className="h-48 w-full max-w-4xl" />
+            </div>
         ))}
     </div>
 );
+
 
 const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
     <Card className="h-full flex flex-col justify-between">
@@ -70,6 +62,88 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
     </Card>
 );
 
+const TestimonialCarousel = ({ testimonials, direction }: { testimonials: Testimonial[], direction: 'forward' | 'backward' }) => {
+    const [api, setApi] = useState<CarouselApi>();
+    const [scaleValues, setScaleValues] = useState<number[]>([]);
+
+    const plugin = useRef(
+        Autoplay({ delay: 2000, stopOnInteraction: false, direction })
+    );
+
+    const onScroll = useCallback(() => {
+        if (!api) return;
+
+        const newScaleValues = api.scrollSnapList().map((_, index) => {
+            const diff = Math.abs(index - api.selectedScrollSnap());
+            const scale = 1 - diff * 0.2;
+            return Math.max(0, scale);
+        });
+        setScaleValues(newScaleValues);
+
+    }, [api]);
+
+
+    useEffect(() => {
+        if (!api) {
+        return;
+        }
+        
+        onScroll(); // Set initial scales
+        api.on('select', onScroll);
+        api.on('reInit', onScroll);
+        api.on('scroll', onScroll);
+
+        return () => {
+            if (api) {
+                api.off('select', onScroll);
+                api.off('reInit', onScroll);
+                api.off('scroll', onScroll);
+            }
+        };
+    }, [api, onScroll]);
+
+    return (
+        <Carousel
+            setApi={setApi}
+            plugins={[plugin.current]}
+            opts={{
+            align: 'center',
+            loop: true,
+            }}
+            className="w-full max-w-6xl mx-auto"
+            onMouseEnter={plugin.current.stop}
+            onMouseLeave={plugin.current.play}
+        >
+            <CarouselContent>
+                {testimonials.map((testimonial, index) => (
+                    <CarouselItem key={testimonial.id} className="sm:basis-1/2 md:basis-1/2 lg:basis-1/3">
+                        <motion.div 
+                            className="p-1 h-full"
+                            style={{
+                                scale: scaleValues[index] ?? 0.8,
+                                opacity: scaleValues[index] ?? 0,
+                                transition: 'scale 0.5s ease-in-out, opacity 0.5s ease-in-out'
+                            }}
+                        >
+                            <TestimonialCard testimonial={testimonial} />
+                        </motion.div>
+                    </CarouselItem>
+                ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+        </Carousel>
+    )
+}
+
+function chunkArray<T>(array: T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+}
+
 export default function AllTestimonialsSection() {
   const { business, openTestimonialModal } = useAppContext();
   const { data: testimonials, error, isLoading, mutate } = useSWR<Testimonial[]>(
@@ -77,71 +151,12 @@ export default function AllTestimonialsSection() {
     fetcher
   );
 
-  const [api, setApi] = useState<CarouselApi>();
-  const [scaleValues, setScaleValues] = useState<number[]>([]);
-
-  const plugin = useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: false })
-  );
-
-  const onScroll = useCallback(() => {
-    if (!api) return;
-
-    const newScaleValues = api.scrollSnapList().map((_, index) => {
-        const diff = Math.abs(index - api.selectedScrollSnap());
-        const scale = 1 - diff * 0.2;
-        return Math.max(0, scale);
-    });
-    setScaleValues(newScaleValues);
-
-  }, [api]);
-
-
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
-    
-    onScroll(); // Set initial scales
-    api.on('select', onScroll);
-    api.on('reInit', onScroll);
-     api.on('scroll', onScroll);
-
-    return () => {
-      api.off('select', onScroll);
-      api.off('reInit', onScroll);
-      api.off('scroll', onScroll);
-    };
-
-  }, [api, onScroll]);
-
   const handleOpenModal = () => {
       openTestimonialModal(() => mutate());
   }
+
+  const testimonialChunks = testimonials ? chunkArray(testimonials, 10) : [];
   
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0, scale: 0.8 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: [0.25, 1, 0.5, 1], // ease-out-expo
-      },
-    },
-  };
-
   return (
     <section id="all-testimonials" className="py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -199,41 +214,19 @@ export default function AllTestimonialsSection() {
             </div>
         )}
 
-        {testimonials && testimonials.length > 0 && (
-            <motion.div variants={containerVariants} initial="hidden" animate="visible">
-                <Carousel
-                    setApi={setApi}
-                    plugins={[plugin.current]}
-                    opts={{
-                    align: 'center',
-                    loop: true,
-                    }}
-                    className="w-full max-w-6xl mx-auto"
-                    onMouseEnter={plugin.current.stop}
-                    onMouseLeave={plugin.current.play}
-                >
-                    <CarouselContent>
-                    {testimonials.map((testimonial, index) => (
-                        <CarouselItem key={testimonial.id} className="sm:basis-1/2 md:basis-1/2 lg:basis-1/3">
-                            <motion.div 
-                                className="p-1 h-full"
-                                style={{
-                                    scale: scaleValues[index] ?? 0.8,
-                                    opacity: scaleValues[index] ?? 0,
-                                    transition: 'scale 0.5s ease-in-out, opacity 0.5s ease-in-out'
-                                }}
-                            >
-                                <TestimonialCard testimonial={testimonial} />
-                            </motion.div>
-                        </CarouselItem>
-                    ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                </Carousel>
-          </motion.div>
+        {testimonialChunks.length > 0 && (
+            <div className="space-y-8">
+                {testimonialChunks.map((chunk, index) => (
+                    <TestimonialCarousel 
+                        key={index}
+                        testimonials={chunk}
+                        direction={index % 2 === 0 ? 'forward' : 'backward'}
+                    />
+                ))}
+            </div>
         )}
       </div>
     </section>
   );
 }
+

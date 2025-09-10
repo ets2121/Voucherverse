@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { fetchWithTimezone } from '@/lib/utils';
@@ -16,7 +17,9 @@ export async function GET(request: Request) {
     const query = supabase
       .from('testimonials')
       .select('*')
-      .eq('business_id', businessId);
+      .eq('business_id', businessId)
+      .gte('rating', 4) // Only fetch ratings greater than or equal to 4
+      .order('created_at', { ascending: false }); // Order by newest first
       
     const { data, error } = await fetchWithTimezone(query);
       

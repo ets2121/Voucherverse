@@ -19,6 +19,38 @@ import { useCategories } from '@/hooks/useCategories';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 
+const ProductsSkeleton = () => (
+    <section id="products" className="py-20 md:py-24 bg-background">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <Skeleton className="h-10 w-1/2 mx-auto" />
+          <Skeleton className="h-5 w-1/3 mx-auto mt-2" />
+        </div>
+        <div className="sticky top-[80px] z-20 bg-background/95 backdrop-blur-sm py-4 mb-8 border-b">
+          <div className="flex flex-col gap-4 justify-center items-center">
+              <Skeleton className="h-10 w-full max-w-sm" />
+              <Skeleton className="h-10 w-full max-w-lg" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
+          {[...Array(12)].map((_, i) => (
+             <div key={i} className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden flex flex-col h-full">
+                <Skeleton className="aspect-square w-full" />
+                <div className="p-2 flex flex-col flex-grow space-y-2">
+                   <Skeleton className="h-4 w-5/6" />
+                   <Skeleton className="h-4 w-3/4" />
+                   <div className="pt-2 space-y-1">
+                    <Skeleton className="h-5 w-1/2" />
+                    <Skeleton className="h-3 w-1/3" />
+                   </div>
+                </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+);
+
 
 export default function ProductsSection() {
   const { business, openModal } = useAppContext();
@@ -78,37 +110,8 @@ export default function ProductsSection() {
 
   const showCategoryFilter = categories && categories.length > 1;
 
-  if (isLoading && !products) {
-    return (
-      <section id="products" className="py-20 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Skeleton className="h-10 w-1/2 mx-auto" />
-          </div>
-          <div className="sticky top-[80px] z-20 bg-background/95 backdrop-blur-sm py-4 mb-8 border-b">
-            <div className="flex flex-col gap-4 justify-center items-center">
-                <Skeleton className="h-10 w-full max-w-sm" />
-                <Skeleton className="h-10 w-full max-w-lg" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
-            {[...Array(12)].map((_, i) => (
-               <div key={i} className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden flex flex-col h-full">
-                  <Skeleton className="aspect-square w-full" />
-                  <div className="p-2 flex flex-col flex-grow space-y-2">
-                     <Skeleton className="h-4 w-5/6" />
-                     <Skeleton className="h-4 w-3/4" />
-                     <div className="pt-2 space-y-1">
-                      <Skeleton className="h-5 w-1/2" />
-                      <Skeleton className="h-3 w-1/3" />
-                     </div>
-                  </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+  if (isLoading && !products.length) {
+    return <ProductsSkeleton />;
   }
   
 
@@ -148,6 +151,9 @@ export default function ProductsSection() {
             <h2 className="font-headline text-3xl md:text-4xl font-bold">
             Our Exclusive Deals
             </h2>
+             <p className="mt-2 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Discover unique products and claim special vouchers. Click on any item to see more details.
+            </p>
         </div>
         
         <div className="sticky top-[80px] z-20 bg-background/95 backdrop-blur-sm py-4 mb-8 border-b">
@@ -179,19 +185,29 @@ export default function ProductsSection() {
                         className="w-full max-w-full"
                     >
                         <TabsList className="flex w-full overflow-x-auto justify-start md:justify-center">
-                            <TabsTrigger value="all">All</TabsTrigger>
-                            {categories.map((cat) => (
-                                <TabsTrigger key={cat.id} value={String(cat.id)}>
-                                    {cat.name}
-                                </TabsTrigger>
-                            ))}
+                           {categoriesLoading ? (
+                                <>
+                                    <Skeleton className="h-8 w-20" />
+                                    <Skeleton className="h-8 w-20" />
+                                    <Skeleton className="h-8 w-20" />
+                                </>
+                           ) : (
+                             <>
+                                <TabsTrigger value="all">All</TabsTrigger>
+                                {categories.map((cat) => (
+                                    <TabsTrigger key={cat.id} value={String(cat.id)}>
+                                        {cat.name}
+                                    </TabsTrigger>
+                                ))}
+                             </>
+                           )}
                         </TabsList>
                     </Tabs>
                 )}
             </div>
         </div>
         
-         {error && (
+         {error && !isLoading && (
             <Alert variant="destructive" className="max-w-lg mx-auto mb-8">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Could Not Load Deals</AlertTitle>
@@ -229,7 +245,7 @@ export default function ProductsSection() {
 
         <div ref={loadMoreRef} className="h-10 mt-8 flex justify-center items-center">
             {isLoadingMore && <Loader2 className="animate-spin" />}
-            {isReachingEnd && <p className="text-muted-foreground">You've reached the end.</p>}
+            {isReachingEnd && !isLoadingMore && products.length > 0 && <p className="text-muted-foreground">You've reached the end.</p>}
         </div>
       </div>
     </motion.section>

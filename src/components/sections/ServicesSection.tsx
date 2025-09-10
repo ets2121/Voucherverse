@@ -17,6 +17,31 @@ const fetcher = (url: string) => fetch(url).then((res) => {
     return res.json();
 });
 
+const ServicesSkeleton = () => (
+    <section id="services" className="py-20 md:py-24 bg-background">
+        <div className="container mx-auto px-4">
+            <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
+                What We Offer
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(3)].map((_, i) => (
+                    <Card key={i} className="h-full bg-card">
+                        <CardHeader>
+                            <Skeleton className="relative h-40 w-full mb-4 rounded-t-lg" />
+                            <Skeleton className="h-6 w-3/4" />
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-2/3" />
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        </div>
+    </section>
+);
+
 export default function ServicesSection() {
   const { business } = useAppContext();
   const { data: services, error, isLoading } = useSWR<BusinessService[]>(
@@ -25,20 +50,7 @@ export default function ServicesSection() {
   );
 
   if (isLoading) {
-     return (
-       <section id="services" className="py-20 md:py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
-            What We Offer
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-             <Skeleton className="h-80 w-full" />
-             <Skeleton className="h-80 w-full" />
-             <Skeleton className="h-80 w-full" />
-          </div>
-        </div>
-       </section>
-     )
+     return <ServicesSkeleton />;
   }
 
   if (error) {

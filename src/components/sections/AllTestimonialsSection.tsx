@@ -19,22 +19,42 @@ const fetcher = (url: string) => fetch(url).then((res) => {
     return res.json();
 });
 
+const TestimonialSkeleton = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, i) => (
+            <Card key={i} className="h-full flex flex-col justify-between">
+                <CardContent className="p-6 flex flex-col items-center text-center">
+                    <Skeleton className="h-16 w-16 mb-4 rounded-full" />
+                    <Skeleton className="h-5 w-24 mb-2" />
+                    <Skeleton className="h-4 w-20 mb-3" />
+                    <div className="space-y-2 w-full">
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-3/4" />
+                    </div>
+                </CardContent>
+            </Card>
+        ))}
+    </div>
+);
+
+
 const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
     <Card className="h-full flex flex-col justify-between">
-        <CardContent className="p-6 flex flex-col items-center text-center">
-             <Avatar className="h-16 w-16 mb-4 text-lg">
+        <CardContent className="p-4 flex flex-col items-center text-center">
+             <Avatar className="h-10 w-10 mb-3 text-base">
                 <AvatarImage src={testimonial.image_url || ''} alt={testimonial.customer_name || 'Customer'} />
                 <AvatarFallback>
                     {testimonial.customer_name?.charAt(0).toUpperCase()}
                 </AvatarFallback>
             </Avatar>
-            <p className="font-semibold">{testimonial.customer_name}</p>
+            <p className="font-semibold text-sm">{testimonial.customer_name}</p>
             <div className="flex justify-center mt-1">
                 {[...Array(testimonial.rating || 5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                    <Star key={i} className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
                 ))}
             </div>
-            <blockquote className="mt-2 text-sm text-muted-foreground italic">
+            <blockquote className="mt-2 text-xs text-muted-foreground italic">
                 "{testimonial.message}"
             </blockquote>
         </CardContent>
@@ -65,13 +85,7 @@ export default function AllTestimonialsSection() {
           </p>
         </motion.div>
 
-        {isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <Skeleton key={i} className="h-64 w-full" />
-            ))}
-          </div>
-        )}
+        {isLoading && <TestimonialSkeleton />}
 
         {error && (
             <Alert variant="destructive" className="max-w-2xl mx-auto">

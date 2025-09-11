@@ -191,12 +191,6 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                   </div>
               </div>
           )}
-          <Separator className="my-4" />
-          <ProductReviews 
-            reviews={reviews} 
-            isLoading={reviewsLoading} 
-            error={reviewsError} 
-          />
         </CardContent>
         <CardFooter className="flex-col items-start gap-3 p-4 pt-2 mt-auto">
            <Button variant="outline" size="sm" className="w-full" onClick={() => openReviewModal(product)}>
@@ -240,6 +234,14 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
            {!voucher && (
              <p className="w-full text-center text-sm text-muted-foreground pt-4">No voucher available for this product.</p>
            )}
+            <div className="w-full pt-2">
+              <Separator className="my-2" />
+              <ProductReviews 
+                reviews={reviews} 
+                isLoading={reviewsLoading} 
+                error={reviewsError} 
+              />
+            </div>
         </CardFooter>
       </Card>
     </motion.div>

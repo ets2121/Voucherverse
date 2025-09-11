@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import type { ProductReview } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -8,21 +9,19 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { MessageSquareDashed, AlertTriangle, UserCircle, Star } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 
 const ReviewSkeleton = () => (
     <div className="space-y-4">
         {[...Array(2)].map((_, i) => (
             <div key={i} className="flex gap-3">
-                <Skeleton className="h-10 w-10 rounded-full" />
+                <Skeleton className="h-8 w-8 rounded-full" />
                 <div className="flex-1 space-y-2">
-                    <div className="flex justify-between">
-                        <Skeleton className="h-4 w-1/4" />
-                        <Skeleton className="h-4 w-1/5" />
-                    </div>
-                     <Skeleton className="h-4 w-1/3" />
+                    <Skeleton className="h-4 w-1/4" />
+                    <Skeleton className="h-4 w-1/5" />
+                    <Skeleton className="h-4 w-1/3" />
                     <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
                 </div>
             </div>
         ))}
@@ -68,6 +67,14 @@ const formatEmailForPrivacy = (email: string): string => {
 
 
 export default function ProductReviews({ reviews, isLoading, error }: ProductReviewsProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  const REVIEWS_DISPLAY_LIMIT = 3;
+  const EXPAND_THRESHOLD = 5;
+
+  const showToggleButton = reviews && reviews.length > EXPAND_THRESHOLD;
+  const displayedReviews = showToggleButton && !isExpanded ? reviews.slice(0, REVIEWS_DISPLAY_LIMIT) : reviews;
+
   return (
     <div className="space-y-4">
         <h3 className="font-headline text-lg font-semibold">Customer Reviews</h3>
@@ -90,9 +97,9 @@ export default function ProductReviews({ reviews, isLoading, error }: ProductRev
             </div>
         )}
 
-        {!isLoading && !error && reviews && reviews.length > 0 && (
+        {!isLoading && !error && displayedReviews && displayedReviews.length > 0 && (
             <div className="space-y-6">
-                {reviews.map((review, index) => (
+                {displayedReviews.map((review, index) => (
                     <div key={review.id}>
                         <div className="flex gap-3">
                              <UserCircle className="h-8 w-8 text-muted-foreground shrink-0 mt-1" />
@@ -105,10 +112,21 @@ export default function ProductReviews({ reviews, isLoading, error }: ProductRev
                                 <p className="text-sm text-foreground pt-1">{review.review}</p>
                             </div>
                         </div>
-                        {index < reviews.length - 1 && <Separator className="mt-4" />}
+                        {index < displayedReviews.length - 1 && <Separator className="mt-4" />}
                     </div>
                 ))}
             </div>
+        )}
+        
+        {showToggleButton && (
+            <Button
+                variant="link"
+                size="sm"
+                className="p-0 h-auto text-xs"
+                onClick={() => setIsExpanded(!isExpanded)}
+            >
+                {isExpanded ? 'Show less reviews' : `Show all ${reviews?.length} reviews`}
+            </Button>
         )}
     </div>
   );

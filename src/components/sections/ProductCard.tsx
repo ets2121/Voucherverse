@@ -176,7 +176,6 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                 ratingData={product.product_ratings} 
                 showReviewCount={true}
             />
-            <CardDescription className="text-sm line-clamp-3 pt-1">{product.short_description}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="flex-grow p-4 pt-0">
@@ -231,10 +230,12 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
              <p className="w-full text-center text-sm text-muted-foreground pt-4">No voucher available for this product.</p>
            )}
 
-           <Button variant="outline" size="sm" className="w-full" onClick={() => openReviewModal(product)}>
+            <Button variant="outline" size="sm" className="w-full" onClick={() => openReviewModal(product)}>
                 <MessageSquareQuote className="mr-2 h-4 w-4" />
                 Write a review
             </Button>
+            
+            <CardDescription className="text-sm line-clamp-3 pt-1">{product.short_description}</CardDescription>
             
             <div className="w-full pt-2">
               <Separator className="my-2" />

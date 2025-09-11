@@ -17,6 +17,7 @@ import { useAppContext } from '@/context/AppContext';
 import { Separator } from '@/components/ui/separator';
 import ProductReviews from '@/components/shared/ProductReviews';
 import useSWR from 'swr';
+import { cn } from '@/lib/utils';
 
 
 interface ProductCardProps {
@@ -89,6 +90,8 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
   const { openReviewModal } = useAppContext();
   const voucher = product.voucher;
   const currencySymbol = priceConfig.currency_symbol;
+  
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const { data: reviews, error: reviewsError, isLoading: reviewsLoading } = useSWR<ProductReview[]>(
     `/api/reviews?product_id=${product.id}`, 
@@ -114,6 +117,9 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
 
     discountPercent = Math.min(Math.round((voucher.discount_amount! / product.price) * 100), 100);
   }
+  
+  const isLongDescription = product.short_description && product.short_description.length > 100;
+  const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
 
 
   return (
@@ -235,7 +241,19 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                 Write a review
             </Button>
             
-            <CardDescription className="text-sm line-clamp-3 pt-1">{product.short_description}</CardDescription>
+            {product.short_description && (
+            <div className="w-full pt-2">
+                <h4 className="font-headline text-md font-semibold">Description</h4>
+                <CardDescription className={cn("text-sm pt-1", !isDescriptionExpanded && "line-clamp-2")}>
+                    {product.short_description}
+                </CardDescription>
+                {isLongDescription && (
+                    <Button variant="link" size="sm" onClick={toggleDescription} className="p-0 h-auto text-xs">
+                        {isDescriptionExpanded ? 'See less' : 'See more'}
+                    </Button>
+                )}
+            </div>
+            )}
             
             <div className="w-full pt-2">
               <Separator className="my-2" />
@@ -250,3 +268,5 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
     </motion.div>
   );
 }
+
+    

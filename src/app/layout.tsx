@@ -3,6 +3,7 @@ import { AppProvider } from '@/context/AppContext';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import './globals.css';
+import PageTransition from '@/components/shared/PageTransition';
 
 export const metadata: Metadata = {
   title: 'VoucherVerse',
@@ -26,7 +27,9 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-background')}>
         <AppProvider>
-          {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           <Toaster />
         </AppProvider>
       </body>

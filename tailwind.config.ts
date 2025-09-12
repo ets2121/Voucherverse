@@ -95,11 +95,16 @@ export default {
             height: '0',
           },
         },
+        'shimmer': {
+          from: { backgroundPosition: '200% 0' },
+          to: { backgroundPosition: '-200% 0' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'grid': 'grid 15s linear infinite',
+        'shimmer': 'shimmer 2s ease-in-out infinite',
       },
       backgroundImage: {
         'grid-white/[0.02]': 'linear-gradient(to right, hsla(0, 0%, 100%, 0.02) 1px, transparent 1px), linear-gradient(to bottom, hsla(0, 0%, 100%, 0.02) 1px, transparent 1px)',

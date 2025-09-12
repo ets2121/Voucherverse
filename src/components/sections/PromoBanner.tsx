@@ -3,10 +3,8 @@
 
 import { useRef, useMemo } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useProducts } from '@/hooks/useProducts';
 import { useAppContext } from '@/context/AppContext';
-import { Card, CardContent } from '@/components/ui/card';
 import {
   Carousel,
   CarouselContent,
@@ -14,31 +12,27 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { motion } from 'framer-motion';
 import config from '@/../public/config/promoBannerConfig.json';
-import productCardConfig from '@/../public/productCardConfig.json';
-import { useRouter } from 'next/navigation';
 
 const PromoBannerSkeleton = () => (
   <section className="py-12 md:py-16 bg-card">
     <div className="container mx-auto px-4">
       <Skeleton className="h-10 w-1/2 mx-auto mb-12" />
       <div className="flex justify-center">
-        <Skeleton className="h-[400px] w-full max-w-4xl" />
+        <Skeleton className="h-[200px] w-full max-w-2xl" />
       </div>
     </div>
   </section>
 );
 
 export default function PromoBanner() {
-  const { business, openModal } = useAppContext();
+  const { business } = useAppContext();
   const { products, isLoading, error } = useProducts(business?.id);
-  const router = useRouter();
 
   const promoProducts = useMemo(() => {
     if (!products) return [];
@@ -85,7 +79,7 @@ export default function PromoBanner() {
             align: 'start',
             loop: true,
           }}
-          className="w-full max-w-5xl mx-auto"
+          className="w-full max-w-2xl mx-auto"
           onMouseEnter={plugin.current.stop}
           onMouseLeave={plugin.current.reset}
         >
@@ -100,42 +94,42 @@ export default function PromoBanner() {
               return (
                 <CarouselItem key={product.id}>
                   <div className="p-1">
-                    <div className="relative rounded-lg overflow-hidden p-6 md:p-8 bg-gradient-to-r from-primary/20 to-accent/20">
+                    <div className="relative rounded-lg overflow-hidden p-4 md:p-6 bg-gradient-to-r from-primary/20 to-accent/20">
                        <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)]"></div>
-                       <div className="grid md:grid-cols-5 gap-6 items-center relative z-10">
+                       <div className="grid grid-cols-3 gap-4 items-center relative z-10">
                         <motion.div
-                            className="md:col-span-2"
+                            className="col-span-1"
                             initial={{ opacity: 0, x: -50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.7 }}
                         >
-                            <div className="relative aspect-square w-full max-w-[120px] mx-auto md:max-w-none">
+                            <div className="relative aspect-square w-full max-w-[80px] mx-auto">
                                 <Image
                                     src={product.image_url || `https://picsum.photos/300/300?random=${product.id}`}
                                     alt={product.name}
                                     fill
                                     data-ai-hint="product shoe"
-                                    className="rounded-lg object-contain"
+                                    className="rounded-lg object-contain filter blur-sm"
                                 />
                             </div>
                         </motion.div>
                         <motion.div 
-                            className="text-center md:text-left md:col-span-3"
+                            className="text-left col-span-2"
                             initial={{ opacity: 0, x: 50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.7, delay: 0.2 }}
                         >
                             {discountPercent > 0 && (
-                                <p className="font-bold text-lg md:text-xl text-accent">
-                                    GET UP TO <span className="text-white">{discountPercent}%</span> OFF
+                                <p className="font-bold text-base md:text-lg text-accent">
+                                    <span className="text-white">{discountPercent}%</span> OFF
                                 </p>
                             )}
-                             <h3 className="font-headline text-lg md:text-xl font-bold mt-1 text-white">
+                             <h3 className="font-headline text-base md:text-lg font-bold mt-1 text-white">
                                 {product.name}
                             </h3>
-                            <p className="text-muted-foreground mt-2 line-clamp-2 text-sm">
+                            <p className="text-muted-foreground mt-1 line-clamp-2 text-xs">
                                 {product.short_description}
                             </p>
                         </motion.div>

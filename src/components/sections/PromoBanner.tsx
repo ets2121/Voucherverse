@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRef, useMemo } from 'react';
@@ -21,9 +22,9 @@ import config from '@/config/promoBannerConfig.json';
 import productCardConfig from '@/config/productCardConfig.json';
 
 const PromoBannerSkeleton = () => (
-  <section className="py-8 bg-card">
+  <section className="py-2 bg-card">
     <div className="container mx-auto px-4">
-      <Skeleton className="h-8 w-1/3 mx-auto mb-6" />
+      <Skeleton className="h-8 w-1/3 mx-auto mb-4" />
       <div className="flex justify-center">
         <Skeleton className="h-[150px] w-full max-w-xl" />
       </div>
@@ -56,7 +57,7 @@ export default function PromoBanner() {
 
   if (error) {
     return (
-      <section className="py-8 bg-card">
+      <section className="py-2 bg-card">
         <div className="container mx-auto px-4">
           <Alert variant="destructive" className="max-w-lg mx-auto">
             <AlertTriangle className="h-4 w-4" />
@@ -75,9 +76,9 @@ export default function PromoBanner() {
   }
 
   return (
-    <section id="promo-banner" className="py-8 bg-card overflow-hidden">
+    <section id="promo-banner" className="py-2 bg-card overflow-hidden">
       <div className="container mx-auto px-4">
-        <h2 className="text-lg font-medium text-center text-muted-foreground mb-4">
+        <h2 className="text-lg font-medium text-center text-muted-foreground mb-2">
           {config.title}
         </h2>
         <Carousel

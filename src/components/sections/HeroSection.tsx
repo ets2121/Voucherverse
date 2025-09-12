@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
@@ -26,8 +27,22 @@ export default function HeroSection() {
     return text.replace('{businessName}', business?.name || 'VoucherVerse');
   }
 
+  const sectionStyle = config.backgroundImageUrl 
+    ? { backgroundImage: `url(${config.backgroundImageUrl})` }
+    : {};
+
   return (
-    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center bg-grid-white/[0.05]">
+    <section 
+      className="relative pt-32 pb-20 md:pt-48 md:pb-32 text-center bg-cover bg-center bg-no-repeat"
+      style={sectionStyle}
+      data-ai-hint="background abstract"
+    >
+        {/* Overlay */}
+        <div 
+            className="absolute inset-0 bg-background"
+            style={{ opacity: config.backgroundImageUrl ? config.backgroundOverlayOpacity : 0 }}
+        ></div>
+
         <div 
           className="absolute pointer-events-none inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]">
         </div>

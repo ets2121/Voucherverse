@@ -4,7 +4,9 @@
     "subtitle": "Secondary text appearing below the title.",
     "additionalText": "An array of strings for extra lines of text. Each string is a new paragraph.",
     "buttons": "An array of button objects. 'text' is the button label. 'action' can be 'scrollTo' (to scroll to an element ID) or 'redirect' (to navigate to a new page). 'target' is the ID or URL path.",
-    "animation": "Settings for the entrance animations. 'duration' is the base speed in seconds. 'delayIncrement' is the additional delay for each subsequent animated element."
+    "animation": "Settings for the entrance animations. 'duration' is the base speed in seconds. 'delayIncrement' is the additional delay for each subsequent animated element.",
+    "backgroundImageUrl": "URL for the hero section background image. Leave empty for no image.",
+    "backgroundOverlayOpacity": "A value from 0 (transparent) to 1 (solid) for the dark overlay on the background image. Helps with text readability."
   },
   "title": "Welcome to {businessName}",
   "subtitle": "Discover amazing deals and exclusive vouchers just for you.",
@@ -19,5 +21,7 @@
   "animation": {
     "duration": 0.5,
     "delayIncrement": 0.1
-  }
+  },
+  "backgroundImageUrl": "https://picsum.photos/seed/hero/1920/1080",
+  "backgroundOverlayOpacity": 0.5
 }

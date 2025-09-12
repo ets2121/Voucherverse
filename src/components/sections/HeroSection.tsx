@@ -3,7 +3,7 @@
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import config from '@/../public/config/heroConfig.json';
+import config from '@/config/heroConfig.json';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 

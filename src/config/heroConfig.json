@@ -1,0 +1,23 @@
+{
+  "_comments": {
+    "title": "Main headline for the hero section. Use {businessName} as a placeholder for the business name.",
+    "subtitle": "Secondary text appearing below the title.",
+    "additionalText": "An array of strings for extra lines of text. Each string is a new paragraph.",
+    "buttons": "An array of button objects. 'text' is the button label. 'action' can be 'scrollTo' (to scroll to an element ID) or 'redirect' (to navigate to a new page). 'target' is the ID or URL path.",
+    "animation": "Settings for the entrance animations. 'duration' is the base speed in seconds. 'delayIncrement' is the additional delay for each subsequent animated element."
+  },
+  "title": "Welcome to {businessName}",
+  "subtitle": "Discover amazing deals and exclusive vouchers just for you.",
+  "additionalText": [],
+  "buttons": [
+    {
+      "text": "Explore Deals",
+      "action": "redirect",
+      "target": "/products"
+    }
+  ],
+  "animation": {
+    "duration": 0.5,
+    "delayIncrement": 0.1
+  }
+}

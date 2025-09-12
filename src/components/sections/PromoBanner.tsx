@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRef, useMemo } from 'react';
@@ -18,8 +17,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { motion } from 'framer-motion';
-import config from '@/../public/config/promoBannerConfig.json';
-import productCardConfig from '@/../public/config/productCardConfig.json';
+import config from '@/config/promoBannerConfig.json';
+import productCardConfig from '@/config/productCardConfig.json';
 
 const PromoBannerSkeleton = () => (
   <section className="py-12 md:py-16 bg-card">

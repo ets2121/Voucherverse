@@ -1,0 +1,28 @@
+{
+    "_comments": {
+        "currency_symbol": "The currency symbol to be displayed for prices.",
+        "display": {
+            "_comment": "Controls what elements are shown on the product card.",
+            "show_rating_on_card": "If true, shows the star rating on the main product card.",
+            "show_review_count_on_card": "If true, shows the number of reviews next to the star rating.",
+            "show_description_on_card": "If true, displays the product's short description on the card.",
+            "show_reviews_on_card": "If true, displays a list of recent customer reviews on the card."
+        },
+        "badge": {
+            "_comment": "Configuration for badges displayed on the product image.",
+            "discount_variant": "The visual style of the discount badge. Corresponds to badge variants in 'src/components/ui/badge.tsx'. Options: 'default', 'secondary', 'destructive', 'outline'.",
+            "promo_type_classes": "Direct Tailwind CSS classes for styling the 'promo_type' badge."
+        }
+    },
+    "currency_symbol": "$",
+    "display": {
+        "show_rating_on_card": true,
+        "show_review_count_on_card": true,
+        "show_description_on_card": true,
+        "show_reviews_on_card": true
+    },
+    "badge": {
+        "discount_variant": "destructive",
+        "promo_type_classes": "text-xs font-bold uppercase tracking-wider bg-accent text-accent-foreground px-2 py-0.5 rounded-full"
+    }
+}

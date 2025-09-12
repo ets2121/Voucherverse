@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRef } from 'react';
@@ -21,7 +20,7 @@ import { AlertTriangle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Autoplay from 'embla-carousel-autoplay';
-import config from '@/../public/config/testimonialsConfig.json';
+import config from '@/config/testimonialsConfig.json';
 
 
 const fetcher = (url: string) => fetch(url).then((res) => {

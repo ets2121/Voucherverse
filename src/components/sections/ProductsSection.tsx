@@ -154,8 +154,8 @@ export default function ProductsSection() {
             </header>
             <main className="flex-1 overflow-y-auto pt-4">
               <div className="container mx-auto px-4 pb-8">
-                <div className="max-w-lg mx-auto">
-                  <ProductCard product={selectedProduct} onClaimVoucher={openModal} />
+                <div className="max-w-4xl mx-auto">
+                  <ProductCard product={selectedProduct} onClaimVoucher={openModal} isDetailedView={true} />
                 </div>
               </div>
             </main>

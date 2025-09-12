@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 interface ProductCardProps {
   product: Product;
   onClaimVoucher: (voucher: Voucher) => void;
+  isDetailedView?: boolean;
 }
 
 const fetcher = (url: string) => fetch(url).then(res => {
@@ -85,7 +86,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 };
 
 
-export default function ProductCard({ product, onClaimVoucher }: ProductCardProps) {
+export default function ProductCard({ product, onClaimVoucher, isDetailedView = false }: ProductCardProps) {
   const { openReviewModal } = useAppContext();
   const voucher = product.voucher;
   const { currency_symbol, display: displayConfig, badge: badgeConfig } = productCardConfig;
@@ -120,56 +121,49 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
   const isLongDescription = product.short_description && product.short_description.length > 100;
   const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
 
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="h-full"
-    >
-      <Card className="h-full flex flex-col overflow-hidden bg-card transition-all duration-300 group hover:shadow-lg hover:-translate-y-1">
-        <CardHeader className="p-0">
-           <div className="relative h-48 w-full overflow-hidden">
-            <Image
-              src={product.image_url || `https://picsum.photos/400/300?random=${product.id}`}
-              alt={product.name}
-              fill
-              data-ai-hint="product food"
-              className="object-contain transition-transform duration-300 group-hover:scale-105"
-            />
-            {hasDiscount && discountPercent > 0 && (
-              <Badge 
-                variant={badgeConfig.discount_variant as any} 
-                className="absolute top-2 right-2"
-              >
-                <Tag className="w-3 h-3 mr-1"/> {discountPercent}% OFF
-              </Badge>
-            )}
-            {voucher?.promo_type && (
-                <div className="absolute bottom-2 left-2 inline-block">
-                    <div className={badgeConfig.promo_type_classes}>
-                      {voucher.promo_type}
-                    </div>
-                </div>
-            )}
-          </div>
-          <div className="p-4 space-y-2">
-            <CardTitle className="font-headline pt-1 text-xl line-clamp-1">{product.name}</CardTitle>
+  const cardContent = (
+      <>
+        <div className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none">
+          <Image
+            src={product.image_url || `https://picsum.photos/400/300?random=${product.id}`}
+            alt={product.name}
+            fill
+            data-ai-hint="product food"
+            className="object-contain transition-transform duration-300 group-hover:scale-105"
+          />
+          {hasDiscount && discountPercent > 0 && (
+            <Badge 
+              variant={badgeConfig.discount_variant as any} 
+              className="absolute top-2 right-2"
+            >
+              <Tag className="w-3 h-3 mr-1"/> {discountPercent}% OFF
+            </Badge>
+          )}
+          {voucher?.promo_type && (
+              <div className="absolute bottom-2 left-2 inline-block">
+                  <div className={badgeConfig.promo_type_classes}>
+                    {voucher.promo_type}
+                  </div>
+              </div>
+          )}
+        </div>
+        <div className="flex flex-col flex-grow">
+          <CardHeader className="p-4 space-y-2">
+            <CardTitle className="font-headline pt-1 text-xl lg:text-2xl line-clamp-1">{product.name}</CardTitle>
             
             {product.price && (
               <div className="flex items-baseline gap-2">
                 {discountedPrice !== null ? (
                   <>
-                    <p className="text-2xl font-bold text-primary">
+                    <p className="text-2xl lg:text-3xl font-bold text-primary">
                       {currency_symbol}{discountedPrice.toFixed(2)}
                     </p>
-                    <p className="text-md text-muted-foreground line-through">
+                    <p className="text-md lg:text-lg text-muted-foreground line-through">
                       {currency_symbol}{product.price.toFixed(2)}
                     </p>
                   </>
                 ) : (
-                  <p className="text-2xl font-bold text-foreground">
+                  <p className="text-2xl lg:text-3xl font-bold text-foreground">
                     {currency_symbol}{product.price.toFixed(2)}
                   </p>
                 )}
@@ -182,90 +176,105 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                   showReviewCount={displayConfig.show_review_count_on_card}
               />
             )}
-          </div>
-        </CardHeader>
-        <CardContent className="flex-grow p-4 pt-0">
-           {voucher && !hasDiscount && (
-             <div className="bg-primary/10 p-3 rounded-lg border border-dashed border-primary space-y-2 flex items-center gap-3">
-                  <Ticket className="w-5 h-5 text-primary shrink-0" />
-                  <div>
-                    <p className="font-bold text-sm text-primary">{voucher.description}</p>
-                    <p className="text-xs text-primary/80">
-                      Special voucher available!
-                    </p>
-                  </div>
-              </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex-col items-start gap-3 p-4 pt-2 mt-auto">
-          {voucher && (
-            <>
-              <div className="w-full">
-                <div className="flex justify-between items-center mb-1">
-                    <p className="text-xs text-muted-foreground font-medium">Vouchers Claimed</p>
-                    <AnimatePresence mode="wait">
-                      <motion.p 
-                        key={voucher.claimed_count}
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.2 }}
-                        className="text-xs font-bold text-accent"
-                      >
-                        {voucher.max_claims ? `${claimsLeft} left` : 'Unlimited claims'}
-                      </motion.p>
-                    </AnimatePresence>
+          </CardHeader>
+          <CardContent className="flex-grow p-4 pt-0">
+            {voucher && !hasDiscount && (
+              <div className="bg-primary/10 p-3 rounded-lg border border-dashed border-primary space-y-2 flex items-center gap-3">
+                    <Ticket className="w-5 h-5 text-primary shrink-0" />
+                    <div>
+                      <p className="font-bold text-sm text-primary">{voucher.description}</p>
+                      <p className="text-xs text-primary/80">
+                        Special voucher available!
+                      </p>
+                    </div>
                 </div>
-                {voucher.max_claims && (
-                    <Progress value={claimedPercentage} className="h-2" />
-                )}
-                <div className="mt-2">
-                    <CountdownTimer expiryDate={voucher.end_date} />
-                </div>
-              </div>
-              <Button 
-                className="w-full" 
-                onClick={() => onClaimVoucher(voucher)}
-                disabled={isSoldOut}
-              >
-                {isSoldOut ? 'Fully Claimed' : 'Claim Voucher'}
-              </Button>
-            </>
-          )}
-           {!voucher && (
-             <p className="w-full text-center text-sm text-muted-foreground pt-4">No voucher available for this product.</p>
-           )}
-
-            <Button variant="outline" size="sm" className="w-full" onClick={() => openReviewModal(product)}>
-                <MessageSquareQuote className="mr-2 h-4 w-4" />
-                Write a review
-            </Button>
-            
-            {displayConfig.show_description_on_card && product.short_description && (
-              <div className="w-full pt-2">
+            )}
+             {displayConfig.show_description_on_card && product.short_description && (
+              <div className="w-full pt-4">
                   <h4 className="font-headline text-md font-semibold">Description</h4>
-                  <CardDescription className={cn("text-sm pt-1", !isDescriptionExpanded && "line-clamp-2")}>
+                  <CardDescription className={cn("text-sm pt-1", !isDetailedView && !isDescriptionExpanded && "line-clamp-2")}>
                       {product.short_description}
                   </CardDescription>
-                  {isLongDescription && (
+                  {!isDetailedView && isLongDescription && (
                       <Button variant="link" size="sm" onClick={toggleDescription} className="p-0 h-auto text-xs">
                           {isDescriptionExpanded ? 'See less' : 'See more'}
                       </Button>
                   )}
               </div>
             )}
-            
-            {displayConfig.show_reviews_on_card && (
-              <div className="w-full pt-2">
-                <Separator className="my-2" />
-                <ProductReviews 
-                  reviews={reviews} 
-                  isLoading={reviewsLoading} 
-                  error={reviewsError} 
-                />
-              </div>
+          </CardContent>
+          <CardFooter className="flex-col items-start gap-3 p-4 pt-2 mt-auto">
+            {voucher && (
+              <>
+                <div className="w-full">
+                  <div className="flex justify-between items-center mb-1">
+                      <p className="text-xs text-muted-foreground font-medium">Vouchers Claimed</p>
+                      <AnimatePresence mode="wait">
+                        <motion.p 
+                          key={voucher.claimed_count}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-xs font-bold text-accent"
+                        >
+                          {voucher.max_claims ? `${claimsLeft} left` : 'Unlimited claims'}
+                        </motion.p>
+                      </AnimatePresence>
+                  </div>
+                  {voucher.max_claims && (
+                      <Progress value={claimedPercentage} className="h-2" />
+                  )}
+                  <div className="mt-2">
+                      <CountdownTimer expiryDate={voucher.end_date} />
+                  </div>
+                </div>
+                <Button 
+                  className="w-full" 
+                  onClick={() => onClaimVoucher(voucher)}
+                  disabled={isSoldOut}
+                >
+                  {isSoldOut ? 'Fully Claimed' : 'Claim Voucher'}
+                </Button>
+              </>
             )}
-        </CardFooter>
+            {!voucher && (
+              <p className="w-full text-center text-sm text-muted-foreground pt-4">No voucher available for this product.</p>
+            )}
+
+              <Button variant="outline" size="sm" className="w-full" onClick={() => openReviewModal(product)}>
+                  <MessageSquareQuote className="mr-2 h-4 w-4" />
+                  Write a review
+              </Button>
+              
+              {isDetailedView && displayConfig.show_reviews_on_card && (
+                <div className="w-full pt-2">
+                  <Separator className="my-2" />
+                  <ProductReviews 
+                    reviews={reviews} 
+                    isLoading={reviewsLoading} 
+                    error={reviewsError} 
+                  />
+                </div>
+              )}
+          </CardFooter>
+        </div>
+      </>
+  );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="h-full"
+    >
+      <Card className={cn(
+          "h-full flex flex-col overflow-hidden bg-card transition-all duration-300",
+          !isDetailedView && "group hover:shadow-lg hover:-translate-y-1",
+          isDetailedView && "md:grid md:grid-cols-2 md:gap-0"
+        )}>
+        {cardContent}
       </Card>
     </motion.div>
   );

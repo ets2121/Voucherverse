@@ -29,7 +29,7 @@ const PromoBannerSkeleton = () => (
     <div className="container mx-auto px-4">
       <Skeleton className="h-10 w-1/2 mx-auto mb-12" />
       <div className="flex justify-center">
-        <Skeleton className="h-[400px] w-full max-w-6xl" />
+        <Skeleton className="h-[400px] w-full max-w-4xl" />
       </div>
     </div>
   </section>
@@ -85,7 +85,7 @@ export default function PromoBanner() {
             align: 'start',
             loop: true,
           }}
-          className="w-full max-w-6xl mx-auto"
+          className="w-full max-w-5xl mx-auto"
           onMouseEnter={plugin.current.stop}
           onMouseLeave={plugin.current.reset}
         >
@@ -100,23 +100,25 @@ export default function PromoBanner() {
               return (
                 <CarouselItem key={product.id}>
                   <div className="p-1">
-                    <div className="relative rounded-lg overflow-hidden p-8 md:p-12 bg-gradient-to-r from-primary/20 to-accent/20">
+                    <div className="relative rounded-lg overflow-hidden p-6 md:p-8 bg-gradient-to-r from-primary/20 to-accent/20">
                        <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)]"></div>
-                       <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
+                       <div className="grid md:grid-cols-2 gap-6 items-center relative z-10">
                         <motion.div
                             initial={{ opacity: 0, x: -50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.7 }}
                         >
-                            <Image
-                                src={product.image_url || `https://picsum.photos/600/400?random=${product.id}`}
-                                alt={product.name}
-                                width={600}
-                                height={400}
-                                data-ai-hint="product shoe"
-                                className="rounded-lg object-contain aspect-video"
-                            />
+                            <div className="aspect-video w-full">
+                                <Image
+                                    src={product.image_url || `https://picsum.photos/600/400?random=${product.id}`}
+                                    alt={product.name}
+                                    width={600}
+                                    height={400}
+                                    data-ai-hint="product shoe"
+                                    className="rounded-lg w-full h-full object-contain"
+                                />
+                            </div>
                         </motion.div>
                         <motion.div 
                             className="text-center md:text-left"
@@ -126,17 +128,17 @@ export default function PromoBanner() {
                             transition={{ duration: 0.7, delay: 0.2 }}
                         >
                             {discountPercent > 0 && (
-                                <p className="font-bold text-3xl md:text-5xl text-accent">
+                                <p className="font-bold text-2xl md:text-4xl text-accent">
                                     GET UP TO <span className="text-white">{discountPercent}%</span> OFF
                                 </p>
                             )}
-                             <h3 className="font-headline text-2xl md:text-4xl font-bold mt-2 text-white">
+                             <h3 className="font-headline text-xl md:text-3xl font-bold mt-1 text-white">
                                 {product.name}
                             </h3>
-                            <p className="text-muted-foreground mt-4 line-clamp-2">
+                            <p className="text-muted-foreground mt-3 line-clamp-2 text-sm md:text-base">
                                 {product.short_description}
                             </p>
-                            <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                            <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                                 <Button size="lg" onClick={() => openModal(product.voucher!)}>Claim Now</Button>
                                 <Button size="lg" variant="outline" asChild>
                                     <Link href="/products">Shop All Deals</Link>

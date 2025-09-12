@@ -14,12 +14,14 @@ import VoucherModal from '@/components/shared/VoucherModal';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import ProductsSection from '@/components/sections/ProductsSection';
+import PromoBanner from '@/components/sections/PromoBanner';
 
 const sectionComponents: Record<string, FC> = {
   hero: HeroSection,
   services: ServicesSection,
   testimonials: TestimonialsSection,
   products: ProductsSection,
+  promoBanner: PromoBanner,
 };
 
 const LoadingSkeleton = () => (

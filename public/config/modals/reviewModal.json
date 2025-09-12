@@ -1,12 +1,20 @@
 {
+  "_comments": {
+    "all": "This configuration file controls the text and labels displayed in the 'Write a Review' modal.",
+    "default": "Settings for the initial view of the modal where the user fills out the form.",
+    "submitting": "Text displayed while the review is being submitted.",
+    "success": "Content shown after a review is successfully submitted.",
+    "error": "Content shown when an unexpected error occurs.",
+    "alreadySubmitted": "Content shown if the user has already submitted a review for this product."
+  },
   "default": {
-    "title": "Leave a Review for",
-    "description": "Your feedback helps us improve. Please share your experience.",
+    "title": "Share Your Thoughts on",
+    "description": "Your feedback helps us and other customers. Please share your experience with this product.",
     "ratingLabel": "Your Rating",
     "emailLabel": "Your Email",
     "emailPlaceholder": "you@example.com",
     "reviewLabel": "Your Review (Optional)",
-    "reviewPlaceholder": "Tell us what you think...",
+    "reviewPlaceholder": "Tell us what you liked or disliked...",
     "cancelButton": "Cancel",
     "submitButton": "Submit Review"
   },
@@ -15,16 +23,16 @@
   },
   "success": {
     "title": "Review Submitted!",
-    "message": "Thank you for your valuable feedback.",
+    "message": "Thank you for your feedback. Your review has been received.",
     "buttonText": "Done"
+  },
+  "error": {
+    "title": "Submission Failed",
+    "buttonText": "Try Again"
   },
   "alreadySubmitted": {
     "title": "Already Reviewed",
     "message": "It looks like you have already submitted a review for this product with this email address.",
     "buttonText": "Close"
-  },
-  "error": {
-    "title": "Submission Failed",
-    "buttonText": "Try Again"
   }
 }

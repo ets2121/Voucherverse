@@ -1,4 +1,15 @@
 {
+  "_comments": {
+    "currency_symbol": "The currency symbol to be displayed for product prices (e.g., '$', '€', '£').",
+    "display": "Controls the visibility of different sections on the product card.",
+    "show_rating_on_card": "Set to true to show the star rating, or false to hide it.",
+    "show_review_count_on_card": "Set to true to show the total number of reviews next to the stars, or false to hide it.",
+    "show_description_on_card": "Set to true to display the product's short description on the card.",
+    "show_reviews_on_card": "Set to true to display the customer reviews section directly on the card.",
+    "badge": "Controls the appearance of badges on the product card.",
+    "discount_variant": "Style for the discount percentage badge. Options: 'default', 'secondary', 'destructive', 'outline'.",
+    "promo_type_classes": "Tailwind CSS classes for the promo type badge (e.g., 'BOGO'). This allows for custom styling."
+  },
   "currency_symbol": "$",
   "display": {
     "show_rating_on_card": true,
@@ -8,6 +19,6 @@
   },
   "badge": {
     "discount_variant": "destructive",
-    "promo_type_classes": "relative text-xs font-semibold text-accent-foreground bg-accent px-3 py-1 rounded-sm shadow-md"
+    "promo_type_classes": "relative z-10 text-xs font-bold uppercase tracking-wider text-accent-foreground bg-accent px-2 py-1 rounded-sm"
   }
 }

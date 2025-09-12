@@ -1,43 +1,26 @@
 {
+  "_comments": {
+    "navigation": "This array controls the navigation links in the header. The 'href' must correspond to a valid page route. The 'label' is the display text for the link.",
+    "sections": "This array defines the order of sections on the homepage. The names must match keys in the 'sectionComponents' object in 'src/app/page.tsx'. Available sections: 'hero', 'products', 'services', 'testimonials'."
+  },
+  "navigation": [
+    {
+      "href": "/",
+      "label": "Home"
+    },
+    {
+      "href": "/products",
+      "label": "Deals"
+    },
+    {
+      "href": "/testimonials",
+      "label": "Testimonials"
+    }
+  ],
   "sections": [
     "hero",
+    "products",
     "services",
     "testimonials"
-  ],
-  "navigation": [
-    { "href": "/", "label": "Home" },
-    { "href": "/products", "label": "Deals" },
-    { "href": "/testimonials", "label": "Testimonials" }
-  ],
-  "modalConfig": {
-    "default": {
-      "title": "Claim Your Voucher",
-      "emailLabel": "Enter your email to claim",
-      "emailPlaceholder": "you@example.com",
-      "submitButton": "Claim Now",
-      "cancelButton": "Cancel"
-    },
-    "submitting": {
-        "submitButton": "Claiming..."
-    },
-    "success": {
-      "title": "Voucher Claimed!",
-      "message": "Success! We've sent the voucher details to your email. Enjoy your deal!",
-      "buttonText": "Done"
-    },
-    "alreadyClaimed": {
-      "title": "Voucher Already Claimed",
-      "message": "It looks like you've already claimed this voucher with this email address.",
-      "buttonText": "Close"
-    },
-    "expired": {
-        "title": "Voucher Expired",
-        "message": "We're sorry, but this promotion has already ended.",
-        "buttonText": "Close"
-    },
-    "error": {
-      "title": "Claim Failed",
-      "buttonText": "Try Again"
-    }
-  }
+  ]
 }

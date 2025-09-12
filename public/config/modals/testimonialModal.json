@@ -1,8 +1,16 @@
 {
+  "_comments": {
+    "all": "This configuration file controls the text and labels displayed in the 'Submit a Testimonial' modal.",
+    "default": "Settings for the initial view of the modal where the user fills out the form.",
+    "submitting": "Text displayed while the testimonial is being submitted.",
+    "success": "Content shown after a testimonial is successfully submitted.",
+    "error": "Content shown when an unexpected error occurs.",
+    "alreadySubmitted": "Content shown if the user's email has already been used for a testimonial."
+  },
   "default": {
-    "title": "Share Your Experience",
-    "description": "We'd love to hear from you! Your feedback helps us and other customers.",
-    "ratingLabel": "Overall Rating",
+    "title": "Leave a Testimonial",
+    "description": "We'd love to hear about your experience with us. Your feedback is greatly appreciated!",
+    "ratingLabel": "Your Overall Rating",
     "emailLabel": "Your Email",
     "emailPlaceholder": "you@example.com",
     "nameLabel": "Your Name (Optional)",
@@ -17,16 +25,16 @@
   },
   "success": {
     "title": "Thank You!",
-    "message": "Your testimonial has been submitted successfully. We appreciate your support!",
+    "message": "Your testimonial has been received. We appreciate you taking the time to share your feedback.",
     "buttonText": "Done"
-  },
-  "alreadySubmitted": {
-    "title": "Already Submitted",
-    "message": "It looks like you've already shared a testimonial with this email. Thank you for your feedback!",
-    "buttonText": "Close"
   },
   "error": {
     "title": "Submission Failed",
     "buttonText": "Try Again"
+  },
+  "alreadySubmitted": {
+    "title": "Already Submitted",
+    "message": "It looks like you have already submitted a testimonial with this email address. Thank you for your feedback!",
+    "buttonText": "Close"
   }
 }

@@ -1,8 +1,17 @@
 {
+  "_comments": {
+    "all": "This configuration file controls the text and labels displayed in the 'Claim Voucher' modal.",
+    "default": "Settings for the initial view of the modal where the user enters their email.",
+    "submitting": "Text displayed while the claim is being processed.",
+    "success": "Content shown after a voucher is successfully claimed.",
+    "error": "Content shown when an unexpected error occurs.",
+    "alreadyClaimed": "Content shown if the user has already claimed this voucher.",
+    "expired": "Content shown if the voucher has expired."
+  },
   "default": {
     "title": "Claim Your Voucher",
     "emailLabel": "Email Address",
-    "emailPlaceholder": "you@example.com",
+    "emailPlaceholder": "Enter your email to claim",
     "cancelButton": "Cancel",
     "submitButton": "Claim Now"
   },
@@ -11,21 +20,21 @@
   },
   "success": {
     "title": "Voucher Claimed!",
-    "message": "Your voucher has been successfully claimed. Check your email for details.",
-    "buttonText": "Done"
-  },
-  "alreadyClaimed": {
-    "title": "Already Claimed",
-    "message": "It looks like you have already claimed this voucher with this email address.",
-    "buttonText": "Close"
-  },
-  "expired": {
-    "title": "Voucher Expired",
-    "message": "Unfortunately, this voucher is no longer valid.",
-    "buttonText": "Close"
+    "message": "Success! A confirmation has been sent to your email with instructions on how to use your voucher.",
+    "buttonText": "Great!"
   },
   "error": {
     "title": "Claim Failed",
     "buttonText": "Try Again"
+  },
+  "alreadyClaimed": {
+    "title": "Already Claimed",
+    "message": "It looks like you've already claimed this voucher with this email address. Please check your inbox.",
+    "buttonText": "Close"
+  },
+  "expired": {
+    "title": "Voucher Expired",
+    "message": "Unfortunately, this voucher has expired and is no longer available to be claimed.",
+    "buttonText": "Close"
   }
 }

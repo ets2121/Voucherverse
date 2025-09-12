@@ -39,8 +39,11 @@ export default function HeroSection() {
     >
         {/* Overlay */}
         <div 
-            className="absolute inset-0 bg-background"
-            style={{ opacity: config.backgroundImageUrl ? config.backgroundOverlayOpacity : 0 }}
+            className="absolute inset-0"
+            style={{ 
+              backgroundColor: config.backgroundOverlayColor,
+              opacity: config.backgroundImageUrl ? config.backgroundOverlayOpacity : 0 
+            }}
         ></div>
 
         <div 

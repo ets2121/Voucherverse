@@ -6,7 +6,8 @@
     "buttons": "An array of button objects. 'text' is the button label. 'action' can be 'scrollTo' (to scroll to an element ID) or 'redirect' (to navigate to a new page). 'target' is the ID or URL path.",
     "animation": "Settings for the entrance animations. 'duration' is the base speed in seconds. 'delayIncrement' is the additional delay for each subsequent animated element.",
     "backgroundImageUrl": "URL for the hero section background image. Leave empty for no image.",
-    "backgroundOverlayOpacity": "A value from 0 (transparent) to 1 (solid) for the dark overlay on the background image. Helps with text readability."
+    "backgroundOverlayColor": "The CSS color (e.g., 'rgba(0, 0, 0, 0.5)', '#000000', 'hsl(0, 0%, 0%)') for the overlay. This helps with text readability.",
+    "backgroundOverlayOpacity": "A value from 0 (transparent) to 1 (solid) for the overlay on the background image. This is applied on top of the color's own alpha channel."
   },
   "title": "Welcome to {businessName}",
   "subtitle": "Discover amazing deals and exclusive vouchers just for you.",
@@ -23,5 +24,6 @@
     "delayIncrement": 0.1
   },
   "backgroundImageUrl": "https://picsum.photos/seed/hero/1920/1080",
-  "backgroundOverlayOpacity": 0.5
+  "backgroundOverlayColor": "hsl(260 6% 15%)",
+  "backgroundOverlayOpacity": 0.7
 }

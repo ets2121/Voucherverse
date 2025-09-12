@@ -19,7 +19,7 @@ import { AlertTriangle } from 'lucide-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { motion } from 'framer-motion';
 import config from '@/../public/config/promoBannerConfig.json';
-import productCardConfig from '@/../public/productCardConfig.json';
+import productCardConfig from '@/../public/config/productCardConfig.json';
 
 const PromoBannerSkeleton = () => (
   <section className="py-12 md:py-16 bg-card">

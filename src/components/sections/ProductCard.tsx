@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Ticket, Clock, Tag, MessageSquareQuote } from 'lucide-react';
 import { differenceInSeconds } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import productCardConfig from '@/../public/productCardConfig.json';
+import productCardConfig from '@/../public/config/productCardConfig.json';
 import { useAppContext } from '@/context/AppContext';
 import { Separator } from '@/components/ui/separator';
 import ProductReviews from '@/components/shared/ProductReviews';

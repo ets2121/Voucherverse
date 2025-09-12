@@ -6,7 +6,7 @@ import type { Product } from '@/lib/types';
 import StarRating from '@/components/shared/StarRating';
 import { Tag } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import productCardConfig from '@/../public/productCardConfig.json';
+import productCardConfig from '@/../public/config/productCardConfig.json';
 import { motion } from 'framer-motion';
 
 interface ProductCardSmallProps {

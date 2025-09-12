@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -98,6 +99,7 @@ export default function VoucherModal() {
   }
   
   const renderContent = () => {
+    const config = modalConfig.voucherModal;
     return (
       <AnimatePresence>
         <motion.div
@@ -110,40 +112,40 @@ export default function VoucherModal() {
         {claimStatus === 'success' && (
           <div className="text-center flex flex-col items-center gap-4 p-8">
             <CheckCircle className="w-16 h-16 text-green-500" />
-            <h2 className="text-2xl font-headline">{modalConfig.success.title}</h2>
-            <p className="text-muted-foreground">{modalConfig.success.message}</p>
-            <Button onClick={closeModal} className="mt-4">{modalConfig.success.buttonText}</Button>
+            <h2 className="text-2xl font-headline">{config.success.title}</h2>
+            <p className="text-muted-foreground">{config.success.message}</p>
+            <Button onClick={closeModal} className="mt-4">{config.success.buttonText}</Button>
           </div>
         )}
         {claimStatus === 'already-claimed' && (
           <div className="text-center flex flex-col items-center gap-4 p-8">
             <AlertTriangle className="w-16 h-16 text-yellow-500" />
-            <h2 className="text-2xl font-headline">{modalConfig.alreadyClaimed.title}</h2>
-            <p className="text-muted-foreground max-w-sm">{modalConfig.alreadyClaimed.message}</p>
-            <Button onClick={closeModal} variant="outline" className="mt-4">{modalConfig.alreadyClaimed.buttonText}</Button>
+            <h2 className="text-2xl font-headline">{config.alreadyClaimed.title}</h2>
+            <p className="text-muted-foreground max-w-sm">{config.alreadyClaimed.message}</p>
+            <Button onClick={closeModal} variant="outline" className="mt-4">{config.alreadyClaimed.buttonText}</Button>
           </div>
         )}
         {claimStatus === 'expired' && (
             <div className="text-center flex flex-col items-center gap-4 p-8">
             <Clock className="w-16 h-16 text-destructive" />
-            <h2 className="text-2xl font-headline">{modalConfig.expired.title}</h2>
-            <p className="text-muted-foreground max-w-sm">{modalConfig.expired.message}</p>
-            <Button onClick={closeModal} variant="outline" className="mt-4">{modalConfig.expired.buttonText}</Button>
+            <h2 className="text-2xl font-headline">{config.expired.title}</h2>
+            <p className="text-muted-foreground max-w-sm">{config.expired.message}</p>
+            <Button onClick={closeModal} variant="outline" className="mt-4">{config.expired.buttonText}</Button>
             </div>
         )}
         {claimStatus === 'error' && (
           <div className="text-center flex flex-col items-center gap-4 p-8">
             <XCircle className="w-16 h-16 text-destructive" />
-            <h2 className="text-2xl font-headline">{modalConfig.error.title}</h2>
+            <h2 className="text-2xl font-headline">{config.error.title}</h2>
             <p className="text-muted-foreground max-w-sm">{errorMessage}</p>
-            <Button onClick={() => setClaimStatus('idle')} variant="outline" className="mt-4">{modalConfig.error.buttonText}</Button>
+            <Button onClick={() => setClaimStatus('idle')} variant="outline" className="mt-4">{config.error.buttonText}</Button>
           </div>
         )}
         {claimStatus === 'idle' && (
             <>
               <DialogHeader>
                 <DialogTitle className="font-headline flex items-center gap-2">
-                  <Ticket className="text-primary"/> {modalConfig.default.title}
+                  <Ticket className="text-primary"/> {config.default.title}
                 </DialogTitle>
                 <DialogDescription>
                   {selectedVoucher?.description}
@@ -156,19 +158,19 @@ export default function VoucherModal() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{modalConfig.default.emailLabel}</FormLabel>
+                        <FormLabel>{config.default.emailLabel}</FormLabel>
                         <FormControl>
-                          <Input placeholder={modalConfig.default.emailPlaceholder} {...field} />
+                          <Input placeholder={config.default.emailPlaceholder} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   <DialogFooter>
-                    <Button type="button" variant="ghost" onClick={closeModal}>{modalConfig.default.cancelButton}</Button>
+                    <Button type="button" variant="ghost" onClick={closeModal}>{config.default.cancelButton}</Button>
                     <Button type="submit" disabled={isSubmitting}>
                       {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      {isSubmitting ? modalConfig.submitting.submitButton : modalConfig.default.submitButton}
+                      {isSubmitting ? config.submitting.submitButton : config.default.submitButton}
                     </Button>
                   </DialogFooter>
                 </form>

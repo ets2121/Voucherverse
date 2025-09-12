@@ -22,6 +22,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Loader2, CheckCircle, XCircle, Star, AlertTriangle } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
+import modalConfig from '@/../public/modalConfig.json';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -52,7 +53,7 @@ export default function ReviewModal() {
   const { isReviewModalOpen, closeReviewModal, selectedProduct, business } = useAppContext();
   const { mutate } = useProducts(business?.id);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error' | 'already-claimed'>('idle');
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error' | 'already-submitted'>('idle');
   const [errorMessage, setErrorMessage] = useState('An unknown error occurred. Please try again.');
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -105,7 +106,7 @@ export default function ReviewModal() {
     } catch (error: any) {
       const detailedError = error.message || 'An unexpected error occurred.';
        if (detailedError.includes('already submitted a review')) {
-        setSubmitStatus('already-claimed');
+        setSubmitStatus('already-submitted');
       } else {
         setErrorMessage(detailedError);
         setSubmitStatus('error');
@@ -116,6 +117,8 @@ export default function ReviewModal() {
   }
 
   const renderContent = () => {
+    const config = modalConfig.reviewModal;
+
     return (
        <AnimatePresence>
          <motion.div
@@ -128,33 +131,33 @@ export default function ReviewModal() {
         {submitStatus === 'success' && (
           <div className="text-center flex flex-col items-center gap-4 p-8">
             <CheckCircle className="w-16 h-16 text-green-500" />
-            <h2 className="text-2xl font-headline">Review Submitted!</h2>
-            <p className="text-muted-foreground">Thank you for your valuable feedback.</p>
-            <Button onClick={closeReviewModal} className="mt-4">Done</Button>
+            <h2 className="text-2xl font-headline">{config.success.title}</h2>
+            <p className="text-muted-foreground">{config.success.message}</p>
+            <Button onClick={closeReviewModal} className="mt-4">{config.success.buttonText}</Button>
           </div>
         )}
-        {submitStatus === 'already-claimed' && (
+        {submitStatus === 'already-submitted' && (
           <div className="text-center flex flex-col items-center gap-4 p-8">
             <AlertTriangle className="w-16 h-16 text-yellow-500" />
-            <h2 className="text-2xl font-headline">Already Reviewed</h2>
-            <p className="text-muted-foreground max-w-sm">It looks like you've already submitted a review for this product with this email address.</p>
-            <Button onClick={closeReviewModal} variant="outline" className="mt-4">Close</Button>
+            <h2 className="text-2xl font-headline">{config.alreadySubmitted.title}</h2>
+            <p className="text-muted-foreground max-w-sm">{config.alreadySubmitted.message}</p>
+            <Button onClick={closeReviewModal} variant="outline" className="mt-4">{config.alreadySubmitted.buttonText}</Button>
           </div>
         )}
         {submitStatus === 'error' && (
           <div className="text-center flex flex-col items-center gap-4 p-8">
             <XCircle className="w-16 h-16 text-destructive" />
-            <h2 className="text-2xl font-headline">Submission Failed</h2>
+            <h2 className="text-2xl font-headline">{config.error.title}</h2>
             <p className="text-muted-foreground max-w-sm">{errorMessage}</p>
-            <Button onClick={() => setSubmitStatus('idle')} variant="outline" className="mt-4">Try Again</Button>
+            <Button onClick={() => setSubmitStatus('idle')} variant="outline" className="mt-4">{config.error.buttonText}</Button>
           </div>
         )}
         {submitStatus === 'idle' && (
           <>
             <DialogHeader>
-              <DialogTitle className="font-headline">Rate & Review '{selectedProduct?.name}'</DialogTitle>
+              <DialogTitle className="font-headline">{config.default.title} '{selectedProduct?.name}'</DialogTitle>
               <DialogDescription>
-                Your feedback helps us and other customers. Let us know what you think!
+                {config.default.description}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -164,7 +167,7 @@ export default function ReviewModal() {
                   name="rating"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Rating</FormLabel>
+                      <FormLabel>{config.default.ratingLabel}</FormLabel>
                       <FormControl>
                         <StarRatingInput value={field.value} onChange={field.onChange} />
                       </FormControl>
@@ -177,9 +180,9 @@ export default function ReviewModal() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Email</FormLabel>
+                      <FormLabel>{config.default.emailLabel}</FormLabel>
                       <FormControl>
-                        <Input placeholder="you@example.com" {...field} />
+                        <Input placeholder={config.default.emailPlaceholder} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -190,19 +193,19 @@ export default function ReviewModal() {
                   name="review"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Review (Optional)</FormLabel>
+                      <FormLabel>{config.default.reviewLabel}</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Tell us more about your experience..." {...field} />
+                        <Textarea placeholder={config.default.reviewPlaceholder} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <DialogFooter>
-                  <Button type="button" variant="ghost" onClick={closeReviewModal}>Cancel</Button>
+                  <Button type="button" variant="ghost" onClick={closeReviewModal}>{config.default.cancelButton}</Button>
                   <Button type="submit" disabled={isSubmitting}>
                     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {isSubmitting ? 'Submitting...' : 'Submit Review'}
+                    {isSubmitting ? config.submitting.submitButton : config.default.submitButton}
                   </Button>
                 </DialogFooter>
               </form>

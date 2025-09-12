@@ -1,31 +1,95 @@
 {
-  "default": {
-    "title": "Claim Your Voucher",
-    "emailLabel": "Enter your email to claim",
-    "emailPlaceholder": "you@example.com",
-    "submitButton": "Claim Now",
-    "cancelButton": "Cancel"
+  "voucherModal": {
+    "default": {
+      "title": "Claim Your Exclusive Voucher",
+      "emailLabel": "Enter your email to claim",
+      "emailPlaceholder": "you@example.com",
+      "cancelButton": "Cancel",
+      "submitButton": "Claim Now"
+    },
+    "submitting": {
+      "submitButton": "Claiming..."
+    },
+    "success": {
+      "title": "Voucher Claimed!",
+      "message": "Your voucher has been successfully claimed. Check your email for details.",
+      "buttonText": "Done"
+    },
+    "alreadyClaimed": {
+      "title": "Voucher Already Claimed",
+      "message": "It looks like this email address has already been used to claim this voucher.",
+      "buttonText": "Close"
+    },
+    "expired": {
+      "title": "Voucher Expired",
+      "message": "Unfortunately, this voucher is no longer valid.",
+      "buttonText": "Close"
+    },
+    "error": {
+      "title": "Claim Failed",
+      "buttonText": "Try Again"
+    }
   },
-  "submitting": {
-    "submitButton": "Claiming..."
+  "reviewModal": {
+    "default": {
+      "title": "Rate & Review",
+      "description": "Your feedback helps us and other customers. Let us know what you think!",
+      "ratingLabel": "Your Rating",
+      "emailLabel": "Your Email",
+      "emailPlaceholder": "you@example.com",
+      "reviewLabel": "Your Review (Optional)",
+      "reviewPlaceholder": "Tell us more about your experience...",
+      "cancelButton": "Cancel",
+      "submitButton": "Submit Review"
+    },
+    "submitting": {
+      "submitButton": "Submitting..."
+    },
+    "success": {
+      "title": "Review Submitted!",
+      "message": "Thank you for your valuable feedback.",
+      "buttonText": "Done"
+    },
+    "alreadySubmitted": {
+      "title": "Already Reviewed",
+      "message": "It looks like you've already submitted a review for this product with this email address.",
+      "buttonText": "Close"
+    },
+    "error": {
+      "title": "Submission Failed",
+      "buttonText": "Try Again"
+    }
   },
-  "success": {
-    "title": "Success!",
-    "message": "Your voucher has been claimed. Check your email for details.",
-    "buttonText": "Awesome!"
-  },
-  "error": {
-    "title": "Oops! Something went wrong.",
-    "buttonText": "Try Again"
-  },
-  "alreadyClaimed": {
-    "title": "Voucher Already Claimed",
-    "message": "It looks like you've already claimed this voucher with this email address.",
-    "buttonText": "Got it"
-  },
-  "expired": {
-    "title": "Voucher Expired",
-    "message": "We're sorry, but this voucher has already expired and can no longer be claimed.",
-    "buttonText": "Close"
+  "testimonialModal": {
+    "default": {
+      "title": "Share Your Experience",
+      "description": "We'd love to hear your feedback! Your review helps us and other customers.",
+      "ratingLabel": "Your Rating*",
+      "emailLabel": "Your Email*",
+      "emailPlaceholder": "you@example.com",
+      "nameLabel": "Your Name (Optional)",
+      "namePlaceholder": "John Doe",
+      "messageLabel": "Testimonial Message*",
+      "messagePlaceholder": "Tell us about your experience...",
+      "cancelButton": "Cancel",
+      "submitButton": "Submit Testimonial"
+    },
+    "submitting": {
+      "submitButton": "Submitting..."
+    },
+    "success": {
+      "title": "Testimonial Submitted!",
+      "message": "Thank you for sharing your experience.",
+      "buttonText": "Done"
+    },
+    "alreadySubmitted": {
+      "title": "Already Submitted",
+      "message": "It looks like you've already submitted a testimonial with this email address.",
+      "buttonText": "Close"
+    },
+    "error": {
+      "title": "Submission Failed",
+      "buttonText": "Try Again"
+    }
   }
 }

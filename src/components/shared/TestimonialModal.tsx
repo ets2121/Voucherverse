@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Loader2, CheckCircle, XCircle, Star, AlertTriangle } from 'lucide-react';
+import modalConfig from '@/../public/modalConfig.json';
 
 const formSchema = z.object({
   customer_name: z.string().optional(),
@@ -114,6 +116,7 @@ export default function TestimonialModal() {
   }
 
   const renderContent = () => {
+    const config = modalConfig.testimonialModal;
     return (
        <AnimatePresence mode="wait">
          <motion.div
@@ -126,33 +129,33 @@ export default function TestimonialModal() {
         {submitStatus === 'success' && (
           <div className="text-center flex flex-col items-center gap-4 p-8">
             <CheckCircle className="w-16 h-16 text-green-500" />
-            <h2 className="text-2xl font-headline">Testimonial Submitted!</h2>
-            <p className="text-muted-foreground">Thank you for sharing your experience.</p>
-            <Button onClick={closeTestimonialModal} className="mt-4">Done</Button>
+            <h2 className="text-2xl font-headline">{config.success.title}</h2>
+            <p className="text-muted-foreground">{config.success.message}</p>
+            <Button onClick={closeTestimonialModal} className="mt-4">{config.success.buttonText}</Button>
           </div>
         )}
         {submitStatus === 'already-submitted' && (
           <div className="text-center flex flex-col items-center gap-4 p-8">
             <AlertTriangle className="w-16 h-16 text-yellow-500" />
-            <h2 className="text-2xl font-headline">Already Submitted</h2>
-            <p className="text-muted-foreground max-w-sm">It looks like you've already submitted a testimonial with this email address.</p>
-            <Button onClick={closeTestimonialModal} variant="outline" className="mt-4">Close</Button>
+            <h2 className="text-2xl font-headline">{config.alreadySubmitted.title}</h2>
+            <p className="text-muted-foreground max-w-sm">{config.alreadySubmitted.message}</p>
+            <Button onClick={closeTestimonialModal} variant="outline" className="mt-4">{config.alreadySubmitted.buttonText}</Button>
           </div>
         )}
         {submitStatus === 'error' && (
           <div className="text-center flex flex-col items-center gap-4 p-8">
             <XCircle className="w-16 h-16 text-destructive" />
-            <h2 className="text-2xl font-headline">Submission Failed</h2>
+            <h2 className="text-2xl font-headline">{config.error.title}</h2>
             <p className="text-muted-foreground max-w-sm">{errorMessage}</p>
-            <Button onClick={() => setSubmitStatus('idle')} variant="outline" className="mt-4">Try Again</Button>
+            <Button onClick={() => setSubmitStatus('idle')} variant="outline" className="mt-4">{config.error.buttonText}</Button>
           </div>
         )}
         {submitStatus === 'idle' && (
           <>
             <DialogHeader>
-              <DialogTitle className="font-headline">Share Your Experience</DialogTitle>
+              <DialogTitle className="font-headline">{config.default.title}</DialogTitle>
               <DialogDescription>
-                We'd love to hear your feedback! Your review helps us and other customers.
+                {config.default.description}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -162,7 +165,7 @@ export default function TestimonialModal() {
                   name="rating"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Rating*</FormLabel>
+                      <FormLabel>{config.default.ratingLabel}</FormLabel>
                       <FormControl>
                         <StarRatingInput value={field.value} onChange={field.onChange} />
                       </FormControl>
@@ -175,9 +178,9 @@ export default function TestimonialModal() {
                   name="customer_email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Email*</FormLabel>
+                      <FormLabel>{config.default.emailLabel}</FormLabel>
                       <FormControl>
-                        <Input placeholder="you@example.com" {...field} />
+                        <Input placeholder={config.default.emailPlaceholder} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -188,9 +191,9 @@ export default function TestimonialModal() {
                   name="customer_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Your Name (Optional)</FormLabel>
+                      <FormLabel>{config.default.nameLabel}</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} />
+                        <Input placeholder={config.default.namePlaceholder} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -201,19 +204,19 @@ export default function TestimonialModal() {
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Testimonial Message*</FormLabel>
+                      <FormLabel>{config.default.messageLabel}</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Tell us about your experience..." {...field} />
+                        <Textarea placeholder={config.default.messagePlaceholder} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <DialogFooter>
-                  <Button type="button" variant="ghost" onClick={closeTestimonialModal}>Cancel</Button>
+                  <Button type="button" variant="ghost" onClick={closeTestimonialModal}>{config.default.cancelButton}</Button>
                   <Button type="submit" disabled={isSubmitting}>
                     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {isSubmitting ? 'Submitting...' : 'Submit Testimonial'}
+                    {isSubmitting ? config.submitting.submitButton : config.default.submitButton}
                   </Button>
                 </DialogFooter>
               </form>

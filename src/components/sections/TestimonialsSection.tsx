@@ -21,6 +21,7 @@ import { AlertTriangle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Autoplay from 'embla-carousel-autoplay';
+import config from '@/../public/config/testimonialsConfig.json';
 
 
 const fetcher = (url: string) => fetch(url).then((res) => {
@@ -48,7 +49,7 @@ export default function TestimonialsSection() {
       <section id="testimonials" className="py-20 md:py-24 bg-card">
         <div className="container mx-auto px-4">
           <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
-            What Our Customers Say
+            {config.title}
           </h2>
           <div className="flex justify-center">
             <Skeleton className="h-64 w-full max-w-sm" />
@@ -82,7 +83,7 @@ export default function TestimonialsSection() {
     <section id="testimonials" className="py-20 md:py-24 bg-card">
       <div className="container mx-auto px-4">
         <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
-          What Our Customers Say
+          {config.title}
         </h2>
         <Carousel 
           plugins={[plugin.current]}
@@ -127,7 +128,7 @@ export default function TestimonialsSection() {
         <div className="text-center mt-12">
           <Button asChild variant="link">
             <Link href="/testimonials">
-              View All Testimonials
+              {config.viewAllButtonText}
             </Link>
           </Button>
         </div>

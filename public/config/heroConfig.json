@@ -1,0 +1,23 @@
+{
+  "_comments": {
+    "title": "The main headline for the hero section. Can use '{businessName}' which will be replaced by the business name from the context.",
+    "subtitle": "The paragraph below the main headline. Can also use '{businessName}'.",
+    "additionalText": "An array of extra text lines to display below the subtitle. Each string is a new paragraph.",
+    "buttons": "An array of buttons to display. 'text' is the button label. 'action' determines what it does ('scrollTo' for now). 'target' is the ID of the section to scroll to.",
+    "animation": "Controls the Framer Motion animation timings. 'duration' is the base duration, and 'delayIncrement' is the time added between each animated element."
+  },
+  "title": "Welcome to {businessName}",
+  "subtitle": "Discover and claim exclusive deals from your favorite local businesses.",
+  "additionalText": [],
+  "buttons": [
+    {
+      "text": "Explore Vouchers",
+      "action": "scrollTo",
+      "target": "products"
+    }
+  ],
+  "animation": {
+    "duration": 0.5,
+    "delayIncrement": 0.1
+  }
+}

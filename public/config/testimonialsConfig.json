@@ -1,0 +1,8 @@
+{
+  "_comments": {
+    "title": "The title for the testimonials section on the homepage.",
+    "viewAllButtonText": "The text for the button that links to the full testimonials page."
+  },
+  "title": "What Our Customers Say",
+  "viewAllButtonText": "View All Testimonials"
+}

@@ -77,7 +77,7 @@ export default function PromoBanner() {
   return (
     <section id="promo-banner" className="py-12 md:py-16 bg-card overflow-hidden">
       <div className="container mx-auto px-4">
-        <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
+        <h2 className="font-headline text-2xl font-bold text-center mb-8">
           {config.title}
         </h2>
         <Carousel

@@ -5,7 +5,7 @@ import { fetchWithTimezone } from '@/lib/utils';
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export async function GET() {
-  const businessId = 1; // Hardcoded for single business context
+  const businessId = process.env.BUSINESS_ID || 1; 
 
   try {
     const query = supabase

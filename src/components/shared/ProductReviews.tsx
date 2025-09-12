@@ -108,7 +108,7 @@ export default function ProductReviews({ reviews, isLoading, error }: ProductRev
                                 <p className="text-xs text-muted-foreground">
                                     {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
                                 </p>
-                                <IndividualStarRating rating={review.rating} />
+                                <IndividualStarRating rating={review.review_rating} />
                                 <p className="text-sm text-foreground pt-1">{review.review}</p>
                             </div>
                         </div>

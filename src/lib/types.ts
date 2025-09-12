@@ -58,7 +58,7 @@ export interface ProductReview {
     business_id: number;
     product_id: number;
     email: string;
-    rating: number;
+    review_rating: number;
     review: string;
     created_at: string;
 }

@@ -1,3 +1,13 @@
 {
-  "currency_symbol": "₱"
+  "currency_symbol": "$",
+  "display": {
+    "show_rating_on_card": true,
+    "show_review_count_on_card": true,
+    "show_description_on_card": true,
+    "show_reviews_on_card": true
+  },
+  "badge": {
+    "discount_variant": "destructive",
+    "promo_type_classes": "relative px-3 py-1 text-xs font-bold text-primary-foreground bg-primary rounded-md overflow-hidden"
+  }
 }

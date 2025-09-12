@@ -16,7 +16,7 @@ interface ProductCardSmallProps {
 
 export default function ProductCardSmall({ product, onClick }: ProductCardSmallProps) {
   const { voucher, name, price, product_ratings, image_url, id } = product;
-  const currencySymbol = priceConfig.currency_symbol;
+  const { currency_symbol, display: displayConfig, badge: badgeConfig } = priceConfig;
   
   const hasDiscount = voucher && voucher.discount_amount && price && price > 0;
   
@@ -46,13 +46,16 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
           className="object-contain"
         />
          {hasDiscount && discountPercent > 0 && (
-            <Badge variant="destructive" className="absolute top-1.5 right-1.5 text-xs px-1.5 py-0.5">
+            <Badge 
+              variant={badgeConfig.discount_variant as any} 
+              className="absolute top-1.5 right-1.5 text-xs px-1.5 py-0.5"
+            >
               <Tag className="w-2.5 h-2.5 mr-1"/> {discountPercent}%
             </Badge>
           )}
         {voucher?.promo_type && (
             <div className="absolute bottom-1.5 left-1.5 inline-block">
-                <div className="relative px-3 py-1 text-xs font-bold text-primary-foreground bg-primary rounded-md overflow-hidden">
+                <div className={badgeConfig.promo_type_classes}>
                   <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
                   <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-background"></div>
                   <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
@@ -70,25 +73,27 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
                 {discountedPrice !== null ? (
                   <>
                     <p className="text-md font-bold text-primary">
-                      {currencySymbol}{discountedPrice.toFixed(2)}
+                      {currency_symbol}{discountedPrice.toFixed(2)}
                     </p>
                     <p className="text-xs text-muted-foreground line-through">
-                      {currencySymbol}{price.toFixed(2)}
+                      {currency_symbol}{price.toFixed(2)}
                     </p>
                   </>
                 ) : (
                   <p className="text-md font-bold text-foreground">
-                    {currencySymbol}{price.toFixed(2)}
+                    {currency_symbol}{price.toFixed(2)}
                   </p>
                 )}
               </div>
             )}
-            <StarRating 
-                ratingData={product_ratings} 
-                showReviewCount={false} 
-                showAverage={true} 
-                starSize='w-3.5 h-3.5'
-            />
+            {displayConfig.show_rating_on_card && (
+              <StarRating 
+                  ratingData={product_ratings} 
+                  showReviewCount={false} 
+                  showAverage={true} 
+                  starSize='w-3.5 h-3.5'
+              />
+            )}
         </div>
       </div>
     </motion.div>

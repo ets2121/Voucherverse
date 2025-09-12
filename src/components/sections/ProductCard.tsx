@@ -89,7 +89,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 export default function ProductCard({ product, onClaimVoucher }: ProductCardProps) {
   const { openReviewModal } = useAppContext();
   const voucher = product.voucher;
-  const currencySymbol = priceConfig.currency_symbol;
+  const { currency_symbol, display: displayConfig, badge: badgeConfig } = priceConfig;
   
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
@@ -140,13 +140,16 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
               className="object-contain transition-transform duration-300 group-hover:scale-105"
             />
             {hasDiscount && discountPercent > 0 && (
-              <Badge variant="destructive" className="absolute top-2 right-2">
+              <Badge 
+                variant={badgeConfig.discount_variant as any} 
+                className="absolute top-2 right-2"
+              >
                 <Tag className="w-3 h-3 mr-1"/> {discountPercent}% OFF
               </Badge>
             )}
             {voucher?.promo_type && (
                 <div className="absolute bottom-2 left-2 inline-block">
-                    <div className="relative px-3 py-1 text-xs font-bold text-primary-foreground bg-primary rounded-md overflow-hidden">
+                    <div className={badgeConfig.promo_type_classes}>
                       <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
                       <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-background"></div>
                       <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
@@ -164,24 +167,26 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                 {discountedPrice !== null ? (
                   <>
                     <p className="text-2xl font-bold text-primary">
-                      {currencySymbol}{discountedPrice.toFixed(2)}
+                      {currency_symbol}{discountedPrice.toFixed(2)}
                     </p>
                     <p className="text-md text-muted-foreground line-through">
-                      {currencySymbol}{product.price.toFixed(2)}
+                      {currency_symbol}{product.price.toFixed(2)}
                     </p>
                   </>
                 ) : (
                   <p className="text-2xl font-bold text-foreground">
-                    {currencySymbol}{product.price.toFixed(2)}
+                    {currency_symbol}{product.price.toFixed(2)}
                   </p>
                 )}
               </div>
             )}
             
-            <StarRating 
-                ratingData={product.product_ratings} 
-                showReviewCount={true}
-            />
+            {displayConfig.show_rating_on_card && (
+              <StarRating 
+                  ratingData={product.product_ratings} 
+                  showReviewCount={displayConfig.show_review_count_on_card}
+              />
+            )}
           </div>
         </CardHeader>
         <CardContent className="flex-grow p-4 pt-0">
@@ -241,28 +246,30 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
                 Write a review
             </Button>
             
-            {product.short_description && (
-            <div className="w-full pt-2">
-                <h4 className="font-headline text-md font-semibold">Description</h4>
-                <CardDescription className={cn("text-sm pt-1", !isDescriptionExpanded && "line-clamp-2")}>
-                    {product.short_description}
-                </CardDescription>
-                {isLongDescription && (
-                    <Button variant="link" size="sm" onClick={toggleDescription} className="p-0 h-auto text-xs">
-                        {isDescriptionExpanded ? 'See less' : 'See more'}
-                    </Button>
-                )}
-            </div>
+            {displayConfig.show_description_on_card && product.short_description && (
+              <div className="w-full pt-2">
+                  <h4 className="font-headline text-md font-semibold">Description</h4>
+                  <CardDescription className={cn("text-sm pt-1", !isDescriptionExpanded && "line-clamp-2")}>
+                      {product.short_description}
+                  </CardDescription>
+                  {isLongDescription && (
+                      <Button variant="link" size="sm" onClick={toggleDescription} className="p-0 h-auto text-xs">
+                          {isDescriptionExpanded ? 'See less' : 'See more'}
+                      </Button>
+                  )}
+              </div>
             )}
             
-            <div className="w-full pt-2">
-              <Separator className="my-2" />
-              <ProductReviews 
-                reviews={reviews} 
-                isLoading={reviewsLoading} 
-                error={reviewsError} 
-              />
-            </div>
+            {displayConfig.show_reviews_on_card && (
+              <div className="w-full pt-2">
+                <Separator className="my-2" />
+                <ProductReviews 
+                  reviews={reviews} 
+                  isLoading={reviewsLoading} 
+                  error={reviewsError} 
+                />
+              </div>
+            )}
         </CardFooter>
       </Card>
     </motion.div>

@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useProducts } from '@/hooks/useProducts';
 import { Loader2, CheckCircle, XCircle, Ticket, AlertTriangle, Clock } from 'lucide-react';
-import modalConfig from '@/../public/modalConfig.json';
+import config from '@/../public/config/modals/voucherModal.json';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -99,7 +99,6 @@ export default function VoucherModal() {
   }
   
   const renderContent = () => {
-    const config = modalConfig.voucherModal;
     return (
       <AnimatePresence>
         <motion.div

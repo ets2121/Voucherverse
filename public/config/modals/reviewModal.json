@@ -1,0 +1,30 @@
+{
+  "default": {
+    "title": "Leave a Review for",
+    "description": "Your feedback helps us improve. Please share your experience.",
+    "ratingLabel": "Your Rating",
+    "emailLabel": "Your Email",
+    "emailPlaceholder": "you@example.com",
+    "reviewLabel": "Your Review (Optional)",
+    "reviewPlaceholder": "Tell us what you think...",
+    "cancelButton": "Cancel",
+    "submitButton": "Submit Review"
+  },
+  "submitting": {
+    "submitButton": "Submitting..."
+  },
+  "success": {
+    "title": "Review Submitted!",
+    "message": "Thank you for your valuable feedback.",
+    "buttonText": "Done"
+  },
+  "alreadySubmitted": {
+    "title": "Already Reviewed",
+    "message": "It looks like you have already submitted a review for this product with this email address.",
+    "buttonText": "Close"
+  },
+  "error": {
+    "title": "Submission Failed",
+    "buttonText": "Try Again"
+  }
+}

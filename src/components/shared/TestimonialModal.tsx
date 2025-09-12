@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Loader2, CheckCircle, XCircle, Star, AlertTriangle } from 'lucide-react';
-import modalConfig from '@/../public/modalConfig.json';
+import config from '@/../public/config/modals/testimonialModal.json';
 
 const formSchema = z.object({
   customer_name: z.string().optional(),
@@ -116,7 +116,6 @@ export default function TestimonialModal() {
   }
 
   const renderContent = () => {
-    const config = modalConfig.testimonialModal;
     return (
        <AnimatePresence mode="wait">
          <motion.div

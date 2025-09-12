@@ -22,7 +22,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Loader2, CheckCircle, XCircle, Star, AlertTriangle } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
-import modalConfig from '@/../public/modalConfig.json';
+import config from '@/../public/config/modals/reviewModal.json';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -117,8 +117,6 @@ export default function ReviewModal() {
   }
 
   const renderContent = () => {
-    const config = modalConfig.reviewModal;
-
     return (
        <AnimatePresence>
          <motion.div

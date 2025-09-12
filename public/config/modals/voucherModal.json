@@ -1,0 +1,31 @@
+{
+  "default": {
+    "title": "Claim Your Voucher",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "you@example.com",
+    "cancelButton": "Cancel",
+    "submitButton": "Claim Now"
+  },
+  "submitting": {
+    "submitButton": "Claiming..."
+  },
+  "success": {
+    "title": "Voucher Claimed!",
+    "message": "Your voucher has been successfully claimed. Check your email for details.",
+    "buttonText": "Done"
+  },
+  "alreadyClaimed": {
+    "title": "Already Claimed",
+    "message": "It looks like you have already claimed this voucher with this email address.",
+    "buttonText": "Close"
+  },
+  "expired": {
+    "title": "Voucher Expired",
+    "message": "Unfortunately, this voucher is no longer valid.",
+    "buttonText": "Close"
+  },
+  "error": {
+    "title": "Claim Failed",
+    "buttonText": "Try Again"
+  }
+}

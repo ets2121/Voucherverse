@@ -1,0 +1,32 @@
+{
+  "default": {
+    "title": "Share Your Experience",
+    "description": "We'd love to hear from you! Your feedback helps us and other customers.",
+    "ratingLabel": "Overall Rating",
+    "emailLabel": "Your Email",
+    "emailPlaceholder": "you@example.com",
+    "nameLabel": "Your Name (Optional)",
+    "namePlaceholder": "John Doe",
+    "messageLabel": "Your Message",
+    "messagePlaceholder": "Share your story...",
+    "cancelButton": "Cancel",
+    "submitButton": "Submit Testimonial"
+  },
+  "submitting": {
+    "submitButton": "Submitting..."
+  },
+  "success": {
+    "title": "Thank You!",
+    "message": "Your testimonial has been submitted successfully. We appreciate your support!",
+    "buttonText": "Done"
+  },
+  "alreadySubmitted": {
+    "title": "Already Submitted",
+    "message": "It looks like you've already shared a testimonial with this email. Thank you for your feedback!",
+    "buttonText": "Close"
+  },
+  "error": {
+    "title": "Submission Failed",
+    "buttonText": "Try Again"
+  }
+}

@@ -57,8 +57,8 @@ export default function PromoBanner() {
 
   if (error) {
     return (
-      <section className="py-2 bg-card">
-        <div className="container mx-auto px-4">
+      <section className="bg-card">
+        <div className="container mx-auto px-4 py-2">
           <Alert variant="destructive" className="max-w-lg mx-auto">
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Could Not Load Promotions</AlertTitle>
@@ -76,9 +76,8 @@ export default function PromoBanner() {
   }
 
   return (
-    <section id="promo-banner" className="py-2 bg-card overflow-hidden">
-      <div className="container mx-auto px-4">
-        <h2 className="text-lg font-medium text-center text-muted-foreground mb-2">
+    <section id="promo-banner" className="bg-card overflow-hidden">
+        <h2 className="text-sm font-medium text-center text-muted-foreground mb-2 pt-2">
           {config.title}
         </h2>
         <Carousel
@@ -87,7 +86,7 @@ export default function PromoBanner() {
             align: 'start',
             loop: true,
           }}
-          className="w-full max-w-xl mx-auto"
+          className="w-full"
           onMouseEnter={plugin.current.stop}
           onMouseLeave={plugin.current.reset}
         >
@@ -100,8 +99,8 @@ export default function PromoBanner() {
               }
 
               return (
-                <CarouselItem key={product.id} onClick={() => handleBannerClick(product.id)}>
-                  <div className="p-1 cursor-pointer">
+                <CarouselItem key={product.id} onClick={() => handleBannerClick(product.id)} className="sm:basis-1/2 md:basis-1/2 lg:basis-1/3">
+                  <div className="p-2 cursor-pointer">
                     <div className="relative rounded-lg overflow-hidden p-4 bg-gradient-to-r from-primary/20 to-accent/20">
                        <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)]"></div>
                        <div className="grid grid-cols-3 gap-4 items-center relative z-10">
@@ -152,10 +151,9 @@ export default function PromoBanner() {
               );
             })}
           </CarouselContent>
-          <CarouselPrevious className="left-[-0.5rem] sm:left-[-1.5rem]" />
-          <CarouselNext className="right-[-0.5rem] sm:right-[-1.5rem]" />
+          <CarouselPrevious className="left-2" />
+          <CarouselNext className="right-2" />
         </Carousel>
-      </div>
     </section>
   );
 }

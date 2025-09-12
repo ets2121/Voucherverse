@@ -9,10 +9,15 @@ export const useIsAnimating = () => {
   const pathname = usePathname();
 
   useEffect(() => {
+    // We don't want to show the loader on the initial page load.
+    // We can track this by checking if a pathname has been set.
+    const hasLoadedOnce = pathname !== null;
+    if (!hasLoadedOnce) return;
+
     setIsAnimating(true);
     const timer = setTimeout(() => {
       setIsAnimating(false);
-    }, 750); // Corresponds to animation duration
+    }, 350); // A shorter duration for a snappier feel
 
     return () => clearTimeout(timer);
   }, [pathname]);

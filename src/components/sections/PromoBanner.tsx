@@ -102,48 +102,42 @@ export default function PromoBanner() {
                   <div className="p-1">
                     <div className="relative rounded-lg overflow-hidden p-6 md:p-8 bg-gradient-to-r from-primary/20 to-accent/20">
                        <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)]"></div>
-                       <div className="grid md:grid-cols-2 gap-6 items-center relative z-10">
+                       <div className="grid md:grid-cols-5 gap-6 items-center relative z-10">
                         <motion.div
+                            className="md:col-span-2"
                             initial={{ opacity: 0, x: -50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.7 }}
                         >
-                            <div className="aspect-video w-full">
+                            <div className="relative aspect-square w-full max-w-[120px] mx-auto md:max-w-none">
                                 <Image
-                                    src={product.image_url || `https://picsum.photos/600/400?random=${product.id}`}
+                                    src={product.image_url || `https://picsum.photos/300/300?random=${product.id}`}
                                     alt={product.name}
-                                    width={600}
-                                    height={400}
+                                    fill
                                     data-ai-hint="product shoe"
-                                    className="rounded-lg w-full h-full object-contain"
+                                    className="rounded-lg object-contain"
                                 />
                             </div>
                         </motion.div>
                         <motion.div 
-                            className="text-center md:text-left"
+                            className="text-center md:text-left md:col-span-3"
                             initial={{ opacity: 0, x: 50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.7, delay: 0.2 }}
                         >
                             {discountPercent > 0 && (
-                                <p className="font-bold text-2xl md:text-4xl text-accent">
+                                <p className="font-bold text-lg md:text-xl text-accent">
                                     GET UP TO <span className="text-white">{discountPercent}%</span> OFF
                                 </p>
                             )}
-                             <h3 className="font-headline text-xl md:text-3xl font-bold mt-1 text-white">
+                             <h3 className="font-headline text-lg md:text-xl font-bold mt-1 text-white">
                                 {product.name}
                             </h3>
-                            <p className="text-muted-foreground mt-3 line-clamp-2 text-sm md:text-base">
+                            <p className="text-muted-foreground mt-2 line-clamp-2 text-sm">
                                 {product.short_description}
                             </p>
-                            <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-                                <Button size="lg" onClick={() => openModal(product.voucher!)}>Claim Now</Button>
-                                <Button size="lg" variant="outline" asChild>
-                                    <Link href="/products">Shop All Deals</Link>
-                                </Button>
-                            </div>
                         </motion.div>
                        </div>
                     </div>

@@ -1,19 +1,21 @@
 {
   "_comments": {
-    "title": "The main headline for the hero section. Can use '{businessName}' which will be replaced by the business name from the context.",
-    "subtitle": "The paragraph below the main headline. Can also use '{businessName}'.",
-    "additionalText": "An array of extra text lines to display below the subtitle. Each string is a new paragraph.",
-    "buttons": "An array of buttons to display. 'text' is the button label. 'action' determines what it does ('scrollTo' for now). 'target' is the ID of the section to scroll to.",
-    "animation": "Controls the Framer Motion animation timings. 'duration' is the base duration, and 'delayIncrement' is the time added between each animated element."
+    "title": "The main heading for the hero section. Use {businessName} as a placeholder for the business name.",
+    "subtitle": "The main subheading that appears below the title.",
+    "additionalText": "An array of extra text lines to display. Each string is a new paragraph.",
+    "buttons": "An array of buttons to display. 'text' is the button label. 'action' can be 'scrollTo' (to scroll to an element ID) or 'redirect' (to navigate to a URL). 'target' is the ID or URL.",
+    "animation": "Controls the animation timing. 'duration' is in seconds. 'delayIncrement' is the delay between each animated element."
   },
-  "title": "Welcome to {businessName}",
-  "subtitle": "Discover and claim exclusive deals from your favorite local businesses.",
-  "additionalText": [],
+  "title": "Exclusive Vouchers & Unbeatable Deals at {businessName}",
+  "subtitle": "Your one-stop destination for amazing discounts. Grab them before they're gone!",
+  "additionalText": [
+    "Fresh deals added daily!"
+  ],
   "buttons": [
     {
-      "text": "Explore Vouchers",
-      "action": "scrollTo",
-      "target": "products"
+      "text": "View All Deals",
+      "action": "redirect",
+      "target": "/products"
     }
   ],
   "animation": {

@@ -4,9 +4,12 @@ import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import config from '@/../public/config/heroConfig.json';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function HeroSection() {
   const { business } = useAppContext();
+  const router = useRouter();
 
   const handleButtonClick = (action: string, target: string) => {
     if (action === 'scrollTo') {
@@ -14,6 +17,8 @@ export default function HeroSection() {
       if (section) {
         section.scrollIntoView({ behavior: 'smooth' });
       }
+    } else if (action === 'redirect') {
+        router.push(target);
     }
   };
   
@@ -70,12 +75,16 @@ export default function HeroSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: config.animation.duration, delay: config.animation.delayIncrement * (2 + (config.additionalText?.length || 0) + index) }}
               >
-                <Button 
-                  size="lg" 
-                  className="bg-accent text-accent-foreground hover:bg-accent/90" 
-                  onClick={() => handleButtonClick(button.action, button.target)}
-                >
-                  {button.text}
+                 <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
+                  {button.action === 'redirect' ? (
+                    <Link href={button.target}>
+                      {button.text}
+                    </Link>
+                  ) : (
+                    <button onClick={() => handleButtonClick(button.action, button.target)}>
+                      {button.text}
+                    </button>
+                  )}
                 </Button>
               </motion.div>
             ))}

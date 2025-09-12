@@ -1,7 +1,7 @@
 {
   "_comments": {
-    "navigation": "This array controls the navigation links in the header. The 'href' must correspond to a valid page route. The 'label' is the display text for the link.",
-    "sections": "This array defines the order of sections on the homepage. The names must match keys in the 'sectionComponents' object in 'src/app/page.tsx'. Available sections: 'hero', 'products', 'services', 'testimonials'."
+    "navigation": "This array controls the main navigation links in the header. 'label' is the link text, and 'href' is the destination path.",
+    "sections": "This array defines the order of sections displayed on the homepage. The names must match the keys of the 'sectionComponents' object in 'src/app/page.tsx'. Available sections: 'hero', 'services', 'testimonials'."
   },
   "navigation": [
     {
@@ -19,7 +19,6 @@
   ],
   "sections": [
     "hero",
-    "products",
     "services",
     "testimonials"
   ]

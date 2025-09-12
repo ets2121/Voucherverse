@@ -1,24 +1,25 @@
 {
   "_comments": {
-    "currency_symbol": "The currency symbol to be displayed for product prices (e.g., '$', '€', '£').",
-    "display": "Controls the visibility of different sections on the product card.",
-    "show_rating_on_card": "Set to true to show the star rating, or false to hide it.",
-    "show_review_count_on_card": "Set to true to show the total number of reviews next to the stars, or false to hide it.",
-    "show_description_on_card": "Set to true to display the product's short description on the card.",
-    "show_reviews_on_card": "Set to true to display the customer reviews section directly on the card.",
-    "badge": "Controls the appearance of badges on the product card.",
-    "discount_variant": "Style for the discount percentage badge. Options: 'default', 'secondary', 'destructive', 'outline'.",
-    "promo_type_classes": "Tailwind CSS classes for the promo type badge (e.g., 'BOGO'). This allows for custom styling."
+    "all": "This file controls the display settings for product cards across the application.",
+    "currency_symbol": "Sets the currency symbol used for prices (e.g., '$', '€', '£').",
+    "display": "Contains boolean flags to toggle the visibility of different sections on the product cards.",
+    "display.show_rating_on_card": "If true, the star rating will be shown on the product card.",
+    "display.show_review_count_on_card": "If true, the total number of reviews will be shown next to the star rating.",
+    "display.show_description_on_card": "If true, the product's short description will be displayed.",
+    "display.show_reviews_on_card": "If true, a section with individual customer reviews will be shown at the bottom of the card.",
+    "badge": "Controls the styling for badges that appear on the product card image.",
+    "badge.discount_variant": "Defines the color variant for the discount percentage badge. Options: 'default', 'secondary', 'destructive', 'outline'.",
+    "badge.promo_type_classes": "A string of Tailwind CSS classes to style the 'Promo Type' badge (e.g., 'BOGO', 'Freebie'). This allows for more custom styling."
   },
   "currency_symbol": "$",
   "display": {
     "show_rating_on_card": true,
     "show_review_count_on_card": true,
-    "show_description_on_card": true,
-    "show_reviews_on_card": true
+    "show_description_on_card": false,
+    "show_reviews_on_card": false
   },
   "badge": {
     "discount_variant": "destructive",
-    "promo_type_classes": "relative z-10 text-xs font-bold uppercase tracking-wider text-accent-foreground bg-accent px-2 py-1 rounded-sm"
+    "promo_type_classes": "relative inline-flex items-center rounded-full border border-transparent bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground shadow"
   }
 }

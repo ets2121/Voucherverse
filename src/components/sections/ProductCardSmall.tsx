@@ -56,11 +56,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
         {voucher?.promo_type && (
             <div className="absolute bottom-1.5 left-1.5 inline-block">
                 <div className={badgeConfig.promo_type_classes}>
-                  <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
-                  <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-background"></div>
-                  <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
-                  <div className="absolute -bottom-1 -right-1 w-2 h-2 rounded-full bg-background"></div>
-                  <span className="relative z-10">{voucher.promo_type}</span>
+                  {voucher.promo_type}
                 </div>
             </div>
         )}

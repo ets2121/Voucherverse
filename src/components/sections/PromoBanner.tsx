@@ -3,6 +3,7 @@
 
 import { useRef, useMemo } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useProducts } from '@/hooks/useProducts';
 import { useAppContext } from '@/context/AppContext';
 import {
@@ -18,6 +19,7 @@ import { AlertTriangle } from 'lucide-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { motion } from 'framer-motion';
 import config from '@/../public/config/promoBannerConfig.json';
+import productCardConfig from '@/../public/productCardConfig.json';
 
 const PromoBannerSkeleton = () => (
   <section className="py-12 md:py-16 bg-card">
@@ -32,6 +34,7 @@ const PromoBannerSkeleton = () => (
 
 export default function PromoBanner() {
   const { business } = useAppContext();
+  const router = useRouter();
   const { products, isLoading, error } = useProducts(business?.id);
 
   const promoProducts = useMemo(() => {
@@ -42,6 +45,11 @@ export default function PromoBanner() {
   const plugin = useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
+
+  const handleBannerClick = (productId: number) => {
+    sessionStorage.setItem('selectedProductIdFromBanner', String(productId));
+    router.push('/products');
+  };
 
   if (isLoading) {
     return <PromoBannerSkeleton />;
@@ -92,8 +100,8 @@ export default function PromoBanner() {
               }
 
               return (
-                <CarouselItem key={product.id}>
-                  <div className="p-1">
+                <CarouselItem key={product.id} onClick={() => handleBannerClick(product.id)}>
+                  <div className="p-1 cursor-pointer">
                     <div className="relative rounded-lg overflow-hidden p-4 md:p-6 bg-gradient-to-r from-primary/20 to-accent/20">
                        <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)]"></div>
                        <div className="grid grid-cols-3 gap-4 items-center relative z-10">
@@ -110,28 +118,32 @@ export default function PromoBanner() {
                                     alt={product.name}
                                     fill
                                     data-ai-hint="product shoe"
-                                    className="rounded-lg object-contain filter blur-sm"
+                                    className="rounded-lg object-contain"
                                 />
                             </div>
                         </motion.div>
                         <motion.div 
-                            className="text-left col-span-2"
+                            className="text-left col-span-2 space-y-1"
                             initial={{ opacity: 0, x: 50 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.7, delay: 0.2 }}
                         >
-                            {discountPercent > 0 && (
-                                <p className="font-bold text-base md:text-lg text-accent">
-                                    <span className="text-white">{discountPercent}%</span> OFF
-                                </p>
-                            )}
-                             <h3 className="font-headline text-base md:text-lg font-bold mt-1 text-white">
+                            <div className="flex items-center gap-2">
+                              {discountPercent > 0 && (
+                                  <p className="font-bold text-base text-accent">
+                                      {discountPercent}% OFF
+                                  </p>
+                              )}
+                              {voucher?.promo_type && (
+                                <div className={productCardConfig.badge.promo_type_classes}>
+                                    {voucher.promo_type}
+                                </div>
+                              )}
+                            </div>
+                            <h3 className="font-headline text-base font-bold text-white line-clamp-1">
                                 {product.name}
                             </h3>
-                            <p className="text-muted-foreground mt-1 line-clamp-2 text-xs">
-                                {product.short_description}
-                            </p>
                         </motion.div>
                        </div>
                     </div>

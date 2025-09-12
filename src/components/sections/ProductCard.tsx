@@ -150,11 +150,7 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
             {voucher?.promo_type && (
                 <div className="absolute bottom-2 left-2 inline-block">
                     <div className={badgeConfig.promo_type_classes}>
-                      <div className="absolute -top-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
-                      <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-background"></div>
-                      <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-background"></div>
-                      <div className="absolute -bottom-1 -right-1 w-2 h-2 rounded-full bg-background"></div>
-                      <span className="relative z-10">{voucher.promo_type}</span>
+                      {voucher.promo_type}
                     </div>
                 </div>
             )}
@@ -275,5 +271,3 @@ export default function ProductCard({ product, onClaimVoucher }: ProductCardProp
     </motion.div>
   );
 }
-
-    

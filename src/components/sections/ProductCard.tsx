@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Ticket, Clock, Tag, MessageSquareQuote } from 'lucide-react';
 import { differenceInSeconds } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import priceConfig from '@/../public/priceConfig.json';
+import productCardConfig from '@/../public/productCardConfig.json';
 import { useAppContext } from '@/context/AppContext';
 import { Separator } from '@/components/ui/separator';
 import ProductReviews from '@/components/shared/ProductReviews';
@@ -89,7 +89,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 export default function ProductCard({ product, onClaimVoucher }: ProductCardProps) {
   const { openReviewModal } = useAppContext();
   const voucher = product.voucher;
-  const { currency_symbol, display: displayConfig, badge: badgeConfig } = priceConfig;
+  const { currency_symbol, display: displayConfig, badge: badgeConfig } = productCardConfig;
   
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 

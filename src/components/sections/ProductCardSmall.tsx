@@ -6,7 +6,7 @@ import type { Product } from '@/lib/types';
 import StarRating from '@/components/shared/StarRating';
 import { Tag } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import priceConfig from '@/../public/priceConfig.json';
+import productCardConfig from '@/../public/productCardConfig.json';
 import { motion } from 'framer-motion';
 
 interface ProductCardSmallProps {
@@ -16,7 +16,7 @@ interface ProductCardSmallProps {
 
 export default function ProductCardSmall({ product, onClick }: ProductCardSmallProps) {
   const { voucher, name, price, product_ratings, image_url, id } = product;
-  const { currency_symbol, display: displayConfig, badge: badgeConfig } = priceConfig;
+  const { currency_symbol, display: displayConfig, badge: badgeConfig } = productCardConfig;
   
   const hasDiscount = voucher && voucher.discount_amount && price && price > 0;
   

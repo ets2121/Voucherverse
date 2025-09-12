@@ -21,11 +21,11 @@ import config from '@/config/promoBannerConfig.json';
 import productCardConfig from '@/config/productCardConfig.json';
 
 const PromoBannerSkeleton = () => (
-  <section className="py-12 md:py-16 bg-card">
+  <section className="py-8 bg-card">
     <div className="container mx-auto px-4">
-      <Skeleton className="h-10 w-1/2 mx-auto mb-12" />
+      <Skeleton className="h-8 w-1/3 mx-auto mb-6" />
       <div className="flex justify-center">
-        <Skeleton className="h-[200px] w-full max-w-2xl" />
+        <Skeleton className="h-[150px] w-full max-w-xl" />
       </div>
     </div>
   </section>
@@ -56,7 +56,7 @@ export default function PromoBanner() {
 
   if (error) {
     return (
-      <section className="py-12 md:py-16 bg-card">
+      <section className="py-8 bg-card">
         <div className="container mx-auto px-4">
           <Alert variant="destructive" className="max-w-lg mx-auto">
             <AlertTriangle className="h-4 w-4" />
@@ -75,9 +75,9 @@ export default function PromoBanner() {
   }
 
   return (
-    <section id="promo-banner" className="py-12 md:py-16 bg-card overflow-hidden">
+    <section id="promo-banner" className="py-8 bg-card overflow-hidden">
       <div className="container mx-auto px-4">
-        <h2 className="font-headline text-2xl font-bold text-center mb-8">
+        <h2 className="text-lg font-medium text-center text-muted-foreground mb-4">
           {config.title}
         </h2>
         <Carousel
@@ -86,7 +86,7 @@ export default function PromoBanner() {
             align: 'start',
             loop: true,
           }}
-          className="w-full max-w-2xl mx-auto"
+          className="w-full max-w-xl mx-auto"
           onMouseEnter={plugin.current.stop}
           onMouseLeave={plugin.current.reset}
         >
@@ -101,15 +101,15 @@ export default function PromoBanner() {
               return (
                 <CarouselItem key={product.id} onClick={() => handleBannerClick(product.id)}>
                   <div className="p-1 cursor-pointer">
-                    <div className="relative rounded-lg overflow-hidden p-4 md:p-6 bg-gradient-to-r from-primary/20 to-accent/20">
+                    <div className="relative rounded-lg overflow-hidden p-4 bg-gradient-to-r from-primary/20 to-accent/20">
                        <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black)]"></div>
                        <div className="grid grid-cols-3 gap-4 items-center relative z-10">
                         <motion.div
                             className="col-span-1"
-                            initial={{ opacity: 0, x: -50 }}
+                            initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.7 }}
+                            transition={{ duration: 0.5 }}
                         >
                             <div className="relative aspect-square w-full max-w-[80px] mx-auto">
                                 <Image
@@ -117,20 +117,20 @@ export default function PromoBanner() {
                                     alt={product.name}
                                     fill
                                     data-ai-hint="product shoe"
-                                    className="rounded-lg object-contain"
+                                    className="rounded-md object-contain"
                                 />
                             </div>
                         </motion.div>
                         <motion.div 
                             className="text-left col-span-2 space-y-1"
-                            initial={{ opacity: 0, x: 50 }}
+                            initial={{ opacity: 0, x: 20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.7, delay: 0.2 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
                         >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               {discountPercent > 0 && (
-                                  <p className="font-bold text-base text-accent">
+                                  <p className="font-bold text-sm text-accent">
                                       {discountPercent}% OFF
                                   </p>
                               )}
@@ -151,8 +151,8 @@ export default function PromoBanner() {
               );
             })}
           </CarouselContent>
-          <CarouselPrevious className="left-[-1rem] sm:left-[-2rem]" />
-          <CarouselNext className="right-[-1rem] sm:right-[-2rem]" />
+          <CarouselPrevious className="left-[-0.5rem] sm:left-[-1.5rem]" />
+          <CarouselNext className="right-[-0.5rem] sm:right-[-1.5rem]" />
         </Carousel>
       </div>
     </section>

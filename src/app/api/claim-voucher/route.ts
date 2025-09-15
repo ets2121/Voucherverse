@@ -1,7 +1,43 @@
 'use server';
 
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase'; // Changed from supabase-admin to supabase
+import { supabase } from '@/lib/supabase';
+import { Resend } from 'resend';
+import VoucherEmail from '@/components/emails/VoucherEmail';
+import type { Product } from '@/lib/types';
+import { fetchWithTimezone } from '@/lib/utils';
+
+const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
+const fromEmail = process.env.NEXT_PUBLIC_EMAIL;
+
+async function getProductFromVoucher(voucherId: number): Promise<Product | null> {
+  const { data: voucherData, error: voucherError } = await supabase
+    .from('voucher')
+    .select('product_id')
+    .eq('id', voucherId)
+    .single();
+
+  if (voucherError || !voucherData) {
+    console.error('Error fetching product_id from voucher:', voucherError?.message);
+    return null;
+  }
+
+  const query = supabase
+    .from('product')
+    .select('*, voucher!inner(*)')
+    .eq('id', voucherData.product_id)
+    .single();
+    
+  const { data: productData, error: productError } = await fetchWithTimezone(query);
+
+  if (productError || !productData) {
+    console.error('Error fetching product details:', productError?.message);
+    return null;
+  }
+
+  return productData as Product;
+}
+
 
 export async function POST(request: Request) {
   let body;
@@ -26,9 +62,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    console.log('Calling voucher_claim RPC with:', { p_voucher_id: voucher_id, p_user_email: user_email, p_business_id: business_id });
-
-    // Switched to the standard 'supabase' client
     const { data: rpcResponse, error: rpcError } = await supabase.rpc('voucher_claim', {
       p_voucher_id: voucher_id,
       p_user_email: user_email,
@@ -40,10 +73,36 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "A database error occurred." }, { status: 500 });
     }
 
-    console.log('Supabase RPC success. Response text:', rpcResponse);
     const responseText = rpcResponse as string;
 
     if (responseText === 'Successfully claimed') {
+      // Claim was successful, now send the email
+      if (!fromEmail) {
+        console.warn('Email sending skipped: NEXT_PUBLIC_EMAIL is not set.');
+      } else {
+        const product = await getProductFromVoucher(voucher_id);
+        if (product && product.voucher) {
+          try {
+            await resend.emails.send({
+              from: fromEmail,
+              to: user_email,
+              subject: `Your Voucher for ${product.name} has been claimed!`,
+              react: VoucherEmail({
+                productName: product.name,
+                productImageUrl: product.image_url || '',
+                voucherDescription: product.voucher.description || 'Enjoy your voucher!',
+                claimedDate: new Date(),
+              }),
+            });
+            console.log(`Voucher claim email sent to ${user_email}`);
+          } catch (emailError) {
+            console.error('Resend API error:', emailError);
+            // Don't block the user response for an email error
+          }
+        } else {
+          console.warn(`Could not find product details for voucher ID ${voucher_id}. Skipping email.`);
+        }
+      }
       return NextResponse.json({ message: 'Voucher claimed successfully!', status: 'success' });
     } else {
        // Handles 'Already claimed' and 'Promo fully claimed'

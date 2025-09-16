@@ -1,62 +1,49 @@
 'use server';
 
-import { NextResponse } from 'next/server';
-import { Webhook } from 'resend';
-import { supabase } from '@/lib/supabase';
+import { NextResponse } from "next/server";
+import { Webhook } from "svix"; // ✅ Svix package, not Resend
+import { supabase } from "@/lib/supabase";
 
 const signingSecret = process.env.RESEND_WEBHOOK_SECRET!;
-const webhook = new Webhook(signingSecret);
 
 export async function POST(req: Request) {
   try {
-    // Raw body
     const rawBody = await req.text();
+    const headers = Object.fromEntries(req.headers.entries());
 
-    // Log lahat ng headers
-    console.log("📩 Incoming webhook headers:");
-    for (const [key, value] of req.headers.entries()) {
-      console.log(`   ${key}: ${value}`);
-    }
+    console.log("=== Incoming Headers ===", headers);
+    console.log("=== Raw Body ===", rawBody);
 
-    // Signature header
-    const signature = req.headers.get('resend-signature');
-    console.log("🔑 Resend Secret (env):", signingSecret ? "[LOADED]" : "[MISSING]");
-    console.log("📝 Signature Header:", signature || "❌ Not found");
-    console.log("📦 Raw Body:", rawBody);
-
-    if (!signature) {
-      return NextResponse.json({ error: 'Missing signature header' }, { status: 401 });
-    }
-
-    // Verify using SDK
-    const { payload } = webhook.verifySignature(rawBody, signature);
+    // Use Svix verifier
+    const wh = new Webhook(signingSecret);
+    const payload = wh.verify(rawBody, headers);
 
     console.log("✅ Verified Payload:", payload);
 
     const { type, data } = payload as any;
-    if (type?.startsWith('email.')) {
+    if (type?.startsWith("email.")) {
       const emailId = data?.email_id;
-      const status = type.split('.')[1];
+      const status = type.split(".")[1];
 
       console.log(`📨 Email Event: ${emailId} → ${status}`);
 
       if (emailId && status) {
-        const { error: rpcError } = await supabase.rpc('verify_claims', {
+        const { error } = await supabase.rpc("verify_claims", {
           p_email_id: emailId,
           p_status: status,
         });
 
-        if (rpcError) {
-          console.error("❌ Supabase RPC error:", rpcError);
+        if (error) {
+          console.error("❌ Supabase RPC error:", error);
         } else {
           console.log("✅ Supabase updated successfully");
         }
       }
     }
 
-    return NextResponse.json({ message: 'Webhook received' }, { status: 200 });
+    return NextResponse.json({ message: "Webhook received" }, { status: 200 });
   } catch (err: any) {
-    console.error("❌ Webhook processing failed:", err.message);
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+    console.error("❌ Webhook verification failed:", err.message);
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 }

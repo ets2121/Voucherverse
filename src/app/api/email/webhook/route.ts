@@ -8,12 +8,20 @@ const signingSecret = process.env.RESEND_WEBHOOK_SECRET;
 
 export async function POST(request: Request) {
   try {
-    // Get raw body (important for signature verification)
-    const rawBody = await request.text();
-    const signature = request.headers.get('Resend-Signature'); // ✅ correct casing
+    // Dump ALL headers for debugging
+    const headersDump = Object.fromEntries(request.headers);
+    console.log("=== Incoming Webhook Headers ===");
+    console.log(headersDump);
 
-    console.log('signingSecret:', signingSecret);
-    console.log('signature:', signature);
+    // Get raw body
+    const rawBody = await request.text();
+    console.log("=== Raw Webhook Body ===");
+    console.log(rawBody);
+
+    // Try to fetch signature
+    const signature = request.headers.get('Resend-Signature');
+    console.log("=== Extracted Signature Header ===");
+    console.log(signature);
 
     if (!signingSecret || !signature) {
       console.warn('Missing signing secret or signature header');
@@ -23,7 +31,10 @@ export async function POST(request: Request) {
     // Compute HMAC SHA256 using signing secret
     const hmac = createHmac('sha256', signingSecret)
       .update(rawBody)
-      .digest('base64'); // ✅ use base64 (Resend requirement)
+      .digest('base64'); // Resend sends base64
+
+    console.log("=== Computed HMAC ===");
+    console.log(hmac);
 
     if (hmac !== signature) {
       console.warn('Invalid webhook signature');
@@ -32,6 +43,9 @@ export async function POST(request: Request) {
 
     // Parse JSON payload AFTER verification
     const payload = JSON.parse(rawBody);
+    console.log("=== Parsed Payload ===");
+    console.log(payload);
+
     const { type, data } = payload;
 
     if (type?.startsWith('email.')) {
@@ -51,7 +65,6 @@ export async function POST(request: Request) {
 
       if (rpcError) {
         console.error(`Error calling verify_claims for email_id ${emailId}:`, rpcError);
-        // Still return 200 so Resend doesn’t retry endlessly
       } else {
         console.log(`Webhook processed: email_id=${emailId}, status=${status}`);
       }

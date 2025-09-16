@@ -1,3 +1,4 @@
+
 'use server';
 
 import { NextResponse } from 'next/server';
@@ -5,7 +6,6 @@ import { supabase } from '@/lib/supabase';
 import { Resend } from 'resend';
 import VoucherEmail from '@/components/emails/VoucherEmail';
 import type { Product } from '@/lib/types';
-import { fetchWithTimezone } from '@/lib/utils';
 
 const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
 const fromEmail = process.env.NEXT_PUBLIC_EMAIL;
@@ -13,7 +13,7 @@ const fromEmail = process.env.NEXT_PUBLIC_EMAIL;
 async function getProductFromVoucher(voucherId: number): Promise<Product | null> {
   const { data: voucherData, error: voucherError } = await supabase
     .from('voucher')
-    .select('product_id')
+    .select('product_id, start_date')
     .eq('id', voucherId)
     .single();
 
@@ -22,20 +22,42 @@ async function getProductFromVoucher(voucherId: number): Promise<Product | null>
     return null;
   }
 
-  const query = supabase
+  const { data: productData, error: productError } = await supabase
     .from('product')
-    .select('*, voucher!inner(*)')
+    .select('*')
     .eq('id', voucherData.product_id)
     .single();
-    
-  const { data: productData, error: productError } = await fetchWithTimezone(query);
 
   if (productError || !productData) {
     console.error('Error fetching product details:', productError?.message);
     return null;
   }
 
-  return productData as Product;
+  // Combine product data with voucher start date for use in claim logic
+  return { ...productData, voucher: { start_date: voucherData.start_date } } as Product;
+}
+
+
+// This function will run in the background without blocking the main response
+async function processClaim(voucher_id: number, user_email: string, business_id: number, email_id: string, start_date: string) {
+    try {
+        const { error: rpcError } = await supabase.rpc('claim_voucher', {
+            p_voucher_id: voucher_id,
+            p_user_email: user_email,
+            p_business_id: business_id,
+            p_email_id: email_id,
+            p_start_date: start_date,
+        });
+
+        if (rpcError) {
+            console.error('Error in claim_voucher RPC call:', rpcError.message);
+            // Optional: Add more robust error handling, like sending a notification
+        } else {
+            console.log(`Successfully inserted claim for email_id: ${email_id}`);
+        }
+    } catch (e: any) {
+        console.error('Exception during background claim processing:', e.message);
+    }
 }
 
 
@@ -51,69 +73,84 @@ export async function POST(request: Request) {
   const { voucher_id, user_email, business_id } = body;
 
   if (!voucher_id || !user_email || !business_id) {
-    const missingParams = [
-        !voucher_id && 'voucher_id',
-        !user_email && 'user_email',
-        !business_id && 'business_id'
-    ].filter(Boolean).join(', ');
+    const missingParams = [!voucher_id && 'voucher_id', !user_email && 'user_email', !business_id && 'business_id']
+      .filter(Boolean)
+      .join(', ');
     const errorMessage = `Missing required parameters: ${missingParams}.`;
-    console.error(errorMessage, { voucher_id, user_email, business_id });
     return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 
   try {
-    const { data: rpcResponse, error: rpcError } = await supabase.rpc('voucher_claim', {
-      p_voucher_id: voucher_id,
-      p_user_email: user_email,
-      p_business_id: business_id,
+    // 1. Get Product info which contains the voucher start_date
+    const product = await getProductFromVoucher(voucher_id);
+    if (!product || !product.voucher?.start_date) {
+        return NextResponse.json({ error: 'Voucher or product details not found.' }, { status: 404 });
+    }
+
+    // 2. Check if the user is eligible to claim
+    const { data: checkData, error: checkError } = await supabase.rpc('check_claims', {
+        p_voucher_id: voucher_id,
+        p_user_email: user_email,
+        p_business_id: business_id,
+        p_voucher_start_date: product.voucher.start_date,
     });
 
-    if (rpcError) {
-      console.error('Supabase RPC error:', rpcError);
-      return NextResponse.json({ error: "A database error occurred." }, { status: 500 });
+    if (checkError) {
+        console.error('Supabase check_claims RPC error:', checkError);
+        return NextResponse.json({ error: 'A database error occurred while checking eligibility.' }, { status: 500 });
     }
 
-    const responseText = rpcResponse as string;
+    const checkStatus = checkData as string;
 
-    if (responseText === 'Successfully claimed') {
-      // Claim was successful, now send the email
-      if (!fromEmail) {
-        console.warn('Email sending skipped: NEXT_PUBLIC_EMAIL is not set.');
-      } else {
-        const product = await getProductFromVoucher(voucher_id);
-        if (product && product.voucher) {
-          try {
-            await resend.emails.send({
-              from: fromEmail,
-              to: user_email,
-              subject: `Your Voucher for ${product.name} has been claimed!`,
-              react: VoucherEmail({
-                productName: product.name,
-                productImageUrl: product.image_url || '',
-                voucherDescription: product.voucher.description || 'Enjoy your voucher!',
-                claimedDate: new Date(),
-              }),
-            });
-            console.log(`Voucher claim email sent to ${user_email}`);
-          } catch (emailError) {
-            console.error('Resend API error:', emailError);
-            // Don't block the user response for an email error
-          }
-        } else {
-          console.warn(`Could not find product details for voucher ID ${voucher_id}. Skipping email.`);
-        }
+    if (checkStatus !== 'Eligible to claim') {
+        return NextResponse.json({ error: checkStatus, status: 'error' }, { status: 409 });
+    }
+
+    // 3. If eligible, send the email
+    if (!fromEmail) {
+      console.warn('Email sending skipped: NEXT_PUBLIC_EMAIL is not set.');
+      return NextResponse.json({ error: 'Email server is not configured.' }, { status: 500 });
+    }
+    
+    // Fetch full product details again for the email template
+     const fullProductDetails = await getProductFromVoucher(voucher_id);
+      if (!fullProductDetails) {
+         console.warn(`Could not find full product details for voucher ID ${voucher_id}.`);
+         return NextResponse.json({ error: 'Product details for email not found.' }, { status: 500 });
       }
-      return NextResponse.json({ message: 'Voucher claimed successfully!', status: 'success' });
-    } else {
-       // Handles 'Already claimed' and 'Promo fully claimed'
-       return NextResponse.json({ error: responseText, status: 'error' }, { status: 409 });
+
+    const { data: resendData, error: resendError } = await resend.emails.send({
+      from: fromEmail,
+      to: user_email,
+      subject: `Your Voucher for ${fullProductDetails.name} is on its way!`,
+      react: VoucherEmail({
+        productName: fullProductDetails.name,
+        productImageUrl: fullProductDetails.image_url || '',
+        voucherDescription: product.description || 'Enjoy your voucher!',
+        claimedDate: new Date(),
+      }),
+    });
+
+    if (resendError) {
+        console.error('Resend API error:', resendError);
+        return NextResponse.json({ error: 'Failed to send voucher email.' }, { status: 500 });
     }
+
+    const emailId = resendData.id;
+
+    // 4. Trigger the background processing of the claim and respond to the user immediately
+    processClaim(voucher_id, user_email, business_id, emailId, product.voucher.start_date);
+    
+    // 5. Respond to the client with the email_id for subscription
+    return NextResponse.json({ 
+        message: 'Processing your voucher claim.', 
+        status: 'processing',
+        emailId: emailId 
+    });
 
   } catch (e: any) {
     console.error('Full API claim-voucher route error:', e);
-    return NextResponse.json(
-      { error: "An unexpected internal server error occurred." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'An unexpected internal server error occurred.' }, { status: 500 });
   }
 }
+

@@ -89,6 +89,7 @@ export default function VoucherModal() {
           voucher_id: selectedVoucher.id,
           user_email: values.email,
           business_id: business.id,
+          claimedAt: new Date(),
         }),
       });
 

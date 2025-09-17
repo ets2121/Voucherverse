@@ -27,7 +27,7 @@ const VoucherEmail = ({
   voucherDescription,
   claimedDate,
 }: VoucherEmailProps) => {
-  const formattedDate = format(claimedDate, "MMMM d, yyyy 'at' h:mm a");
+  const formattedDate = format(new Date(claimedDate), "MMMM d, yyyy 'at' h:mm a");
 
   return (
     <Html>

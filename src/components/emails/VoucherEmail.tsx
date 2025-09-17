@@ -28,7 +28,7 @@ const VoucherEmail = ({
   claimedDate,
 }: VoucherEmailProps) => {
  // const local = new Date(claimedDate).toLocaleString(); // convert to user's timezone
-  const formattedDate = format(new Date(claimedDate), "MMMM d, yyyy 'at' h:mm a");
+  const formattedDate = claimedDate; //format(new Date(claimedDate), "MMMM d, yyyy 'at' h:mm a");
 
   return (
     <Html>

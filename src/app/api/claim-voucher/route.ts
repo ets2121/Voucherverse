@@ -81,9 +81,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    // 1. Get Product info which contains the voucher start_date
-    const product = await getProductFromVoucher(voucher_id);
-    if (!product || !product.voucher?.start_date) {
+    // 1. Fetch all product details once and reuse them
+    const productDetails = await getProductFromVoucher(voucher_id);
+    if (!productDetails || !productDetails.voucher?.start_date) {
         return NextResponse.json({ error: 'Voucher or product details not found.' }, { status: 404 });
     }
 
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
         p_voucher_id: voucher_id,
         p_user_email: user_email,
         p_business_id: business_id,
-        p_voucher_start_date: product.voucher.start_date,
+        p_voucher_start_date: productDetails.voucher.start_date,
     });
 
     if (checkError) {
@@ -111,22 +111,15 @@ export async function POST(request: Request) {
       console.warn('Email sending skipped: NEXT_PUBLIC_EMAIL is not set.');
       return NextResponse.json({ error: 'Email server is not configured.' }, { status: 500 });
     }
-    
-    // Fetch full product details again for the email template
-     const fullProductDetails = await getProductFromVoucher(voucher_id);
-      if (!fullProductDetails) {
-         console.warn(`Could not find full product details for voucher ID ${voucher_id}.`);
-         return NextResponse.json({ error: 'Product details for email not found.' }, { status: 500 });
-      }
 
     const { data: resendData, error: resendError } = await resend.emails.send({
       from: fromEmail,
       to: user_email,
-      subject: `Your Voucher for ${fullProductDetails.name} is on its way!`,
+      subject: `Your Voucher for ${productDetails.name} is on its way!`,
       react: VoucherEmail({
-        productName: fullProductDetails.name,
-        productImageUrl: fullProductDetails.image_url || '',
-        voucherDescription: product.description || 'Enjoy your voucher!',
+        productName: productDetails.name,
+        productImageUrl: productDetails.image_url || '',
+        voucherDescription: productDetails.description || 'Enjoy your voucher!',
         claimedDate: new Date(),
       }),
     });
@@ -139,7 +132,7 @@ export async function POST(request: Request) {
     const emailId = resendData.id;
 
     // 4. Trigger the background processing of the claim and respond to the user immediately
-    processClaim(voucher_id, user_email, business_id, emailId, product.voucher.start_date);
+    processClaim(voucher_id, user_email, business_id, emailId, productDetails.voucher.start_date);
     
     // 5. Respond to the client with the email_id for subscription
     return NextResponse.json({ 
@@ -153,4 +146,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'An unexpected internal server error occurred.' }, { status: 500 });
   }
 }
-

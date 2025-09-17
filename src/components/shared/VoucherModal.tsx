@@ -63,7 +63,7 @@ export default function VoucherModal() {
     if (deliveryStatus === 'delivered') {
       setClaimStatus('success');
       mutate(); // Revalidate product data to show new claimed count
-    } else if (deliveryStatus && deliveryStatus !== 'pending' && deliveryStatus !== 'processing') {
+    } else if (deliveryStatus && deliveryStatus !== 'sent' && deliveryStatus !== 'sending' && deliveryStatus !== 'pending' && deliveryStatus !== 'processing') {
       // Handle failure cases like 'bounced', 'spam', 'failed'
       setClaimStatus('failed-delivery');
     }

@@ -40,6 +40,7 @@ export default function VoucherModal() {
   const [submittedEmail, setSubmittedEmail] = useState<string>('');
 
   const deliveryStatus = useVoucherStatus(emailId);
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -89,7 +90,7 @@ export default function VoucherModal() {
           voucher_id: selectedVoucher.id,
           user_email: values.email,
           business_id: business.id,
-          claimedAt: new Date(),
+          timezone: timezone,
         }),
       });
 

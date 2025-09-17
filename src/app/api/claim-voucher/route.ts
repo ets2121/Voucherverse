@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid request format.' }, { status: 400 });
   }
 
-  const { voucher_id, user_email, business_id } = body;
+  const { voucher_id, user_email, business_id ,claimedAt} = body;
 
   if (!voucher_id || !user_email || !business_id) {
     const missingParams = [!voucher_id && 'voucher_id', !user_email && 'user_email', !business_id && 'business_id']
@@ -120,7 +120,7 @@ export async function POST(request: Request) {
         productName: productDetails.name,
         productImageUrl: productDetails.image_url || '',
         voucherDescription: productDetails.description || 'Enjoy your voucher!',
-        claimedDate: new Date(),
+        claimedDate: claimedAt,
       }),
     });
 

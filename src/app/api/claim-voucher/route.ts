@@ -120,7 +120,7 @@ export async function POST(request: Request) {
         productName: productDetails.name,
         productImageUrl: productDetails.image_url || '',
         voucherDescription: productDetails.description || 'Enjoy your voucher!',
-        claimedDate: now Date().toLocaleString("en-US", { timeZone: timezone }),
+        claimedDate:  new Date().toLocaleString("en-US", { timeZone: timezone }) ,
       }),
     });
 

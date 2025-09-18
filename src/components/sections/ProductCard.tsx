@@ -17,7 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import ProductReviews from '@/components/shared/ProductReviews';
 import useSWR from 'swr';
 import { cn } from '@/lib/utils';
-import { useCountdown } from '@/hooks/useCountdown';
+import useCountdown from '@/hooks/useCountdown';
 
 
 interface ProductCardProps {
@@ -34,7 +34,7 @@ const fetcher = (url: string) => fetch(url).then(res => {
 });
 
 const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
-  let timeLeft = useCountdown(expiryDate,'promo expired');
+  const timeLeft = useCountdown(expiryDate,'promo expired');
   /**const calculateTimeLeft = () => {
     const now = new Date();
     const end = new Date(expiryDate);

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { fetchWithTimezone } from '@/lib/utils';
-
+import { formatDateTime } from '@/lib/formatDateTime';
 export const revalidate = 0; // Don't cache this route
 
 export async function GET(request: Request) {
@@ -20,13 +20,13 @@ export async function GET(request: Request) {
   const to = from + limit - 1;
 
   try {
-    const today = new Date().toLocaleString("en-US", { timeZone: timezone }); 
+    const today = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD'});
     const query = supabase
       .from('product')
       .select(
         `
         *,
-        voucher!left(*),
+        voucher!left(end_date=gte.${today},is_promo=eq.true *),
         product_ratings(*),
         product_category(*)
       `,

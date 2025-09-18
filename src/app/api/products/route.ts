@@ -20,7 +20,7 @@ export async function GET(request: Request) {
   const to = from + limit - 1;
 
   try {
-    const today = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD', returnAs;'date'});
+    const today = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD', returnAs:'date'});
     const query = supabase
       .from('product')
       .select(

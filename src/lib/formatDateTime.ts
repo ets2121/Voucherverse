@@ -1,24 +1,26 @@
-type FormatDateTimeOptions = {
-  timeZone?: string;            // Default Asia/Manila
-  format?: string;              // Default YYYY-MM-DD
-  useDeviceTimeZone?: boolean;  // Default false
-};
-
 export function formatDateTime(
   input: string | Date,
-  {
+  options: {
+    timeZone?: string;
+    format?: string;
+    useDeviceTimeZone?: boolean;
+    returnAs?: "string" | "date" | "timestamp";
+  } = {}
+): string | Date | number {
+  const {
     timeZone = "Asia/Manila",
     format = "YYYY-MM-DD",
     useDeviceTimeZone = false,
-  }: FormatDateTimeOptions = {}
-): string {
+    returnAs = "string",
+  } = options;
+
   const date = new Date(input);
 
   const finalTimeZone = useDeviceTimeZone
     ? Intl.DateTimeFormat().resolvedOptions().timeZone
     : timeZone;
 
-  const options: Intl.DateTimeFormatOptions = {
+  const intlOptions: Intl.DateTimeFormatOptions = {
     timeZone: finalTimeZone,
     year: "numeric",
     month: "2-digit",
@@ -29,33 +31,44 @@ export function formatDateTime(
     hour12: true,
   };
 
-  const parts = new Intl.DateTimeFormat("en-US", options).formatToParts(date);
+  const parts = new Intl.DateTimeFormat("en-US", intlOptions).formatToParts(date);
   const lookup = Object.fromEntries(parts.map((p) => [p.type, p.value]));
 
   const year = lookup.year;
   const month = lookup.month;
   const day = lookup.day;
 
-  const hour24 = new Intl.DateTimeFormat("en-US", {
-    timeZone: finalTimeZone,
-    hour: "2-digit",
-    hour12: false,
-  })
-    .formatToParts(date)
-    .find((p) => p.type === "hour")?.value ?? "00";
+  const hour24 =
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: finalTimeZone,
+      hour: "2-digit",
+      hour12: false,
+    })
+      .formatToParts(date)
+      .find((p) => p.type === "hour")?.value ?? "00";
 
   const hour12 = lookup.hour ?? "00";
   const minute = lookup.minute ?? "00";
   const second = lookup.second ?? "00";
   const period = lookup.dayPeriod?.toUpperCase() ?? "";
 
-  return format
+  const formatted = format
     .replace("YYYY", year)
     .replace("MM", month)
     .replace("DD", day)
-    .replace("HH", hour24) // 24-hour
-    .replace("hh", hour12.padStart(2, "0")) // 12-hour
+    .replace("HH", hour24)
+    .replace("hh", hour12.padStart(2, "0"))
     .replace("mm", minute)
     .replace("ss", second)
     .replace("A", period);
+
+  if (returnAs === "date") {
+    return new Date(`${year}-${month}-${day}T${hour24}:${minute}:${second}`);
+  }
+
+  if (returnAs === "timestamp") {
+    return new Date(`${year}-${month}-${day}T${hour24}:${minute}:${second}`).getTime();
+  }
+
+  return formatted;
 }

@@ -34,7 +34,7 @@ const fetcher = (url: string) => fetch(url).then(res => {
 });
 
 const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
-  const timeLeft = useCountdown(expiryDate,'promo expired');
+  let timeLeft = useCountdown(expiryDate,'promo expired');
   /**const calculateTimeLeft = () => {
     const now = new Date();
     const end = new Date(expiryDate);

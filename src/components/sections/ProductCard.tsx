@@ -17,7 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import ProductReviews from '@/components/shared/ProductReviews';
 import useSWR from 'swr';
 import { cn } from '@/lib/utils';
-import { useCountdown } from '@/hooke/useCountdown';
+import { useCountdown } from '@/hooks/useCountdown';
 
 
 interface ProductCardProps {

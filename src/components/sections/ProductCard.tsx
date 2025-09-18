@@ -17,6 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import ProductReviews from '@/components/shared/ProductReviews';
 import useSWR from 'swr';
 import { cn } from '@/lib/utils';
+import { useCountdown } from '@/hooke/useCountdown';
 
 
 interface ProductCardProps {
@@ -33,7 +34,8 @@ const fetcher = (url: string) => fetch(url).then(res => {
 });
 
 const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
-  const calculateTimeLeft = () => {
+  const timeLeft = useCountdown(expiryDate,'promo expired');
+  /**const calculateTimeLeft = () => {
     const now = new Date();
     const end = new Date(expiryDate);
     let delta = differenceInSeconds(end, now);
@@ -54,25 +56,25 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
     const seconds = Math.floor(delta % 60);
 
     return { days, hours, minutes, seconds };
-  };
+  }; **/
   
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  //const [timeLeft, setTimeLeft] = useState(timeLeft);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+   /** const timer = setTimeout(() => {
       setTimeLeft(calculateTimeLeft());
-    }, 1000);
+    }, 1000); **/
 
-    return () => clearTimeout(timer);
+    //return () => clearTimeout(timer);
   });
 
-  const isExpired = !Object.values(timeLeft).some(val => val > 0);
+  //const isExpired = !Object.values(timeLeft).some(val => val > 0);
 
   return (
     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
       <Clock className="w-3.5 h-3.5" />
-      {isExpired ? (
-        <span>Expired</span>
+      {timeLeft.isExpired ? (
+        <span>{timeLeft.message}</span>
       ) : (
         <span className="font-mono tracking-widest">
             {timeLeft.days > 0 && `${timeLeft.days}d `}

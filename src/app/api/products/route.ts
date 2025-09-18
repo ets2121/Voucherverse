@@ -9,7 +9,9 @@ export async function GET(request: Request) {
   const businessId = searchParams.get('business_id');
   const page = parseInt(searchParams.get('page') || '1', 10);
   const limit = parseInt(searchParams.get('limit') || '12', 10);
+  const timezone = searchParams.get('timezone');
 
+  
   if (!businessId) {
     return NextResponse.json({ error: 'business_id is required' }, { status: 400 });
   }
@@ -18,6 +20,7 @@ export async function GET(request: Request) {
   const to = from + limit - 1;
 
   try {
+    const today = new Date().toLocaleString("en-US", { timeZone: timezone }); 
     const query = supabase
       .from('product')
       .select(
@@ -48,7 +51,7 @@ export async function GET(request: Request) {
       let finalVoucher = null;
       if (singleVoucher) {
         const startDate = new Date(singleVoucher.start_date);
-        const endDate = new Date(singleVoucher.end_date);
+        const endDate = new Date(singleVoucher.end_date+'T23:59:59Z');
         const now = new Date();
         if (now >= startDate && now <= endDate) {
           finalVoucher = singleVoucher;

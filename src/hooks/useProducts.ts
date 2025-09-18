@@ -17,10 +17,11 @@ const fetcher = async (url: string) => {
 };
 
 export function useProducts(businessId: number | undefined) {
+ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const getKey = (pageIndex: number, previousPageData: any) => {
     if (!businessId) return null;
     if (previousPageData && !previousPageData.data.length) return null; // Reached the end
-    return `/api/products?business_id=${businessId}&page=${pageIndex + 1}&limit=${PAGE_SIZE}`;
+    return `/api/products?business_id=${businessId}&page=${pageIndex + 1}&limit=${PAGE_SIZE}&timezone=${timezone}`;
   };
 
   const { 

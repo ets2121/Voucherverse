@@ -20,13 +20,13 @@ export async function GET(request: Request) {
   const to = from + limit - 1;
 
   try {
-    const today = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD'});
+    const today = new Date();//formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD'});
     const query = supabase
       .from('product')
       .select(
         `
         *,
-        voucher!left(end_date=gte.2025-0917,is_promo=eq.true ),
+        voucher!left(end_date=gte.${today},is_promo=eq.true *),
         product_ratings(*),
         product_category(*)
       `,

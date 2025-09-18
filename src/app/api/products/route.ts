@@ -26,7 +26,7 @@ export async function GET(request: Request) {
       .select(
         `
         *,
-        voucher!left(end_date=gte.${today},is_promo=eq.true ),
+        voucher!left(end_date=gte.2025-0917,is_promo=eq.true ),
         product_ratings(*),
         product_category(*)
       `,

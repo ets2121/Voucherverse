@@ -22,19 +22,21 @@ export async function GET(request: Request) {
   try {
     const today = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD', returnAs:'date'});
     const query = supabase
-      .from('product')
-      .select(
-        `
-        *,
-        voucher!left(end_date=gte.${today},is_promo=eq.true *),
-        product_ratings(*),
-        product_category(*)
-      `,
-        { count: 'exact' }
-      )
-      .eq('business_id', businessId)
-      .eq('is_active', true)
-      .range(from, to);
+  .from("product")
+  .select(
+    `
+    *,
+    voucher!left(*),
+    product_ratings(*),
+    product_category(*)
+  `,
+    { count: "exact" }
+  )
+  .eq("business_id", businessId)
+  .eq("is_active", true)
+  .gte("voucher.end_date", today)   // dito ilagay ang date filter
+  .eq("voucher.is_promo", true)    // dito ang is_promo filter
+  .range(from, to);
 
     const { data, error, count } = await fetchWithTimezone(query);
 

@@ -3,8 +3,9 @@ import { useEffect, useState, useCallback } from 'react';
 
 function useCountdown(endDate: string, expiredMessage: string = 'Expired') {
   const calculateTimeLeft = useCallback(() => {
-    // The endDate is a 'YYYY-MM-DD' string. We interpret it as the end of that day in UTC.
-    const target = new Date(`${endDate}T23:59:59.999Z`).getTime();
+    // The endDate is a 'YYYY-MM-DD' string. We interpret it as the end of that day in the user's local timezone.
+    // By creating the date string like this, the JS Date object will parse it in the client's local timezone.
+    const target = new Date(`${endDate}T23:59:59.999`).getTime();
     const now = new Date().getTime();
     const diff = target - now;
 

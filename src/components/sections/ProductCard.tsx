@@ -77,10 +77,10 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
         <span>{timeLeft.message}</span>
       ) : (
         <span className="font-mono tracking-widest">
-            {timeLeft.days > 0 && `${timeLeft.days}d `}
-            {timeLeft.hours > 0 && `${String(timeLeft.hours).padStart(2, '0')}h `}
-            {`${String(timeLeft.minutes).padStart(2, '0')}m `}
-            {`${String(timeLeft.seconds).padStart(2, '0')}s`}
+            {`${timeLeft.days}d :`}
+            {`${String(timeLeft.hours).padStart(1, '0')}h :`}
+            {`${String(timeLeft.minutes).padStart(1, '0')}m :`}
+            {`${String(timeLeft.seconds).padStart(1, '0')}s`}
         </span>
       )}
     </div>

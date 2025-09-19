@@ -9,9 +9,7 @@ export async function GET(request: Request) {
   const businessId = searchParams.get('business_id');
   const page = parseInt(searchParams.get('page') || '1', 10);
   const limit = parseInt(searchParams.get('limit') || '12', 10);
-  const timezone = searchParams.get('timezone');
 
-  
   if (!businessId) {
     return NextResponse.json({ error: 'business_id is required' }, { status: 400 });
   }
@@ -20,43 +18,30 @@ export async function GET(request: Request) {
   const to = from + limit - 1;
 
   try {
-    const today = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD', returnAs:'string'});
-   // const today = "2025-09-19";
+    const today = formatDateTime(new Date(), { useDeviceTimeZone: true, format: 'YYYY-MM-DD', returnAs: 'string' });
 
-const query = supabase
-  .from("product")
-  .select(
-    `
-    *,
-    voucher!left(*),
-    product_ratings(*),
-    product_category(*),
-    product_ratings!inner(
-      one_star,
-      two_star,
-      three_star,
-      four_star,
-      five_star
-    )
-  `,
-    { count: "exact" }
-  )
-  .eq("business_id", businessId)
-  .eq("is_active", true)
-  .or(`voucher.start_date.lte.${today},voucher.end_date.gte.${today}`)
-  .eq("voucher.is_promo", true)
-  .order("voucher.priority_promo", { ascending: false }) // ✅ use computed column
-  .order("voucher.is_promo", { ascending: false })
-  .order("voucher.start_date", { ascending: true })
-  .order("voucher.end_date", { ascending: true })
-  .order("voucher.discount_amount", { ascending: false })
-  .order(
-    `(product_ratings.one_star*1 + product_ratings.two_star*2 + product_ratings.three_star*3 + product_ratings.four_star*4 + product_ratings.five_star*5) / 
-     NULLIF((product_ratings.one_star + product_ratings.two_star + product_ratings.three_star + product_ratings.four_star + product_ratings.five_star),0)`,
-    { ascending: false }
-  )
-  .order("created_at", { ascending: false })
-  .range(from, to);
+    const query = supabase
+      .from("product")
+      .select(
+        `
+        *,
+        voucher!left(*),
+        product_ratings(*),
+        product_category(*)
+      `,
+        { count: "exact" }
+      )
+      .eq("business_id", businessId)
+      .eq("is_active", true)
+      .or(`voucher.start_date.lte.${today},voucher.end_date.gte.${today}`)
+      .eq("voucher.is_promo", true)
+      .order("voucher.priority_promo", { ascending: false }) // primary ordering
+      .order("voucher.is_promo", { ascending: false })
+      .order("voucher.start_date", { ascending: true })
+      .order("voucher.end_date", { ascending: true })
+      .order("voucher.discount_amount", { ascending: false })
+      .order("created_at", { ascending: false })
+      .range(from, to);
 
     const { data, error, count } = await fetchWithTimezone(query);
 
@@ -65,16 +50,16 @@ const query = supabase
       return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 });
     }
 
-    // Post-process to flatten voucher and ratings, and filter invalid vouchers
+    // Post-process vouchers and ratings
     const processedData = data?.map(p => {
       const singleVoucher = Array.isArray(p.voucher) ? p.voucher[0] : p.voucher;
       const singleRating = Array.isArray(p.product_ratings) ? p.product_ratings[0] : p.product_ratings;
 
       let finalVoucher = null;
       if (singleVoucher) {
-        const startDate = new Date(singleVoucher.start_date+'T00:00:00Z');
-        const endDate = new Date(singleVoucher.end_date+'T23:59:59Z');
-        const now = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD Hh:mm:ss', returnAs:'date'});
+        const startDate = new Date(singleVoucher.start_date + 'T00:00:00Z');
+        const endDate = new Date(singleVoucher.end_date + 'T23:59:59Z');
+        const now = new Date();
         if (now >= startDate && now <= endDate) {
           finalVoucher = singleVoucher;
         }
@@ -82,12 +67,25 @@ const query = supabase
 
       const { voucher, product_ratings, ...rest } = p;
 
+      // Compute average rating
+      let avgRating = 0;
+      if (singleRating) {
+        const totalVotes = singleRating.one_star + singleRating.two_star + singleRating.three_star + singleRating.four_star + singleRating.five_star;
+        avgRating = totalVotes ?
+          (singleRating.one_star*1 + singleRating.two_star*2 + singleRating.three_star*3 + singleRating.four_star*4 + singleRating.five_star*5) / totalVotes
+          : 0;
+      }
+
       return {
         ...rest,
         voucher: finalVoucher,
         product_ratings: singleRating || null,
+        avg_rating: avgRating
       };
     });
+
+    // Secondary sort: average rating descending
+    processedData.sort((a, b) => b.avg_rating - a.avg_rating);
 
     return NextResponse.json({ data: processedData, count });
   } catch (e: any) {

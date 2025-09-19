@@ -60,7 +60,7 @@ export async function GET(request: Request) {
       if (singleVoucher) {
         const startDate = new Date(singleVoucher.start_date + 'T00:00:00Z');
         const endDate = new Date(singleVoucher.end_date + 'T23:59:59Z');
-        const now = formatDateTime(new Date(), { useDeviceTimeZone: true, format: 'YYYY-MM-DD Hh:mm:ss', returnAs: 'date' });
+        const now = new Date();
         if (singleVoucher.is_promo && now >= startDate && now <= endDate) {
           finalVoucher = singleVoucher;
         }
@@ -115,5 +115,4 @@ export async function GET(request: Request) {
     console.error('API Products route error:', e);
     return NextResponse.json({ error: 'An unexpected error occurred on the server.' }, { status: 500 });
   }
-}
-F
+                                    }

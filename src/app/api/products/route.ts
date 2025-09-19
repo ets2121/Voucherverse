@@ -54,7 +54,7 @@ export async function GET(request: Request) {
       if (singleVoucher) {
         const startDate = new Date(singleVoucher.start_date+'T00:00:00Z');
         const endDate = new Date(singleVoucher.end_date+'T23:59:59Z');
-        const now = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD Hh:mm:ss', returnAs:'string'});
+        const now = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD Hh:mm:ss', returnAs:'date'});
         if (now >= startDate && now <= endDate) {
           finalVoucher = singleVoucher;
         }

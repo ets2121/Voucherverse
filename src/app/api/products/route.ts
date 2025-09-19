@@ -45,27 +45,15 @@ const query = supabase
   .eq("is_active", true)
   .or(`voucher.start_date.lte.${today},voucher.end_date.gte.${today}`)
   .eq("voucher.is_promo", true)
-  // Keyword & pattern detection priority
-  .order(
-    supabase.raw(
-      `(voucher.promo_type LIKE '%Spatial%' 
-        OR voucher.promo_type LIKE '%1.1%' 
-        OR voucher.promo_type LIKE '%January 1%' 
-        OR voucher.promo_type LIKE '%2.2%' 
-        OR voucher.promo_type LIKE '%February 2%')`,
-      { ascending: false }
-    )
-  )
+  .order("voucher.priority_promo", { ascending: false }) // ✅ use computed column
   .order("voucher.is_promo", { ascending: false })
   .order("voucher.start_date", { ascending: true })
   .order("voucher.end_date", { ascending: true })
   .order("voucher.discount_amount", { ascending: false })
   .order(
-    supabase.raw(
-      `(product_ratings.one_star*1 + product_ratings.two_star*2 + product_ratings.three_star*3 + product_ratings.four_star*4 + product_ratings.five_star*5) / 
-       NULLIF((product_ratings.one_star + product_ratings.two_star + product_ratings.three_star + product_ratings.four_star + product_ratings.five_star),0)`,
-      { ascending: false }
-    )
+    `(product_ratings.one_star*1 + product_ratings.two_star*2 + product_ratings.three_star*3 + product_ratings.four_star*4 + product_ratings.five_star*5) / 
+     NULLIF((product_ratings.one_star + product_ratings.two_star + product_ratings.three_star + product_ratings.four_star + product_ratings.five_star),0)`,
+    { ascending: false }
   )
   .order("created_at", { ascending: false })
   .range(from, to);

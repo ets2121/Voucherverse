@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -9,7 +10,6 @@ import StarRating from '@/components/shared/StarRating';
 import { Progress } from '@/components/ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ticket, Clock, Tag, MessageSquareQuote } from 'lucide-react';
-import { differenceInSeconds } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import productCardConfig from '@/config/productCardConfig.json';
 import { useAppContext } from '@/context/AppContext';
@@ -34,41 +34,7 @@ const fetcher = (url: string) => fetch(url).then(res => {
 });
 
 const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
-  const timeLeft = useCountdown(expiryDate,'promo expired');
-  /**const calculateTimeLeft = () => {
-    const now = new Date();
-    const end = new Date(expiryDate);
-    let delta = differenceInSeconds(end, now);
-
-    if (delta <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    const days = Math.floor(delta / 86400);
-    delta -= days * 86400;
-
-    const hours = Math.floor(delta / 3600) % 24;
-    delta -= hours * 3600;
-
-    const minutes = Math.floor(delta / 60) % 60;
-    delta -= minutes * 60;
-
-    const seconds = Math.floor(delta % 60);
-
-    return { days, hours, minutes, seconds };
-  }; **/
-  
-  //const [timeLeft, setTimeLeft] = useState(timeLeft);
-
-  useEffect(() => {
-   /** const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000); **/
-
-    //return () => clearTimeout(timer);
-  });
-
-  //const isExpired = !Object.values(timeLeft).some(val => val > 0);
+  const timeLeft = useCountdown(expiryDate, 'Promo expired');
 
   return (
     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -78,10 +44,10 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
       ) : (
         <span className="font-mono tracking-widest">
             {`${timeLeft.days}d :`}
-            {`${String(timeLeft.hours).padStart(0, '0')}h :`}
-            {`${String(timeLeft.minutes).padStart(0, '0')}m :`}
-            {`${String(timeLeft.seconds).padStart(0, '0')}s `}
-          <span className="font-mono gap-0"><strong>Left</strong></span>
+            {`${String(timeLeft.hours).padStart(2, '0')}h :`}
+            {`${String(timeLeft.minutes).padStart(2, '0')}m :`}
+            {`${String(timeLeft.seconds).padStart(2, '0')}s `}
+          <span className="font-sans gap-0"><strong>Left</strong></span>
         </span>
       )}
     </div>

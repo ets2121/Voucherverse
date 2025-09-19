@@ -1,53 +1,56 @@
-import { useEffect, useState } from "react";
 
-function useCountdown(endDate: string, expiredMessage: string = "Expired") {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    isExpired: false,
-    message: "",
-  });
+import { useEffect, useState, useCallback } from 'react';
+
+function useCountdown(endDate: string, expiredMessage: string = 'Expired') {
+  const calculateTimeLeft = useCallback(() => {
+    // The endDate is a 'YYYY-MM-DD' string. We interpret it as the end of that day in UTC.
+    const target = new Date(`${endDate}T23:59:59.999Z`).getTime();
+    const now = new Date().getTime();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      return {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        isExpired: true,
+        message: expiredMessage,
+      };
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    return {
+      days,
+      hours,
+      minutes,
+      seconds,
+      isExpired: false,
+      message: `${days}d ${hours}h ${minutes}m ${seconds}s left`,
+    };
+  }, [endDate, expiredMessage]);
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft);
 
   useEffect(() => {
-    // Force the end date to last until 23:59:59 of that day (UTC)
-    const target = new Date(endDate + "T23:59:59Z").getTime();
-
+    // Set initial value
+    setTimeLeft(calculateTimeLeft());
+    
     const interval = setInterval(() => {
-      const now = new Date().getTime(); // Current UTC time
-      const diff = target - now;
-
-      if (diff <= 0) {
-        setTimeLeft({
-          days: 0,
-          hours: 0,
-          minutes: 0,
-          seconds: 0,
-          isExpired: true,
-          message: expiredMessage,
-        });
-        clearInterval(interval);
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-      setTimeLeft({
-        days,
-        hours,
-        minutes,
-        seconds,
-        isExpired: false,
-        message: `${days}d ${hours}h ${minutes}m ${seconds}s`,
-      });
+      setTimeLeft(calculateTimeLeft());
     }, 1000);
 
+    // Stop the interval if the component unmounts or the date expires
+    if (timeLeft.isExpired) {
+        clearInterval(interval);
+    }
+
     return () => clearInterval(interval);
-  }, [endDate, expiredMessage]);
+  }, [endDate, calculateTimeLeft, timeLeft.isExpired]);
 
   return timeLeft;
 }

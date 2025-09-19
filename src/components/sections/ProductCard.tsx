@@ -81,7 +81,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
             {`${String(timeLeft.hours).padStart(0, '0')}h :`}
             {`${String(timeLeft.minutes).padStart(0, '0')}m :`}
             {`${String(timeLeft.seconds).padStart(0, '0')}s `}
-          <span className="font-mono tracking-widest"><strong>Remaining</strong></span>
+          <span className="font-mono gap-0"><strong>Left</strong></span>
         </span>
       )}
     </div>

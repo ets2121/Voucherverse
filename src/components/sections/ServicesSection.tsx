@@ -3,13 +3,13 @@
 
 import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import useSWR from 'swr';
 import type { BusinessService } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const fetcher = (url: string) => fetch(url).then((res) => {
     if (!res.ok) {
@@ -24,20 +24,20 @@ const ServicesSkeleton = () => (
             <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
                 What We Offer
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[...Array(3)].map((_, i) => (
-                    <Card key={i} className="h-full bg-card">
-                        <CardHeader>
-                            <Skeleton className="relative h-40 w-full mb-4 rounded-t-lg" />
-                            <Skeleton className="h-6 w-3/4" />
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-2/3" />
-                        </CardContent>
-                    </Card>
-                ))}
+            <div className="relative max-w-2xl mx-auto">
+              <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2"></div>
+              <div className="space-y-16">
+                  {[...Array(3)].map((_, i) => (
+                      <div key={i} className="flex items-center gap-8 even:flex-row-reverse">
+                          <Skeleton className="w-48 h-48 rounded-lg" />
+                          <div className="flex-1 space-y-2">
+                              <Skeleton className="h-6 w-3/4" />
+                              <Skeleton className="h-4 w-full" />
+                              <Skeleton className="h-4 w-5/6" />
+                          </div>
+                      </div>
+                  ))}
+              </div>
             </div>
         </div>
     </section>
@@ -77,35 +77,54 @@ export default function ServicesSection() {
   return (
     <section id="services" className="py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4">
-        <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-12">
+        <h2 className="font-headline text-3xl md:text-4xl font-bold text-center mb-16">
           What We Offer
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <div className="relative max-w-3xl mx-auto">
+          {/* Vertical Line */}
+          <div className="absolute left-5 md:left-1/2 top-5 bottom-0 w-0.5 bg-border/50 -translate-x-1/2" aria-hidden="true"></div>
+
           {services.map((service, index) => (
             <motion.div
               key={service.id}
-              initial={{ opacity: 0, y: 20 }}
+              className="relative mb-16"
+              initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.5 }}
             >
-              <Card className="h-full bg-card hover:border-primary transition-colors duration-300 group">
-                <CardHeader>
-                  <div className="relative h-40 w-full mb-4 rounded-t-lg overflow-hidden">
+              <div className={cn(
+                  "flex flex-col md:flex-row items-center gap-8",
+                  index % 2 !== 0 && "md:flex-row-reverse"
+              )}>
+                {/* Image */}
+                <div className="md:w-1/2 flex-shrink-0">
+                  <div className="relative aspect-square w-full max-w-sm mx-auto md:max-w-none rounded-lg overflow-hidden shadow-lg border border-border">
                     <Image
-                      src={service.image_url || `https://picsum.photos/400/250?random=${service.id}`}
+                      src={service.image_url || `https://picsum.photos/400/400?random=${service.id}`}
                       alt={service.name}
                       fill
-                      data-ai-hint="service abstract"
-                      className="object-contain group-hover:scale-105 transition-transform duration-300"
+                      data-ai-hint="service technology"
+                      className="object-contain"
                     />
                   </div>
-                  <CardTitle className="font-headline text-xl">{service.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
+                </div>
+
+                {/* Content */}
+                <div className={cn(
+                  "md:w-1/2 text-center md:text-left",
+                  index % 2 !== 0 && "md:text-right"
+                )}>
+                  <h3 className="font-headline text-2xl font-bold text-primary mb-2">{service.name}</h3>
                   <p className="text-muted-foreground">{service.description}</p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
+
+              {/* Number Circle */}
+               <div className="absolute top-0 left-5 md:left-1/2 w-10 h-10 bg-background border-2 border-primary rounded-full flex items-center justify-center -translate-x-1/2 -translate-y-1/2">
+                <span className="font-bold text-primary">{index + 1}</span>
+              </div>
             </motion.div>
           ))}
         </div>

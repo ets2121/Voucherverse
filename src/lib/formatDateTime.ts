@@ -1,5 +1,6 @@
+
 import { format as formatDateFns, parseISO } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
+import { toZonedTime } from 'date-fns-tz';
 
 export function formatDateTime(
   input: string | Date,
@@ -24,7 +25,7 @@ export function formatDateTime(
       : defaultTimeZone;
 
     // Convert the date to the target timezone
-    const zonedDate = utcToZonedTime(date, finalTimeZone);
+    const zonedDate = toZonedTime(date, finalTimeZone);
 
     // Format the zoned date
     return formatDateFns(zonedDate, format, { timeZone: finalTimeZone });

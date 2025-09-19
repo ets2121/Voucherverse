@@ -1,6 +1,7 @@
+
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import ( formatDateTime } from '@/lib/formatDateTime';
+import { formatDateTime } from '@/lib/formatDateTime';
 import { format } from 'date-fns-tz';
 
 export const revalidate = 0; // Don't cache this route
@@ -21,7 +22,7 @@ export async function GET(request: Request) {
 
   try {
     // Get today's date in the specified timezone
-    const today = formatDateTime(new Date(),{format: 'YYYY-MM-DD',useDeviceTimeZone:: true });
+    const today = formatDateTime(new Date(),{format: 'yyyy-MM-dd', useDeviceTimeZone: true, timeZone: timezone });
 
     // Supabase query: fetch all products with voucher left join
     const query = supabase

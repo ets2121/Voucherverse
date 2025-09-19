@@ -52,9 +52,9 @@ export async function GET(request: Request) {
 
       let finalVoucher = null;
       if (singleVoucher) {
-        const startDate = new Date(singleVoucher.start_date);
+        const startDate = new Date(singleVoucher.start_date+'T00:00:00Z');
         const endDate = new Date(singleVoucher.end_date+'T23:59:59Z');
-        const now = new Date();
+        const now = formatDateTime(new Date(),{useDeviceTimeZone: true, format:'YYYY-MM-DD Hh:mm:ss', returnAs:'string'});
         if (now >= startDate && now <= endDate) {
           finalVoucher = singleVoucher;
         }

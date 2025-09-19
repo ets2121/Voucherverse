@@ -34,6 +34,8 @@ export async function GET(request: Request) {
       )
       .eq("business_id", businessId)
       .eq("is_active", true)
+       .gte("voucher.end_date", today)   // dito ilagay ang date filter
+  .eq("voucher.is_promo", true)
       .range(from, to);
 
     const { data, error, count } = await fetchWithTimezone(query);

@@ -106,7 +106,7 @@ export default function ServicesSection() {
                       alt={service.name}
                       fill
                       data-ai-hint="service technology"
-                      className="object-contain"
+                      className="object-cover"
                     />
                   </div>
                 </div>

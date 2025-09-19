@@ -1,74 +1,37 @@
+import { format as formatDateFns, parseISO } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
+
 export function formatDateTime(
   input: string | Date,
   options: {
-    timeZone?: string;
     format?: string;
+    timeZone?: string;
     useDeviceTimeZone?: boolean;
-    returnAs?: "string" | "date" | "timestamp";
   } = {}
-): string | Date | number {
+): string {
   const {
-    timeZone = "Asia/Manila",
-    format = "YYYY-MM-DD",
+    format = 'yyyy-MM-dd',
+    timeZone: defaultTimeZone = 'UTC',
     useDeviceTimeZone = false,
-    returnAs = "string",
   } = options;
 
-  const date = new Date(input);
+  try {
+    const date = typeof input === 'string' ? parseISO(input) : input;
 
-  const finalTimeZone = useDeviceTimeZone
-    ? Intl.DateTimeFormat().resolvedOptions().timeZone
-    : timeZone;
+    // Determine the target timezone
+    const finalTimeZone = useDeviceTimeZone
+      ? Intl.DateTimeFormat().resolvedOptions().timeZone
+      : defaultTimeZone;
 
-  const intlOptions: Intl.DateTimeFormatOptions = {
-    timeZone: finalTimeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  };
+    // Convert the date to the target timezone
+    const zonedDate = utcToZonedTime(date, finalTimeZone);
 
-  const parts = new Intl.DateTimeFormat("en-US", intlOptions).formatToParts(date);
-  const lookup = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+    // Format the zoned date
+    return formatDateFns(zonedDate, format, { timeZone: finalTimeZone });
 
-  const year = lookup.year;
-  const month = lookup.month;
-  const day = lookup.day;
-
-  const hour24 =
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: finalTimeZone,
-      hour: "2-digit",
-      hour12: false,
-    })
-      .formatToParts(date)
-      .find((p) => p.type === "hour")?.value ?? "00";
-
-  const hour12 = lookup.hour ?? "00";
-  const minute = lookup.minute ?? "00";
-  const second = lookup.second ?? "00";
-  const period = lookup.dayPeriod?.toUpperCase() ?? "";
-
-  const formatted = format
-    .replace("YYYY", year)
-    .replace("MM", month)
-    .replace("DD", day)
-    .replace("HH", hour24)
-    .replace("hh", hour12.padStart(2, "0"))
-    .replace("mm", minute)
-    .replace("ss", second)
-    .replace("A", period);
-
-  if (returnAs === "date") {
-    return new Date(`${year}-${month}-${day}T${hour24}:${minute}:${second}`);
+  } catch (error) {
+    console.error("Error formatting date:", input, error);
+    // Return a fallback or the original string if it's not a valid date
+    return String(input);
   }
-
-  if (returnAs === "timestamp") {
-    return new Date(`${year}-${month}-${day}T${hour24}:${minute}:${second}`).getTime();
-  }
-
-  return formatted;
 }

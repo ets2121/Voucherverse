@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { fetchWithTimezone } from '@/lib/utils';
-import { formatDateTime } from '@/lib/formatDateTime';
+import { format } from 'date-fns-tz';
+
 export const revalidate = 0; // Don't cache this route
 
 export async function GET(request: Request) {
@@ -9,6 +9,7 @@ export async function GET(request: Request) {
   const businessId = searchParams.get('business_id');
   const page = parseInt(searchParams.get('page') || '1', 10);
   const limit = parseInt(searchParams.get('limit') || '12', 10);
+  const timezone = searchParams.get('timezone') || 'UTC';
 
   if (!businessId) {
     return NextResponse.json({ error: 'business_id is required' }, { status: 400 });
@@ -18,7 +19,8 @@ export async function GET(request: Request) {
   const to = from + limit - 1;
 
   try {
-    const today = formatDateTime(new Date(), { useDeviceTimeZone: true, format: 'YYYY-MM-DD', returnAs: 'string' });
+    // Get today's date in the specified timezone
+    const today = format(new Date(), 'yyyy-MM-dd', { timeZone: timezone });
 
     // Supabase query: fetch all products with voucher left join
     const query = supabase
@@ -34,18 +36,18 @@ export async function GET(request: Request) {
       )
       .eq("business_id", businessId)
       .eq("is_active", true)
-       .gte("voucher.end_date", today)   // dito ilagay ang date filter
-  .eq("voucher.is_promo", true)
+      .eq("voucher.is_promo", true)
+      .gte("voucher.end_date", today) // Filter expired vouchers in the DB
       .range(from, to);
 
-    const { data, error, count } = await fetchWithTimezone(query);
+    const { data, error, count } = await query;
 
     if (error) {
       console.error('Supabase products fetch error:', error);
       return NextResponse.json({ error: `Database error: ${error.message}` }, { status: 500 });
     }
 
-    // Post-process: filter vouchers, compute average rating, and assign keyword score
+    // Post-process: compute average rating, and assign keyword score
     const keywordPriority = [
       'Spatial', '1.1', 'January 1', '2.2', 'February 2', '3.3', 'March 3',
       '4.4', 'April 4', '5.5', 'May 5', '6.6', 'June 6', '7.7', 'July 7',
@@ -56,17 +58,6 @@ export async function GET(request: Request) {
     const processedData = data?.map(p => {
       const singleVoucher = Array.isArray(p.voucher) ? p.voucher[0] : p.voucher;
       const singleRating = Array.isArray(p.product_ratings) ? p.product_ratings[0] : p.product_ratings;
-
-      // Filter valid vouchers
-      let finalVoucher = null;
-      if (singleVoucher) {
-        const startDate = new Date(singleVoucher.start_date + 'T00:00:00Z');
-        const endDate = new Date(singleVoucher.end_date + 'T23:59:59Z');
-        const now = formatDateTime(new Date(), { useDeviceTimeZone: true, format: 'YYYY-MM-DD Hh:mm:ss', returnAs: 'date' });
-        if (singleVoucher.is_promo && now >= startDate && now <= endDate) {
-          finalVoucher = singleVoucher;
-        }
-      }
 
       // Compute average rating
       let avgRating = 0;
@@ -79,9 +70,9 @@ export async function GET(request: Request) {
 
       // Keyword priority score
       let keywordScore = 0;
-      if (finalVoucher?.promo_type) {
+      if (singleVoucher?.promo_type) {
         for (let i = 0; i < keywordPriority.length; i++) {
-          if (finalVoucher.promo_type.includes(keywordPriority[i])) {
+          if (singleVoucher.promo_type.includes(keywordPriority[i])) {
             keywordScore = keywordPriority.length - i; // higher score = higher priority
             break;
           }
@@ -90,10 +81,10 @@ export async function GET(request: Request) {
 
       return {
         ...p,
-        voucher: finalVoucher,
+        voucher: singleVoucher, // Already pre-filtered by DB
         product_ratings: singleRating || null,
         avg_rating: avgRating,
-        has_priority: finalVoucher?.priority_promo || false,
+        has_priority: singleVoucher?.priority_promo || false,
         keyword_score: keywordScore
       };
     });
@@ -117,4 +108,4 @@ export async function GET(request: Request) {
     console.error('API Products route error:', e);
     return NextResponse.json({ error: 'An unexpected error occurred on the server.' }, { status: 500 });
   }
-                                    }
+}

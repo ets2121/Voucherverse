@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { Resend } from 'resend';
 import VoucherEmail from '@/components/emails/VoucherEmail';
 import type { Product } from '@/lib/types';
+import { formatDateTime } from '@/lib/formatDateTime';
+
 
 const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
 const fromEmail = process.env.NEXT_PUBLIC_EMAIL;
@@ -70,10 +72,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid request format.' }, { status: 400 });
   }
 
-  const { voucher_id, user_email, business_id ,timezone} = body;
+  const { voucher_id, user_email, business_id, timezone } = body;
 
-  if (!voucher_id || !user_email || !business_id) {
-    const missingParams = [!voucher_id && 'voucher_id', !user_email && 'user_email', !business_id && 'business_id']
+  if (!voucher_id || !user_email || !business_id || !timezone) {
+    const missingParams = [
+        !voucher_id && 'voucher_id', 
+        !user_email && 'user_email', 
+        !business_id && 'business_id',
+        !timezone && 'timezone'
+      ]
       .filter(Boolean)
       .join(', ');
     const errorMessage = `Missing required parameters: ${missingParams}.`;
@@ -112,6 +119,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email server is not configured.' }, { status: 500 });
     }
 
+    const claimedAtDate = new Date();
+    const formattedDate = formatDateTime(claimedAtDate, {
+      format: "MMMM d, yyyy 'at' h:mm a",
+      timeZone: timezone,
+    });
+
     const { data: resendData, error: resendError } = await resend.emails.send({
       from: fromEmail,
       to: user_email,
@@ -120,7 +133,7 @@ export async function POST(request: Request) {
         productName: productDetails.name,
         productImageUrl: productDetails.image_url || '',
         voucherDescription: productDetails.description || 'Enjoy your voucher!',
-        claimedDate:  new Date().toLocaleString("en-US", { timeZone: timezone }) ,
+        claimedDate: formattedDate, // Pass the pre-formatted string
       }),
     });
 

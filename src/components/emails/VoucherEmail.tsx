@@ -12,13 +12,12 @@ import {
   Text,
   Tailwind,
 } from '@react-email/components';
-import { format } from 'date-fns';
 
 interface VoucherEmailProps {
   productName: string;
   productImageUrl: string;
   voucherDescription: string;
-  claimedDate: Date;
+  claimedDate: string; // Now expecting a pre-formatted string
 }
 
 const VoucherEmail = ({
@@ -27,8 +26,6 @@ const VoucherEmail = ({
   voucherDescription,
   claimedDate,
 }: VoucherEmailProps) => {
- // const local = new Date(claimedDate).toLocaleString(); // convert to user's timezone
-  const formattedDate = format(new Date(claimedDate), "MMMM d, yyyy 'at' h:mm a");
 
   return (
     <Html>
@@ -72,7 +69,7 @@ const VoucherEmail = ({
 
             <Section>
               <Text className="text-sm text-gray-500">
-                <strong>Date Claimed:</strong> {formattedDate}
+                <strong>Date Claimed:</strong> {claimedDate}
               </Text>
               <Text className="text-sm text-gray-500 mt-2">
                 Please present this email or your voucher code upon purchase. Terms and conditions may apply.

@@ -74,7 +74,7 @@ export default function VoucherModal() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!selectedVoucher || !business) return;
 
-    if (new Date(selectedVoucher.end_date) < new Date()) {
+    if (new Date(selectedVoucher.end_date+'T23:59;59;999) < new Date()) {
         setClaimStatus('expired');
         return;
     }

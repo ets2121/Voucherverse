@@ -11,8 +11,8 @@ export function formatDateTime(
   } = {}
 ): string {
   const {
-    format = 'yyyy-MM-dd',
-    timeZone: defaultTimeZone = 'UTC',
+    format = 'YYYY-MM-DD',
+    timeZone = 'Asia/Manila',
     useDeviceTimeZone = false,
   } = options;
 
@@ -22,7 +22,7 @@ export function formatDateTime(
     // Determine the target timezone
     const finalTimeZone = useDeviceTimeZone
       ? Intl.DateTimeFormat().resolvedOptions().timeZone
-      : defaultTimeZone;
+      : timeZone;
 
     // Convert the date to the target timezone
     const zonedDate = toZonedTime(date, finalTimeZone);

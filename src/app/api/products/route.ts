@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
   try {
     // Get today's date in the specified timezone
-    const today = formatDateTime(new Date(),{format: 'yyyy-MM-dd', useDeviceTimeZone: true, timeZone: timezone });
+    const today = formatDateTime(new Date(),{format: 'YYYY-MM-DD', useDeviceTimeZone: false, timeZone: timezone });
 
     // Supabase query: fetch all products with voucher left join
     const query = supabase

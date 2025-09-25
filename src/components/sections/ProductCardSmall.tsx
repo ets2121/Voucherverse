@@ -29,7 +29,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
     discountPercent = Math.min(Math.round((voucher.discount_amount! / price) * 100), 100);
   }
 
-  const primaryImage = product_images?.find(img => img.resource_type === 'image');
+  const primaryImage = product_images?.find(img => img.is_primary && img.resource_type === 'image') || product_images?.find(img => img.resource_type === 'image');
 
   return (
     <motion.div
@@ -42,7 +42,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
       <div className="relative aspect-square w-full">
         <Image
           src={primaryImage?.image_url || `https://picsum.photos/300/300?random=${id}`}
-          alt={name}
+          alt={primaryImage?.alt_text || name}
           fill
           data-ai-hint="product food"
           className="object-contain"

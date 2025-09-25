@@ -68,6 +68,8 @@ export interface ProductImage {
   product_id: number;
   business_id: number;
   image_url: string;
+  alt_text?: string;
+  is_primary: boolean;
   resource_type: 'image' | 'video';
   created_at: string;
   updated_at: string;

@@ -61,7 +61,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
   );
 };
 
-const MediaCarousel = ({ images }: { images: ProductImage[] }) => {
+const MediaCarousel = ({ images, productName }: { images: ProductImage[], productName: string }) => {
     if (!images || images.length === 0) {
         return (
             <div className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none bg-muted flex items-center justify-center">
@@ -85,7 +85,7 @@ const MediaCarousel = ({ images }: { images: ProductImage[] }) => {
                             {media.resource_type === 'image' ? (
                                 <Image
                                     src={media.image_url}
-                                    alt={media.id.toString()}
+                                    alt={media.alt_text || productName}
                                     fill
                                     className="object-contain"
                                     data-ai-hint="product retail"
@@ -152,7 +152,7 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   const cardContent = (
       <>
         <div className="relative">
-            <MediaCarousel images={product.product_images} />
+            <MediaCarousel images={product.product_images} productName={product.name} />
             {hasDiscount && discountPercent > 0 && (
                 <Badge 
                 variant={badgeConfig.discount_variant as any} 

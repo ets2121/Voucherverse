@@ -125,7 +125,7 @@ export async function POST(request: Request) {
       timeZone: timezone,
     });
 
-    const primaryImage = productDetails.product_images?.find(img => img.resource_type === 'image');
+    const primaryImage = productDetails.product_images?.find(img => img.is_primary && img.resource_type === 'image') || productDetails.product_images?.find(img => img.resource_type === 'image');
 
     const { data: resendData, error: resendError } = await resend.emails.send({
       from: fromEmail,

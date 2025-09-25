@@ -64,7 +64,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 const MediaCarousel = ({ images, productName }: { images: ProductImage[], productName: string }) => {
     if (!images || images.length === 0) {
         return (
-            <div className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none bg-muted flex items-center justify-center">
+            <div className="relative aspect-square w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none bg-muted flex items-center justify-center">
                  <div className="flex flex-col items-center text-muted-foreground">
                     <ImageOff className="h-12 w-12" />
                     <p className="mt-2 text-sm">No image available</p>
@@ -74,12 +74,12 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
     }
     
     return (
-        <Carousel className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] group">
+        <Carousel className="relative aspect-square w-full overflow-hidden md:h-full md:min-h-[300px] group">
             <CarouselContent>
                 {images.map((media) => (
                     <CarouselItem key={media.id} className="w-full h-full">
                          <div className="relative w-full h-full md:rounded-l-lg md:rounded-r-none">
-                            {media.resource_type === 'image' ? (
+                            {media.resource_type.toLowerCase() === 'image' ? (
                                 <Image
                                     src={media.image_url}
                                     alt={media.alt_text || productName}
@@ -119,7 +119,7 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const { data: reviews, error: reviewsError, isLoading: reviewsLoading } = useSWR<ProductReview[]>(
-    `/api/reviews?product_id=${product.id}`, 
+    isDetailedView ? `/api/reviews?product_id=${product.id}`: null, 
     fetcher
   );
 
@@ -145,6 +145,8 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   
   const isLongDescription = product.short_description && product.short_description.length > 100;
   const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
+
+  const primaryImage = product.product_images?.find(img => img.is_primary && img.resource_type === 'image') || product.product_images?.find(img => img.resource_type === 'image');
 
   const cardContent = (
       <>

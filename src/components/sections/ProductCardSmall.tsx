@@ -29,7 +29,10 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
     discountPercent = Math.min(Math.round((voucher.discount_amount! / price) * 100), 100);
   }
 
-  const primaryImage = product_images?.find(img => img.is_primary && img.resource_type === 'image') || product_images?.find(img => img.resource_type === 'image');
+  const primaryImage = product_images?.find(img => img.is_primary && img.resource_type?.toLowerCase() === 'image') || product_images?.find(img => img.resource_type?.toLowerCase() === 'image');
+  
+  console.log(primaryImage);
+  console.log(product_images);
 
   return (
     <motion.div

@@ -4,7 +4,7 @@
 import Image from 'next/image';
 import type { Product } from '@/lib/types';
 import StarRating from '@/components/shared/StarRating';
-import { Tag } from 'lucide-react';
+import { Tag, ImageOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import productCardConfig from '@/config/productCardConfig.json';
 import { motion } from 'framer-motion';
@@ -40,13 +40,19 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
         className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden flex flex-col cursor-pointer h-full"
     >
       <div className="relative aspect-square w-full">
-        <Image
-          src={primaryImage?.image_url || `https://picsum.photos/300/300?random=${id}`}
-          alt={primaryImage?.alt_text || name}
-          fill
-          data-ai-hint="product food"
-          className="object-contain"
-        />
+        {primaryImage ? (
+          <Image
+            src={primaryImage.image_url}
+            alt={primaryImage.alt_text || name}
+            fill
+            data-ai-hint="product food"
+            className="object-contain"
+          />
+        ) : (
+          <div className="w-full h-full bg-muted flex items-center justify-center">
+            <ImageOff className="h-10 w-10 text-muted-foreground" />
+          </div>
+        )}
          {hasDiscount && discountPercent > 0 && (
             <Badge 
               variant={badgeConfig.discount_variant as any} 

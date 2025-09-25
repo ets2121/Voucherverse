@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/carousel';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, ImageOff } from 'lucide-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { motion } from 'framer-motion';
 import config from '@/config/promoBannerConfig.json';
@@ -114,13 +114,19 @@ export default function PromoBanner() {
                             transition={{ duration: 0.5 }}
                         >
                             <div className="relative aspect-square w-full max-w-[80px] mx-auto">
-                                <Image
-                                    src={primaryImage?.image_url || `https://picsum.photos/300/300?random=${product.id}`}
-                                    alt={primaryImage?.alt_text || product.name}
-                                    fill
-                                    data-ai-hint="product shoe"
-                                    className="rounded-md object-contain"
-                                />
+                               {primaryImage ? (
+                                    <Image
+                                        src={primaryImage.image_url}
+                                        alt={primaryImage.alt_text || product.name}
+                                        fill
+                                        data-ai-hint="product shoe"
+                                        className="rounded-md object-contain"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-muted/50 rounded-md flex items-center justify-center">
+                                        <ImageOff className="h-8 w-8 text-muted-foreground" />
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
                         <motion.div 

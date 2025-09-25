@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import StarRating from '@/components/shared/StarRating';
 import { Progress } from '@/components/ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Ticket, Clock, Tag, MessageSquareQuote } from 'lucide-react';
+import { Ticket, Clock, Tag, MessageSquareQuote, ImageOff } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import productCardConfig from '@/config/productCardConfig.json';
 import { useAppContext } from '@/context/AppContext';
@@ -65,13 +65,10 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
     if (!images || images.length === 0) {
         return (
             <div className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none bg-muted flex items-center justify-center">
-                 <Image
-                    src={`https://picsum.photos/400/300?random=${Date.now()}`}
-                    alt="Placeholder"
-                    fill
-                    data-ai-hint="product placeholder"
-                    className="object-contain"
-                />
+                 <div className="flex flex-col items-center text-muted-foreground">
+                    <ImageOff className="h-12 w-12" />
+                    <p className="mt-2 text-sm">No image available</p>
+                </div>
             </div>
         );
     }
@@ -301,5 +298,3 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
     </motion.div>
   );
 }
-
-    

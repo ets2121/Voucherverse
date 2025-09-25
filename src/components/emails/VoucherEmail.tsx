@@ -47,14 +47,16 @@ const VoucherEmail = ({
               </Text>
             </Section>
 
-            <Section className="my-6">
-              <Img
-                src={productImageUrl || `https://picsum.photos/seed/${productName}/600/400`}
-                width="100%"
-                alt={productName}
-                className="rounded-md object-contain max-h-80"
-              />
-            </Section>
+            {productImageUrl && (
+                <Section className="my-6">
+                <Img
+                    src={productImageUrl}
+                    width="100%"
+                    alt={productName}
+                    className="rounded-md object-contain max-h-80"
+                />
+                </Section>
+            )}
 
             <Section className="bg-purple-50 border border-dashed border-purple-300 rounded-lg p-6 my-6 text-center">
               <Heading as="h2" className="text-lg font-semibold text-purple-800 mt-0">

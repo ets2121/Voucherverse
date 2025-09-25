@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -14,7 +15,7 @@ interface ProductCardSmallProps {
 }
 
 export default function ProductCardSmall({ product, onClick }: ProductCardSmallProps) {
-  const { voucher, name, price, product_ratings, image_url, id } = product;
+  const { voucher, name, price, product_ratings, product_images, image_url, id } = product;
   const { currency_symbol, display: displayConfig, badge: badgeConfig } = productCardConfig;
   
   const hasDiscount = voucher && voucher.discount_amount && price && price > 0;
@@ -28,6 +29,8 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
     discountPercent = Math.min(Math.round((voucher.discount_amount! / price) * 100), 100);
   }
 
+  const mainImageUrl = product.product_images?.find(img => img.resource_type === 'image')?.image_url || image_url;
+
   return (
     <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -38,7 +41,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
     >
       <div className="relative aspect-square w-full">
         <Image
-          src={image_url || `https://picsum.photos/300/300?random=${id}`}
+          src={mainImageUrl || `https://picsum.photos/300/300?random=${id}`}
           alt={name}
           fill
           data-ai-hint="product food"

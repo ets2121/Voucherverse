@@ -26,7 +26,7 @@ async function getProductFromVoucher(voucherId: number): Promise<Product | null>
 
   const { data: productData, error: productError } = await supabase
     .from('product')
-    .select('*')
+    .select('*, product_images(*)')
     .eq('id', voucherData.product_id)
     .single();
 
@@ -125,13 +125,15 @@ export async function POST(request: Request) {
       timeZone: timezone,
     });
 
+    const mainImageUrl = productDetails.product_images?.find(img => img.resource_type === 'image')?.image_url || productDetails.image_url;
+
     const { data: resendData, error: resendError } = await resend.emails.send({
       from: fromEmail,
       to: user_email,
       subject: `Your Voucher for ${productDetails.name} is on its way!`,
       react: VoucherEmail({
         productName: productDetails.name,
-        productImageUrl: productDetails.image_url || '',
+        productImageUrl: mainImageUrl || '',
         voucherDescription: productDetails.description || 'Enjoy your voucher!',
         claimedDate: formattedDate, // Pass the pre-formatted string
       }),

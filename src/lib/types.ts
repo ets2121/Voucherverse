@@ -63,12 +63,22 @@ export interface ProductReview {
     created_at: string;
 }
 
+export interface ProductImage {
+  id: number;
+  product_id: number;
+  business_id: number;
+  image_url: string;
+  resource_type: 'image' | 'video';
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Product {
   id: number;
   business_id: number;
   name: string;
-  image_url?: string;
+  image_url?: string; // Will be replaced by product_images, but kept for now to avoid breaking changes in other places not specified by the user
+  product_images: ProductImage[];
   price?: number;
   short_description?: string;
   is_active: boolean;

@@ -92,11 +92,13 @@ export default function PromoBanner() {
         >
           <CarouselContent>
             {promoProducts.map((product) => {
-              const { voucher, price } = product;
+              const { voucher, price, product_images, image_url } = product;
               let discountPercent = 0;
               if (voucher && voucher.discount_amount && price && price > 0) {
                 discountPercent = Math.min(Math.round((voucher.discount_amount / price) * 100), 100);
               }
+
+              const mainImageUrl = product_images?.find(img => img.resource_type === 'image')?.image_url || image_url;
 
               return (
                 <CarouselItem key={product.id} onClick={() => handleBannerClick(product.id)} className="sm:basis-1/2 md:basis-1/2 lg:basis-1/3">
@@ -113,7 +115,7 @@ export default function PromoBanner() {
                         >
                             <div className="relative aspect-square w-full max-w-[80px] mx-auto">
                                 <Image
-                                    src={product.image_url || `https://picsum.photos/300/300?random=${product.id}`}
+                                    src={mainImageUrl || `https://picsum.photos/300/300?random=${product.id}`}
                                     alt={product.name}
                                     fill
                                     data-ai-hint="product shoe"

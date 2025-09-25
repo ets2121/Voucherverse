@@ -32,7 +32,8 @@ export async function GET(request: Request) {
         *,
         voucher!left(*),
         product_ratings(*),
-        product_category(*)
+        product_category(*),
+        product_images(*)
       `,
         { count: "exact" }
       )

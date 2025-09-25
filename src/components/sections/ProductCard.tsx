@@ -89,12 +89,14 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   
   const isLongDescription = product.short_description && product.short_description.length > 100;
   const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
+  
+  const mainImageUrl = product.product_images?.find(img => img.resource_type === 'image')?.image_url || product.image_url;
 
   const cardContent = (
       <>
         <div className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none">
           <Image
-            src={product.image_url || `https://picsum.photos/400/300?random=${product.id}`}
+            src={mainImageUrl || `https://picsum.photos/400/300?random=${product.id}`}
             alt={product.name}
             fill
             data-ai-hint="product food"

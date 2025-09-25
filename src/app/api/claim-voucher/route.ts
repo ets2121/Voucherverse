@@ -15,7 +15,7 @@ const fromEmail = process.env.NEXT_PUBLIC_EMAIL;
 async function getProductFromVoucher(voucherId: number): Promise<Product | null> {
   const { data: voucherData, error: voucherError } = await supabase
     .from('voucher')
-    .select('product_id, start_date')
+    .select('product_id, start_date, description')
     .eq('id', voucherId)
     .single();
 
@@ -36,7 +36,7 @@ async function getProductFromVoucher(voucherId: number): Promise<Product | null>
   }
 
   // Combine product data with voucher start date for use in claim logic
-  return { ...productData, voucher: { start_date: voucherData.start_date } } as Product;
+  return { ...productData, voucher: { start_date: voucherData.start_date, description: voucherData.description } } as Product;
 }
 
 
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
       timeZone: timezone,
     });
 
-    const primaryImage = productDetails.product_images?.find(img => img.is_primary && img.resource_type === 'image') || productDetails.product_images?.find(img => img.resource_type === 'image');
+    const primaryImage = productDetails.product_images?.find(img => img.is_primary && img.resource_type.toLowerCase() === 'image') || productDetails.product_images?.find(img => img.resource_type === 'image');
 
     const { data: resendData, error: resendError } = await resend.emails.send({
       from: fromEmail,
@@ -134,7 +134,7 @@ export async function POST(request: Request) {
       react: VoucherEmail({
         productName: productDetails.name,
         productImageUrl: primaryImage?.image_url || '',
-        voucherDescription: productDetails.description || 'Enjoy your voucher!',
+        voucherDescription: productDetails.voucher.description || 'Enjoy your voucher!',
         claimedDate: formattedDate, // Pass the pre-formatted string
       }),
     });
@@ -144,7 +144,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Failed to send voucher email.' }, { status: 500 });
     }
 
-    const emailId = resendData.id;
+    const emailId = resendData? resendData.id : '';
 
     // 4. Trigger the background processing of the claim and respond to the user immediately
     processClaim(voucher_id, user_email, business_id, emailId, productDetails.voucher.start_date);

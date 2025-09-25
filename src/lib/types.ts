@@ -90,6 +90,7 @@ export interface Product {
   voucher: Voucher | null;
   product_ratings: ProductRating | null;
   product_category: ProductCategory | null;
+  
 }
 
 export interface PromoClaim {

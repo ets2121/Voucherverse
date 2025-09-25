@@ -64,7 +64,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 const MediaCarousel = ({ images, productName }: { images: ProductImage[], productName: string }) => {
     if (!images || images.length === 0) {
         return (
-            <div className="relative aspect-square w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none bg-muted flex items-center justify-center">
+            <div className="relative aspect-square w-full bg-muted flex items-center justify-center md:rounded-l-lg md:rounded-r-none">
                  <div className="flex flex-col items-center text-muted-foreground">
                     <ImageOff className="h-12 w-12" />
                     <p className="mt-2 text-sm">No image available</p>
@@ -74,11 +74,11 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
     }
     
     return (
-        <Carousel className="relative aspect-square w-full overflow-hidden md:h-full md:min-h-[300px] group">
+        <Carousel className="relative aspect-square w-full group md:rounded-l-lg md:rounded-r-none">
             <CarouselContent>
                 {images.map((media) => (
                     <CarouselItem key={media.id} className="w-full h-full">
-                         <div className="relative w-full h-full md:rounded-l-lg md:rounded-r-none">
+                         <div className="relative w-full h-full">
                             {media.resource_type.toLowerCase() === 'image' ? (
                                 <Image
                                     src={media.image_url}
@@ -147,6 +147,10 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
 
   const primaryImage = product.product_images?.find(img => img.is_primary && img.resource_type === 'image') || product.product_images?.find(img => img.resource_type === 'image');
+  if(primaryImage) {
+    console.log(primaryImage);
+  }
+  console.log(product.product_images);
 
   const cardContent = (
       <>

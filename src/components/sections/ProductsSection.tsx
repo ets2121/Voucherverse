@@ -121,16 +121,6 @@ export default function ProductsSection() {
     });
   }, [products, debouncedSearchQuery, selectedCategoryId]);
 
-  useEffect(() => {
-    if (filteredProducts.length > 0) {
-      console.log('Product Images Content:', filteredProducts.map(p => ({ 
-        productId: p.id, 
-        productName: p.name, 
-        images: p.product_images 
-      })));
-    }
-  }, [filteredProducts]);
-
   const showCategoryFilter = categories && categories.length > 1;
 
   if (isLoading) {

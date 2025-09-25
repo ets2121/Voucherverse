@@ -62,12 +62,6 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 };
 
 const MediaCarousel = ({ images, productName }: { images: ProductImage[], productName: string }) => {
-    
-    const primaryImage = images?.find(img => img.is_primary) || images?.[0];
-    console.log(`ProductCard (Product: ${productName}): All images for carousel`, images);
-    console.log(`ProductCard (Product: ${productName}): Selected primary image`, primaryImage);
-
-
     if (!images || images.length === 0) {
         return (
             <div className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none bg-muted flex items-center justify-center">

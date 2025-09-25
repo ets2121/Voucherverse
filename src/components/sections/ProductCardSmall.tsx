@@ -31,10 +31,6 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
 
   const primaryImage = product_images?.find(img => img.is_primary && img.resource_type === 'image') || product_images?.find(img => img.resource_type === 'image');
 
-  console.log(`ProductCardSmall (ID: ${id}): All images`, product_images);
-  console.log(`ProductCardSmall (ID: ${id}): Selected primary image`, primaryImage);
-
-
   return (
     <motion.div
         initial={{ opacity: 0, scale: 0.95 }}

@@ -3,7 +3,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import type { Product, Voucher, ProductReview, ProductImage } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -64,7 +64,7 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 const VideoPlayer = ({ src }: { src: string }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isMuted, setIsMuted] = useState(true);
+    const [isMuted, setIsMuted] = useState(false);
 
     const togglePlay = () => {
         if (videoRef.current) {
@@ -233,7 +233,6 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
 
 
 export default function ProductCard({ product, onClaimVoucher, isDetailedView = false }: ProductCardProps) {
-  console.log('ProductCard product.product_images', product.product_images);
   const { openReviewModal } = useAppContext();
   const voucher = product.voucher;
   const { currency_symbol, display: displayConfig, badge: badgeConfig } = productCardConfig;
@@ -276,8 +275,6 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
       return 0;
     });
   }, [product.product_images]);
-
-  console.log('ProductCard sortedImages', sortedImages);
 
   const cardContent = (
       <>

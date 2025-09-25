@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Image from 'next/image';
@@ -39,8 +40,6 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
     });
     return sortedImages.find(img => img.resource_type?.toLowerCase() === 'image') || null;
   }, [product_images]);
-
-  console.log('ProductCardSmall primaryImage', primaryImage);
   
   return (
     <motion.div

@@ -41,13 +41,13 @@ const fetcher = (url: string) => fetch(url).then(res => {
 });
 
 const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
-  const timeLeft = useCountdown(expiryDate, 'Promo expired');
+  const timeLeft = useCountdown(expiryDate);
 
   return (
     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
       <Clock className="w-3.5 h-3.5" />
       {timeLeft.isExpired ? (
-        <span>{timeLeft.message}</span>
+        <span>Promo expired</span>
       ) : (
         <span className="font-mono tracking-widest">
             {`${timeLeft.days}d :`}
@@ -301,3 +301,5 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
     </motion.div>
   );
 }
+
+    

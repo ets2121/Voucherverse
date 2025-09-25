@@ -74,11 +74,11 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
     }
     
     return (
-        <Carousel className="relative aspect-square w-full group md:rounded-l-lg md:rounded-r-none">
+        <Carousel className="relative aspect-square w-full group bg-muted md:rounded-l-lg md:rounded-r-none">
             <CarouselContent>
                 {images.map((media) => (
                     <CarouselItem key={media.id} className="w-full h-full">
-                         <div className="relative w-full h-full">
+                         <div className="relative w-full h-full aspect-square">
                             {media.resource_type.toLowerCase() === 'image' ? (
                                 <Image
                                     src={media.image_url}
@@ -147,10 +147,6 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
 
   const primaryImage = product.product_images?.find(img => img.is_primary && img.resource_type === 'image') || product.product_images?.find(img => img.resource_type === 'image');
-  if(primaryImage) {
-    console.log(primaryImage);
-  }
-  console.log(product.product_images);
 
   const cardContent = (
       <>
@@ -304,3 +300,5 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
     </motion.div>
   );
 }
+
+    

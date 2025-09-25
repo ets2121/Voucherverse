@@ -31,9 +31,6 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
 
   const primaryImage = product_images?.find(img => img.is_primary && img.resource_type?.toLowerCase() === 'image') || product_images?.find(img => img.resource_type?.toLowerCase() === 'image');
   
-  console.log(primaryImage);
-  console.log(product_images);
-
   return (
     <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -42,7 +39,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
         onClick={onClick}
         className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden flex flex-col cursor-pointer h-full"
     >
-      <div className="relative aspect-square w-full">
+      <div className="relative aspect-square w-full bg-muted">
         {primaryImage ? (
           <Image
             src={primaryImage.image_url}
@@ -52,7 +49,7 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
             className="object-contain"
           />
         ) : (
-          <div className="w-full h-full bg-muted flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center">
             <ImageOff className="h-10 w-10 text-muted-foreground" />
           </div>
         )}
@@ -106,3 +103,5 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
     </motion.div>
   );
 }
+
+    

@@ -22,8 +22,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel"
 
@@ -65,16 +63,14 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 const VideoPlayer = ({ src }: { src: string }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isMuted, setIsMuted] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
 
     const togglePlay = () => {
         if (videoRef.current) {
             if (videoRef.current.paused) {
                 videoRef.current.play().catch(e => console.error("Video play failed:", e));
-                setIsPlaying(true);
             } else {
                 videoRef.current.pause();
-                setIsPlaying(false);
             }
         }
     };
@@ -82,7 +78,6 @@ const VideoPlayer = ({ src }: { src: string }) => {
     const toggleMute = () => {
         if (videoRef.current) {
             videoRef.current.muted = !videoRef.current.muted;
-            setIsMuted(videoRef.current.muted);
         }
     };
 
@@ -136,16 +131,24 @@ const VideoPlayer = ({ src }: { src: string }) => {
 
 const MediaCarousel = ({ images, productName }: { images: ProductImage[], productName: string }) => {
     const [api, setApi] = useState<CarouselApi>();
+    const [current, setCurrent] = useState(0);
 
     useEffect(() => {
         if (!api) return;
-
+        
         const handleSelect = () => {
+            setCurrent(api.selectedScrollSnap());
             api.slideNodes().forEach((slide, index) => {
                 const video = slide.querySelector('video');
                 if (video) {
                     if (index === api.selectedScrollSnap()) {
-                        video.play().catch(e => console.error("Video play with sound failed, likely due to browser policy. Muting and retrying.", e));
+                        // Attempt to play with sound, browser might block it
+                        video.muted = false;
+                        video.play().catch(e => {
+                            console.error("Video autoplay with sound failed, trying muted.", e)
+                            video.muted = true;
+                            video.play().catch(e2 => console.error("Muted video autoplay also failed.", e2));
+                        });
                     } else {
                         video.pause();
                     }
@@ -162,11 +165,9 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
             });
         }
 
+        handleSelect(); // Set initial state
         api.on('select', handleSelect);
         api.on('scroll', handleScroll);
-        
-        // Initial play for the first slide
-        handleSelect();
 
         return () => {
             if (api) {
@@ -212,10 +213,18 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
                 ))}
             </CarouselContent>
             {images.length > 1 && (
-                <>
-                    <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </>
+                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                    {images.map((_, i) => (
+                        <button
+                            key={i}
+                            onClick={() => api?.scrollTo(i)}
+                            className={cn(
+                                'h-1.5 w-1.5 rounded-full transition-all',
+                                i === current ? 'w-4 bg-primary' : 'bg-white/50'
+                            )}
+                        />
+                    ))}
+                </div>
             )}
         </Carousel>
     )
@@ -223,6 +232,7 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
 
 
 export default function ProductCard({ product, onClaimVoucher, isDetailedView = false }: ProductCardProps) {
+  console.log('ProductCard product.product_images', product.product_images);
   const { openReviewModal } = useAppContext();
   const voucher = product.voucher;
   const { currency_symbol, display: displayConfig, badge: badgeConfig } = productCardConfig;
@@ -409,3 +419,5 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
     </motion.div>
   );
 }
+
+    

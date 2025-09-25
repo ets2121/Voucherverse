@@ -65,12 +65,12 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
 const VideoPlayer = ({ src }: { src: string }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isMuted, setIsMuted] = useState(true);
+    const [isMuted, setIsMuted] = useState(false);
 
     const togglePlay = () => {
         if (videoRef.current) {
             if (videoRef.current.paused) {
-                videoRef.current.play();
+                videoRef.current.play().catch(e => console.error("Video play failed:", e));
                 setIsPlaying(true);
             } else {
                 videoRef.current.pause();
@@ -86,7 +86,6 @@ const VideoPlayer = ({ src }: { src: string }) => {
         }
     };
 
-    // This effect is to synchronize the state with the video element's actual properties
     useEffect(() => {
         const video = videoRef.current;
         if (!video) return;
@@ -99,7 +98,6 @@ const VideoPlayer = ({ src }: { src: string }) => {
         video.addEventListener('pause', handlePause);
         video.addEventListener('volumechange', handleVolumeChange);
 
-        // Set initial state from video properties
         setIsPlaying(!video.paused);
         setIsMuted(video.muted);
 
@@ -117,14 +115,13 @@ const VideoPlayer = ({ src }: { src: string }) => {
                 src={src}
                 loop
                 autoPlay
-                muted
                 playsInline
                 className="w-full h-full object-contain"
                 onClick={togglePlay}
             >
                 Your browser does not support the video tag.
             </video>
-            <div className="absolute bottom-2 right-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 rounded-full p-1">
+            <div className="absolute bottom-2 right-2 flex items-center gap-2 bg-black/50 rounded-full p-1">
                 <button onClick={togglePlay} className="text-white p-1 focus:outline-none">
                     {isPlaying ? <Pause size={16} /> : <Play size={16} />}
                 </button>
@@ -148,7 +145,7 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
                 const video = slide.querySelector('video');
                 if (video) {
                     if (index === api.selectedScrollSnap()) {
-                        video.play().catch(e => console.error("Video play failed:", e));
+                        video.play().catch(e => console.error("Video play with sound failed, likely due to browser policy. Muting and retrying.", e));
                     } else {
                         video.pause();
                     }
@@ -167,12 +164,15 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
 
         api.on('select', handleSelect);
         api.on('scroll', handleScroll);
-        // Initial play
+        
+        // Initial play for the first slide
         handleSelect();
 
         return () => {
-            api.off('select', handleSelect);
-            api.off('scroll', handleScroll);
+            if (api) {
+                api.off('select', handleSelect);
+                api.off('scroll', handleScroll);
+            }
         };
     }, [api]);
     
@@ -257,8 +257,6 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   const isLongDescription = product.short_description && product.short_description.length > 100;
   const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
 
-  const primaryImage = product.product_images?.find(img => img.is_primary && img.resource_type === 'image') || product.product_images?.find(img => img.resource_type === 'image');
-  
   const cardContent = (
       <>
         <div className="relative">
@@ -411,7 +409,3 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
     </motion.div>
   );
 }
-
-    
-
-    

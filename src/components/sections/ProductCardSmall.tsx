@@ -2,6 +2,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useMemo } from 'react';
 import type { Product } from '@/lib/types';
 import StarRating from '@/components/shared/StarRating';
 import { Tag, ImageOff } from 'lucide-react';
@@ -29,7 +30,17 @@ export default function ProductCardSmall({ product, onClick }: ProductCardSmallP
     discountPercent = Math.min(Math.round((voucher.discount_amount! / price) * 100), 100);
   }
 
-  const primaryImage = product_images?.find(img => img.is_primary && img.resource_type?.toLowerCase() === 'image') || product_images?.find(img => img.resource_type?.toLowerCase() === 'image');
+  const primaryImage = useMemo(() => {
+    if (!product_images) return null;
+    const sortedImages = [...product_images].sort((a, b) => {
+      if (a.is_primary && !b.is_primary) return -1;
+      if (!a.is_primary && b.is_primary) return 1;
+      return 0;
+    });
+    return sortedImages.find(img => img.resource_type?.toLowerCase() === 'image') || null;
+  }, [product_images]);
+
+  console.log('ProductCardSmall primaryImage', primaryImage);
   
   return (
     <motion.div

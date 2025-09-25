@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Image from 'next/image';
@@ -267,10 +268,21 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   const isLongDescription = product.short_description && product.short_description.length > 100;
   const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
 
+  const sortedImages = useMemo(() => {
+    if (!product.product_images) return [];
+    return [...product.product_images].sort((a, b) => {
+      if (a.is_primary && !b.is_primary) return -1;
+      if (!a.is_primary && b.is_primary) return 1;
+      return 0;
+    });
+  }, [product.product_images]);
+
+  console.log('ProductCard sortedImages', sortedImages);
+
   const cardContent = (
       <>
         <div className="relative">
-            <MediaCarousel images={product.product_images} productName={product.name} />
+            <MediaCarousel images={sortedImages} productName={product.name} />
             {hasDiscount && discountPercent > 0 && (
                 <Badge 
                 variant={badgeConfig.discount_variant as any} 

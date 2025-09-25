@@ -2,14 +2,14 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Product, Voucher, ProductReview, ProductImage } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import StarRating from '@/components/shared/StarRating';
 import { Progress } from '@/components/ui/progress';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Ticket, Clock, Tag, MessageSquareQuote, ImageOff } from 'lucide-react';
+import { Ticket, Clock, Tag, MessageSquareQuote, ImageOff, Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import productCardConfig from '@/config/productCardConfig.json';
 import { useAppContext } from '@/context/AppContext';
@@ -24,6 +24,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel"
 
 
@@ -61,7 +62,120 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
   );
 };
 
+const VideoPlayer = ({ src }: { src: string }) => {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
+
+    const togglePlay = () => {
+        if (videoRef.current) {
+            if (videoRef.current.paused) {
+                videoRef.current.play();
+                setIsPlaying(true);
+            } else {
+                videoRef.current.pause();
+                setIsPlaying(false);
+            }
+        }
+    };
+
+    const toggleMute = () => {
+        if (videoRef.current) {
+            videoRef.current.muted = !videoRef.current.muted;
+            setIsMuted(videoRef.current.muted);
+        }
+    };
+
+    // This effect is to synchronize the state with the video element's actual properties
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        const handlePlay = () => setIsPlaying(true);
+        const handlePause = () => setIsPlaying(false);
+        const handleVolumeChange = () => setIsMuted(video.muted);
+
+        video.addEventListener('play', handlePlay);
+        video.addEventListener('pause', handlePause);
+        video.addEventListener('volumechange', handleVolumeChange);
+
+        // Set initial state from video properties
+        setIsPlaying(!video.paused);
+        setIsMuted(video.muted);
+
+        return () => {
+            video.removeEventListener('play', handlePlay);
+            video.removeEventListener('pause', handlePause);
+            video.removeEventListener('volumechange', handleVolumeChange);
+        };
+    }, []);
+
+    return (
+        <div className="relative w-full h-full group">
+            <video
+                ref={videoRef}
+                src={src}
+                loop
+                autoPlay
+                muted
+                playsInline
+                className="w-full h-full object-contain"
+                onClick={togglePlay}
+            >
+                Your browser does not support the video tag.
+            </video>
+            <div className="absolute bottom-2 right-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 rounded-full p-1">
+                <button onClick={togglePlay} className="text-white p-1 focus:outline-none">
+                    {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+                </button>
+                <button onClick={toggleMute} className="text-white p-1 focus:outline-none">
+                    {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                </button>
+            </div>
+        </div>
+    );
+};
+
+
 const MediaCarousel = ({ images, productName }: { images: ProductImage[], productName: string }) => {
+    const [api, setApi] = useState<CarouselApi>();
+
+    useEffect(() => {
+        if (!api) return;
+
+        const handleSelect = () => {
+            api.slideNodes().forEach((slide, index) => {
+                const video = slide.querySelector('video');
+                if (video) {
+                    if (index === api.selectedScrollSnap()) {
+                        video.play().catch(e => console.error("Video play failed:", e));
+                    } else {
+                        video.pause();
+                    }
+                }
+            });
+        };
+        
+        const handleScroll = () => {
+             api.slideNodes().forEach((slide) => {
+                const video = slide.querySelector('video');
+                if (video && !video.paused) {
+                    video.pause();
+                }
+            });
+        }
+
+        api.on('select', handleSelect);
+        api.on('scroll', handleScroll);
+        // Initial play
+        handleSelect();
+
+        return () => {
+            api.off('select', handleSelect);
+            api.off('scroll', handleScroll);
+        };
+    }, [api]);
+    
     if (!images || images.length === 0) {
         return (
             <div className="relative aspect-square w-full bg-muted flex items-center justify-center md:rounded-l-lg md:rounded-r-none">
@@ -74,7 +188,10 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
     }
     
     return (
-        <Carousel className="relative aspect-square w-full group bg-muted md:rounded-l-lg md:rounded-r-none">
+        <Carousel 
+            setApi={setApi}
+            className="relative aspect-square w-full group bg-muted md:rounded-l-lg md:rounded-r-none"
+        >
             <CarouselContent>
                 {images.map((media) => (
                     <CarouselItem key={media.id} className="w-full h-full">
@@ -88,13 +205,7 @@ const MediaCarousel = ({ images, productName }: { images: ProductImage[], produc
                                     data-ai-hint="product retail"
                                 />
                             ) : (
-                                <video
-                                    src={media.image_url}
-                                    controls
-                                    className="w-full h-full object-contain"
-                                >
-                                    Your browser does not support the video tag.
-                                </video>
+                                <VideoPlayer src={media.image_url} />
                             )}
                         </div>
                     </CarouselItem>
@@ -147,7 +258,7 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
 
   const primaryImage = product.product_images?.find(img => img.is_primary && img.resource_type === 'image') || product.product_images?.find(img => img.resource_type === 'image');
-
+  
   const cardContent = (
       <>
         <div className="relative">
@@ -300,5 +411,7 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
     </motion.div>
   );
 }
+
+    
 
     

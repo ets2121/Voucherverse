@@ -2,8 +2,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import type { Product, Voucher, ProductReview } from '@/lib/types';
+import { useState } from 'react';
+import type { Product, Voucher, ProductReview, ProductImage } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import StarRating from '@/components/shared/StarRating';
@@ -18,6 +18,13 @@ import ProductReviews from '@/components/shared/ProductReviews';
 import useSWR from 'swr';
 import { cn } from '@/lib/utils';
 import useCountdown from '@/hooks/useCountdown';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 
 interface ProductCardProps {
@@ -54,6 +61,58 @@ const CountdownTimer = ({ expiryDate }: { expiryDate: string }) => {
   );
 };
 
+const MediaCarousel = ({ images }: { images: ProductImage[] }) => {
+    if (!images || images.length === 0) {
+        return (
+            <div className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none bg-muted flex items-center justify-center">
+                 <Image
+                    src={`https://picsum.photos/400/300?random=${Date.now()}`}
+                    alt="Placeholder"
+                    fill
+                    data-ai-hint="product placeholder"
+                    className="object-contain"
+                />
+            </div>
+        );
+    }
+    
+    return (
+        <Carousel className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] group">
+            <CarouselContent>
+                {images.map((media) => (
+                    <CarouselItem key={media.id} className="w-full h-full">
+                         <div className="relative w-full h-full md:rounded-l-lg md:rounded-r-none">
+                            {media.resource_type === 'image' ? (
+                                <Image
+                                    src={media.image_url}
+                                    alt={media.id.toString()}
+                                    fill
+                                    className="object-contain"
+                                    data-ai-hint="product retail"
+                                />
+                            ) : (
+                                <video
+                                    src={media.image_url}
+                                    controls
+                                    className="w-full h-full object-contain"
+                                >
+                                    Your browser does not support the video tag.
+                                </video>
+                            )}
+                        </div>
+                    </CarouselItem>
+                ))}
+            </CarouselContent>
+            {images.length > 1 && (
+                <>
+                    <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </>
+            )}
+        </Carousel>
+    )
+}
+
 
 export default function ProductCard({ product, onClaimVoucher, isDetailedView = false }: ProductCardProps) {
   const { openReviewModal } = useAppContext();
@@ -89,34 +148,26 @@ export default function ProductCard({ product, onClaimVoucher, isDetailedView = 
   
   const isLongDescription = product.short_description && product.short_description.length > 100;
   const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
-  
-  const mainImageUrl = product.product_images?.find(img => img.resource_type === 'image')?.image_url || product.image_url;
 
   const cardContent = (
       <>
-        <div className="relative h-48 w-full overflow-hidden md:h-full md:min-h-[300px] md:rounded-l-lg md:rounded-r-none">
-          <Image
-            src={mainImageUrl || `https://picsum.photos/400/300?random=${product.id}`}
-            alt={product.name}
-            fill
-            data-ai-hint="product food"
-            className="object-contain transition-transform duration-300 group-hover:scale-105"
-          />
-          {hasDiscount && discountPercent > 0 && (
-            <Badge 
-              variant={badgeConfig.discount_variant as any} 
-              className="absolute top-2 right-2"
-            >
-              <Tag className="w-3 h-3 mr-1"/> {discountPercent}% OFF
-            </Badge>
-          )}
-          {voucher?.promo_type && (
-              <div className="absolute bottom-2 left-2 inline-block">
-                  <div className={badgeConfig.promo_type_classes}>
-                    {voucher.promo_type}
-                  </div>
-              </div>
-          )}
+        <div className="relative">
+            <MediaCarousel images={product.product_images} />
+            {hasDiscount && discountPercent > 0 && (
+                <Badge 
+                variant={badgeConfig.discount_variant as any} 
+                className="absolute top-2 right-2 z-10"
+                >
+                <Tag className="w-3 h-3 mr-1"/> {discountPercent}% OFF
+                </Badge>
+            )}
+            {voucher?.promo_type && (
+                <div className="absolute bottom-2 left-2 z-10 inline-block">
+                    <div className={badgeConfig.promo_type_classes}>
+                        {voucher.promo_type}
+                    </div>
+                </div>
+            )}
         </div>
         <div className="flex flex-col flex-grow">
           <CardHeader className="p-4 space-y-2">

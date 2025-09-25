@@ -77,7 +77,7 @@ export interface Product {
   id: number;
   business_id: number;
   name: string;
-  image_url?: string; // Will be replaced by product_images, but kept for now to avoid breaking changes in other places not specified by the user
+  image_url?: string | null; // Kept for potential fallback, but can be removed if fully migrated
   product_images: ProductImage[];
   price?: number;
   short_description?: string;

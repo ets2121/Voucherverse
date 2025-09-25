@@ -125,7 +125,7 @@ export async function POST(request: Request) {
       timeZone: timezone,
     });
 
-    const mainImageUrl = productDetails.product_images?.find(img => img.resource_type === 'image')?.image_url || productDetails.image_url;
+    const primaryImage = productDetails.product_images?.find(img => img.resource_type === 'image');
 
     const { data: resendData, error: resendError } = await resend.emails.send({
       from: fromEmail,
@@ -133,7 +133,7 @@ export async function POST(request: Request) {
       subject: `Your Voucher for ${productDetails.name} is on its way!`,
       react: VoucherEmail({
         productName: productDetails.name,
-        productImageUrl: mainImageUrl || '',
+        productImageUrl: primaryImage?.image_url || '',
         voucherDescription: productDetails.description || 'Enjoy your voucher!',
         claimedDate: formattedDate, // Pass the pre-formatted string
       }),
